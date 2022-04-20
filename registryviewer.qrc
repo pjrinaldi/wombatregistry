@@ -1,0 +1,40 @@
+<RCC>
+  <qresource prefix="/">
+    <file>Resources/aboutwombat.png</file>
+    <file>Resources/process-remove.svg</file>
+    <file>Resources/process-stop.svg</file>
+    <file>Resources/edit-find.svg</file>
+    <file>Resources/document-export.svg</file>
+    <file>Resources/process-completed.svg</file>
+    <file>Resources/dialog-information.svg</file>
+    <file>Resources/help-contents.svg</file>
+    <file>Resources/system-search.png</file>
+    <file>Resources/utilities-terminal.svg</file>
+    <file>./Resources/wombat_32.ico</file>
+  </qresource>
+  <qresource prefix="/basic">
+    <file>./Resources/folder.png</file>
+    <file>./Resources/text-x-generic.png</file>
+    <file>./Resources/emblem-package-2.png</file>
+    <file>./Resources/foldersexplorer.png</file>
+    <file>./Resources/filterlist.png</file>
+  </qresource>
+  <qresource prefix="/bar">
+    <file>Resources/burrow.png</file>
+    <file>Resources/go-next.png</file>
+    <file>Resources/go-previous.png</file>
+    <file>Resources/reportpreview1.png</file>
+    <file>Resources/bookmark-rem.svg</file>
+    <file>Resources/list-add.svg</file>
+    <file>Resources/list-remove.svg</file>
+    <file>Resources/folder-open.svg</file>
+    <file>Resources/extension.svg</file>
+    <file>Resources/document-new.svg</file>
+    <file>Resources/accessories-calculator.svg</file>
+    <file>Resources/applications-system.png</file>
+    <file>Resources/checkbox.png</file>
+    <file>Resources/managetags.png</file>
+    <file>./Resources/bookmark.png</file>
+    <file>./Resources/bookmark-new.png</file>
+  </qresource>
+</RCC>
