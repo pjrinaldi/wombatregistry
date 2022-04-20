@@ -16,6 +16,10 @@
   <property name="windowTitle">
    <string>Registry Viewer</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../wombatregistry/registryviewer.qrc">
+    <normaloff>:/Resources/wombat_32.ico</normaloff>:/Resources/wombat_32.ico</iconset>
+  </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
@@ -35,6 +39,103 @@
    <property name="bottomMargin">
     <number>1</number>
    </property>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QToolButton" name="openregfile">
+       <property name="text">
+        <string>Open Hive</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../wombatregistry/registryviewer.qrc">
+         <normaloff>:/bar/Resources/folder-open.svg</normaloff>:/bar/Resources/folder-open.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="managetags">
+       <property name="text">
+        <string>Manage Tags</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../wombatregistry/registryviewer.qrc">
+         <normaloff>:/bar/Resources/managetags.png</normaloff>:/bar/Resources/managetags.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="previewreport">
+       <property name="text">
+        <string>Preview Report</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../wombatregistry/registryviewer.qrc">
+         <normaloff>:/bar/Resources/reportpreview1.png</normaloff>:/bar/Resources/reportpreview1.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="about">
+       <property name="text">
+        <string>About Wombat Registry</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../wombatregistry/registryviewer.qrc">
+         <normaloff>:/Resources/help-contents.svg</normaloff>:/Resources/help-contents.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <widget class="QSplitter" name="splitter_3">
      <property name="sizePolicy">
@@ -159,7 +260,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="wombatforensics.qrc"/>
+  <include location="../wombatregistry/registryviewer.qrc"/>
  </resources>
  <connections/>
 </ui>

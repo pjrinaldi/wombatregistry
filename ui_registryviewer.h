@@ -10,13 +10,17 @@
 #define UI_REGISTRYVIEWER_H
 
 #include <QtCore/QVariant>
+#include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDialog>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPlainTextEdit>
+#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QTableWidget>
+#include <QtWidgets/QToolButton>
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QVBoxLayout>
 
@@ -26,6 +30,12 @@ class Ui_RegistryDialog
 {
 public:
     QVBoxLayout *verticalLayout;
+    QHBoxLayout *horizontalLayout;
+    QToolButton *openregfile;
+    QToolButton *managetags;
+    QToolButton *previewreport;
+    QSpacerItem *horizontalSpacer;
+    QToolButton *about;
     QSplitter *splitter_3;
     QSplitter *splitter;
     QTreeWidget *treeWidget;
@@ -40,11 +50,60 @@ public:
             RegistryDialog->setObjectName(QString::fromUtf8("RegistryDialog"));
         RegistryDialog->setWindowModality(Qt::NonModal);
         RegistryDialog->resize(1400, 720);
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/Resources/wombat_32.ico"), QSize(), QIcon::Normal, QIcon::Off);
+        RegistryDialog->setWindowIcon(icon);
         RegistryDialog->setSizeGripEnabled(true);
         RegistryDialog->setModal(false);
         verticalLayout = new QVBoxLayout(RegistryDialog);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         verticalLayout->setContentsMargins(1, 1, 1, 1);
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setContentsMargins(0, 2, 0, 0);
+        openregfile = new QToolButton(RegistryDialog);
+        openregfile->setObjectName(QString::fromUtf8("openregfile"));
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/bar/Resources/folder-open.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        openregfile->setIcon(icon1);
+        openregfile->setIconSize(QSize(32, 32));
+
+        horizontalLayout->addWidget(openregfile);
+
+        managetags = new QToolButton(RegistryDialog);
+        managetags->setObjectName(QString::fromUtf8("managetags"));
+        QIcon icon2;
+        icon2.addFile(QString::fromUtf8(":/bar/Resources/managetags.png"), QSize(), QIcon::Normal, QIcon::Off);
+        managetags->setIcon(icon2);
+        managetags->setIconSize(QSize(32, 32));
+
+        horizontalLayout->addWidget(managetags);
+
+        previewreport = new QToolButton(RegistryDialog);
+        previewreport->setObjectName(QString::fromUtf8("previewreport"));
+        QIcon icon3;
+        icon3.addFile(QString::fromUtf8(":/bar/Resources/reportpreview1.png"), QSize(), QIcon::Normal, QIcon::Off);
+        previewreport->setIcon(icon3);
+        previewreport->setIconSize(QSize(32, 32));
+
+        horizontalLayout->addWidget(previewreport);
+
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer);
+
+        about = new QToolButton(RegistryDialog);
+        about->setObjectName(QString::fromUtf8("about"));
+        QIcon icon4;
+        icon4.addFile(QString::fromUtf8(":/Resources/help-contents.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        about->setIcon(icon4);
+        about->setIconSize(QSize(32, 32));
+
+        horizontalLayout->addWidget(about);
+
+
+        verticalLayout->addLayout(horizontalLayout);
+
         splitter_3 = new QSplitter(RegistryDialog);
         splitter_3->setObjectName(QString::fromUtf8("splitter_3"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -127,6 +186,10 @@ public:
     void retranslateUi(QDialog *RegistryDialog)
     {
         RegistryDialog->setWindowTitle(QCoreApplication::translate("RegistryDialog", "Registry Viewer", nullptr));
+        openregfile->setText(QCoreApplication::translate("RegistryDialog", "Open Hive", nullptr));
+        managetags->setText(QCoreApplication::translate("RegistryDialog", "Manage Tags", nullptr));
+        previewreport->setText(QCoreApplication::translate("RegistryDialog", "Preview Report", nullptr));
+        about->setText(QCoreApplication::translate("RegistryDialog", "About Wombat Registry", nullptr));
         plainTextEdit->setPlaceholderText(QString());
         label->setText(QCoreApplication::translate("RegistryDialog", "TextLabel", nullptr));
     } // retranslateUi
