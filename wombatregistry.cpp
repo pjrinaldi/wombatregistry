@@ -18,22 +18,15 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     connect(ui->actionManageTags, SIGNAL(triggered()), this, SLOT(ManageTags()), Qt::DirectConnection);
     connect(ui->actionPreviewReport, SIGNAL(triggered()), this, SLOT(PreviewReport()), Qt::DirectConnection);
     reportstring = "prehtml code";
-    /*
-    QStringList taglist;
-    taglist.clear();
+    
+    tags.clear();
     tagmenu = new QMenu(ui->tablewidget);
-    */
+    UpdateTagsMenu();
 
+    ui->tablewidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tablewidget, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(TagMenu(const QPoint &)), Qt::DirectConnection);
 
-    //ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    //ui->tableWidget->setHorizontalHeaderLabels({"Value Name", "Value Type", "Tag"});
-    //ui->label->setText("");
     /*
-    connect(ui->treeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(KeySelected()), Qt::DirectConnection);
-    connect(ui->tableWidget, SIGNAL(itemSelectionChanged()), this, SLOT(ValueSelected()), Qt::DirectConnection);
-    QStringList taglist;
-    taglist.clear();
-    tagmenu = new QMenu(ui->tableWidget);
     bookmarkfile.open(QIODevice::ReadOnly | QIODevice::Text);
     if(bookmarkfile.isOpen())
 	taglist = QString(bookmarkfile.readLine()).split(",", Qt::SkipEmptyParts);
@@ -51,9 +44,8 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     remtagaction->setIcon(QIcon(":/bar/tag-rem"));
     connect(remtagaction, SIGNAL(triggered()), this, SLOT(RemoveTag()));
     tagmenu->addAction(remtagaction);
-    ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->tableWidget, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(TagMenu(const QPoint &)), Qt::DirectConnection);
     */
+
     /*
     QFile registryfile;
     registryfile.setFileName(wombatvariable.tmpmntpath + "registrytags");
@@ -152,12 +144,52 @@ void WombatRegistry::HideClicked()
 }
 */
 
-/*
 void WombatRegistry::CreateNewTag()
 {
-    qDebug() << "create new tag";
+    QString tagname = "";
+    QInputDialog* newtagdialog = new QInputDialog(this);
+    newtagdialog->setCancelButtonText("Cancel");
+    newtagdialog->setInputMode(QInputDialog::TextInput);
+    newtagdialog->setLabelText("Enter Tag Name");
+    newtagdialog->setOkButtonText("Create Tag");
+    newtagdialog->setTextEchoMode(QLineEdit::Normal);
+    newtagdialog->setWindowTitle("New Tag");
+    if(newtagdialog->exec())
+        tagname = newtagdialog->textValue();
+    if(!tagname.isEmpty())
+    {
+	tags.append(tagname);
+        UpdateTagsMenu();
+    }
+    // ADD TAG TO THE REGISTRY ENTRY...
+    //QTableWidgetItem* curitem = ui->tablewidget->itemAt(pt);
+    qDebug() << "curitem:" << ui->tablewidget->item(currow->row(), 2)->text();
+    //if(ui->tablewidget->item(curitem->row(), 0)->text().isEmpty())
+    //qDebug() << "create new tag";
 }
-*/
+
+void WombatRegistry::UpdateTagsMenu()
+{
+    tagmenu->clear();
+    newtagaction = new QAction("New Tag", tagmenu);
+    newtagaction->setIcon(QIcon(":/bar/newtag"));
+    connect(newtagaction, SIGNAL(triggered()), this, SLOT(CreateNewTag()));
+    tagmenu->addAction(newtagaction);
+    tagmenu->addSeparator();
+    for(int i=0; i < tags.count(); i++)
+    {
+	QAction* tmpaction = new QAction(tags.at(i), tagmenu);
+	tmpaction->setIcon(QIcon(":/bar/addtotag"));
+	tmpaction->setData(QVariant("t" + QString::number(i)));
+	connect(tmpaction, SIGNAL(triggered()), this, SLOT(SetTag()));
+	tagmenu->addAction(tmpaction);
+    }
+    tagmenu->addSeparator();
+    remtagaction = new QAction("Remove Tag", tagmenu);
+    remtagaction->setIcon(QIcon(":/bar/removetag"));
+    connect(remtagaction, SIGNAL(triggered()), this, SLOT(RemoveTag()));
+    tagmenu->addAction(remtagaction);
+}
 
 void WombatRegistry::SetTag()
 {
@@ -448,14 +480,12 @@ void WombatRegistry::KeySelected(void)
     libregf_file_t* regfile = NULL;
     libregf_error_t* regerr = NULL;
     libregf_file_initialize(&regfile, &regerr);
-    qDebug() << "key regfilepath:" << hivefilepath;
     libregf_file_open(regfile, hivefilepath.toStdString().c_str(), LIBREGF_OPEN_READ, &regerr);
     libregf_key_t* curkey = NULL;
     libregf_file_get_key_by_utf8_path(regfile, (uint8_t*)(keypath.toUtf8().data()), keypath.toUtf8().size(), &curkey, &regerr);
     // valid key, get values...
     int valuecount = 0;
     libregf_key_get_number_of_values(curkey, &valuecount, &regerr);
-    qDebug() << "value count:" << valuecount;
     ui->tablewidget->clear();
     ui->plaintext->setPlainText("");
     ui->tablewidget->setRowCount(valuecount);
@@ -617,7 +647,6 @@ void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* c
 
 QString WombatRegistry::DecryptRot13(QString encstr)
 {
-    /*
     QString decstr = "";
     int i = 0;
     int strlength = 0;
@@ -628,12 +657,10 @@ QString WombatRegistry::DecryptRot13(QString encstr)
         decstr[i] = Rot13Char(decstr.at(i));
     }
     return decstr;
-    */
 }
 
 QChar WombatRegistry::Rot13Char(QChar curchar)
 {
-    /*
     QChar rot13char;
     if('0' <= curchar && curchar <= '4')
         rot13char = QChar(curchar.unicode() + 5);
@@ -650,7 +677,6 @@ QChar WombatRegistry::Rot13Char(QChar curchar)
     else
         rot13char = curchar;
     return rot13char;
-    */
 }
 
 QString WombatRegistry::ConvertUnixTimeToString(uint32_t input)
@@ -683,12 +709,23 @@ void WombatRegistry::DoubleClick(QTableWidgetItem* curitem)
 
 void WombatRegistry::TagMenu(const QPoint &pt)
 {
+    QTableWidgetItem* currow = ui->tablewidget->itemAt(pt);
+    if(ui->tablewidget->item(currow->row(), 0)->text().isEmpty())
+    {
+        qDebug() << "show add tag menu";
+        //ui->
+    }
+    else
+    {
+        qDebug() << "show remove tag menu";
+    }
+    tagmenu->exec(ui->tablewidget->mapToGlobal(pt));
+    
     // when i need the current value for the right click, i can use a class variable defined in .h so i can access it in the SetTag and CreateNewTag right click menu options...
     //QTableWidgetItem* curitem = ui->tableWidget->itemAt(pt);
     //qDebug() << "cur item:" << ui->tableWidget->item(curitem->row(), 0)->text();
-    
-/*    tagmenu->exec(ui->tableWidget->mapToGlobal(pt)); */
 }
+
 /*
 void WombatForensics::TreeContextMenu(const QPoint &pt)
 {

@@ -49,8 +49,9 @@ private slots:
     void ValueSelected(void);
     void TagMenu(const QPoint &point);
     void SetTag(void);
-    //void CreateNewTag(void);
+    void CreateNewTag(void);
     void RemoveTag(void);
+    void UpdateTagsMenu(void);
     //void DoubleClick(QTableWidgetItem* curitem);
     //void ImgHexMenu(const QPoint &point);
     void StatusUpdate(QString tmptext)
@@ -75,6 +76,9 @@ private:
     QString ConvertWindowsTimeToUnixTimeUTC(uint64_t input);
     //QString regfilepath;
     QMenu* tagmenu;
+    QTableWidgetItem* currow;
+    QAction* newtagaction;
+    QAction* remtagaction;
     QStringList registrytaglist;
     QString htmlentry;
     QString htmlvalue;
