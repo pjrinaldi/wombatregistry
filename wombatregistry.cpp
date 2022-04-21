@@ -11,7 +11,7 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     this->statusBar()->addPermanentWidget(statuslabel, 0);
     StatusUpdate("Open a Hive to Begin");
     ui->tablewidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tablewidget->setHorizontalHeaderLabels({"Value Name", "Value Type", "Tag"});
+    ui->tablewidget->setHorizontalHeaderLabels({"Tag", "Value Name", "Value Type"});
     connect(ui->treewidget, SIGNAL(itemSelectionChanged()), this, SLOT(KeySelected()), Qt::DirectConnection);
     connect(ui->tablewidget, SIGNAL(itemSelectionChanged()), this, SLOT(ValueSelected()), Qt::DirectConnection);
     connect(ui->actionOpenHive, SIGNAL(triggered()), this, SLOT(OpenHive()), Qt::DirectConnection);
@@ -426,17 +426,17 @@ void WombatRegistry::KeySelected(void)
 	if(namesize == 0)
 	{
 	    curtagvalue += "(unnamed)";
-	    ui->tablewidget->setHorizontalHeaderLabels({"Value Name", "Value", "Tag"});
-	    ui->tablewidget->setItem(i, 0, new QTableWidgetItem("(unnamed)"));
-	    ui->tablewidget->setItem(i, 1, new QTableWidgetItem(QString::number(type, 16)));
+	    ui->tablewidget->setHorizontalHeaderLabels({"Tag", "Value Name", "Value"});
+	    ui->tablewidget->setItem(i, 1, new QTableWidgetItem("(unnamed)"));
+	    ui->tablewidget->setItem(i, 2, new QTableWidgetItem(QString::number(type, 16)));
 	    //ui->tablewidget->setItem(i, 2, new QTableWidgetItem(""));
 	}
 	else
 	{
 	    curtagvalue += QString::fromUtf8(reinterpret_cast<char*>(name));
             QString valuetypestr = "";
-	    ui->tablewidget->setHorizontalHeaderLabels({"Value Name", "Value Type", "Tag"});
-	    ui->tablewidget->setItem(i, 0, new QTableWidgetItem(QString::fromUtf8(reinterpret_cast<char*>(name))));
+	    ui->tablewidget->setHorizontalHeaderLabels({"Tag", "Value Name", "Value Type"});
+	    ui->tablewidget->setItem(i, 1, new QTableWidgetItem(QString::fromUtf8(reinterpret_cast<char*>(name))));
             if(type == 0x00) // none
             {
             }
@@ -487,7 +487,7 @@ void WombatRegistry::KeySelected(void)
             else
             {
             }
-	    ui->tablewidget->setItem(i, 1, new QTableWidgetItem(valuetypestr));
+	    ui->tablewidget->setItem(i, 2, new QTableWidgetItem(valuetypestr));
 	    //ui->tablewidget->setItem(i, 2, new QTableWidgetItem(""));
 	}
 	//qDebug() << "curtagvalue:" << curtagvalue;
@@ -499,7 +499,7 @@ void WombatRegistry::KeySelected(void)
 		tagstr = registrytaglist.at(j).split("|", Qt::SkipEmptyParts).last();
 	}
 	//qDebug() << "tagstr:" << tagstr;
-	ui->tablewidget->setItem(i, 2, new QTableWidgetItem(tagstr));
+	ui->tablewidget->setItem(i, 0, new QTableWidgetItem(tagstr));
         ui->tablewidget->resizeColumnToContents(0);
         ui->tablewidget->setCurrentCell(0, 0);
 	libregf_value_free(&curval, &regerr);

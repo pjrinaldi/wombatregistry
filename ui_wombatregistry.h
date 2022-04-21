@@ -98,6 +98,11 @@ public:
         treewidget->header()->setVisible(false);
         splitter = new QSplitter(splitter_2);
         splitter->setObjectName(QString::fromUtf8("splitter"));
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(1);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(splitter->sizePolicy().hasHeightForWidth());
+        splitter->setSizePolicy(sizePolicy);
         splitter->setOrientation(Qt::Vertical);
         tablewidget = new QTableWidget(splitter);
         if (tablewidget->columnCount() < 3)
