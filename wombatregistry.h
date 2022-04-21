@@ -15,6 +15,7 @@
 #include <QDateTime>
 #include <QTimeZone>
 #include "ui_wombatregistry.h"
+#include "tagmanager.h"
 #include "libregf.h"
 //#include "tagging.h"
 //#include "reporting.h"
@@ -41,6 +42,7 @@ public:
 private slots:
     //void HideClicked();
     void OpenHive(void);
+    void ManageTags(void);
     void KeySelected(void);
     void ValueSelected(void);
     void TagMenu(const QPoint &point);
@@ -74,6 +76,7 @@ private:
     QString htmlentry;
     QString htmlvalue;
     QString hivename;
+    QStringList tags;
 };
 
 //Q_DECLARE_METATYPE(WombatRegistry*);

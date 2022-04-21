@@ -15,6 +15,7 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     connect(ui->treewidget, SIGNAL(itemSelectionChanged()), this, SLOT(KeySelected()), Qt::DirectConnection);
     connect(ui->tablewidget, SIGNAL(itemSelectionChanged()), this, SLOT(ValueSelected()), Qt::DirectConnection);
     connect(ui->actionOpenHive, SIGNAL(triggered()), this, SLOT(OpenHive()), Qt::DirectConnection);
+    connect(ui->actionManageTags, SIGNAL(triggered()), this, SLOT(ManageTags()), Qt::DirectConnection);
     /*
     QStringList taglist;
     taglist.clear();
@@ -97,6 +98,42 @@ void WombatRegistry::OpenHive()
         }
         // open file, read header and verify it is a registry file to process.
     }
+}
+
+void WombatRegistry::ManageTags()
+{
+    TagManager* tagmanager = new TagManager(this);
+    //connect(tagmanage, SIGNAL(HideManagerWindow()), this, SLOT(HideTagManager()), Qt::DirectConnection);
+    tagmanager->SetTagList(&tags);
+    tagmanager->exec();
+    qDebug() << "tags:" << tags;
+    /*
+    tagmanage->setWindowIcon(QIcon(":/bar/managetags"));
+    connect(tagmanage, SIGNAL(ReadBookmarks()), this, SLOT(ReadBookmarks()), Qt::DirectConnection);
+
+void WombatForensics::HideTagManager()
+{
+    treemenu->clear();
+    ReadBookmarks();
+    treemenu->addAction(ui->actionView_File);
+    treemenu->addAction(ui->actionView_Properties);
+    treemenu->addAction(viewmenu->menuAction());
+    treemenu->addSeparator();
+    treemenu->addAction(ui->actionCheck);
+    treemenu->addAction(remcheckedaction);
+    treemenu->addSeparator();
+    treemenu->addMenu(bookmarkmenu);
+    treemenu->addAction(remtagaction);
+    treemenu->addSeparator();
+    treemenu->addMenu(tagcheckedmenu);
+    treemenu->addAction(remtagaction1);
+    treemenu->addSeparator();
+    treemenu->addAction(ui->actionDigDeeper);
+    treemenu->addAction(ui->actionExport);
+    treemenu->addAction(ui->actionExportForensicImage);
+}
+     */ 
+
 }
 /*
 void WombatRegistry::HideClicked()

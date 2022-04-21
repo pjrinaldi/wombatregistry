@@ -11,12 +11,18 @@ TagManager::TagManager(QWidget* parent) : QDialog(parent), ui(new Ui::TagManager
     connect(ui->removebutton, SIGNAL(clicked()), this, SLOT(RemoveTag()));
     connect(ui->listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(SelectionChanged()));
     ui->removebutton->setEnabled(false);
-    UpdateList();
+    if(tags != NULL)
+	UpdateList();
 }
 
 TagManager::~TagManager()
 {
     delete ui;
+}
+
+void TagManager::SetTagList(QStringList* tagslist)
+{
+    tags = tagslist;
 }
 
 void TagManager::HideClicked()
@@ -27,6 +33,7 @@ void TagManager::HideClicked()
 
 void TagManager::ModifyTag()
 {
+    /*
     QString selectedtag = ui->listWidget->currentItem()->text();
     int selectedtagid = ui->listWidget->currentRow();
     QString tmpstr = "";
@@ -59,10 +66,12 @@ void TagManager::ModifyTag()
         else
             QMessageBox::information(this, "Tag Exists", "Tag Name Not Modified. New Tag Name already Exists.", QMessageBox::Ok);
     }
+    */
 }
 
 void TagManager::RemoveTag()
 {
+    /*
     QString selectedtag = ui->listWidget->currentItem()->text();
     QString tmpstr = "";
     for(int i = 0; i < taglist.count(); i++)
@@ -81,6 +90,7 @@ void TagManager::RemoveTag()
     UpdateList();
     RemoveTLinkItem(selectedtag);
     RemoveTagItem(selectedtag);
+    */
 }
 
 void TagManager::AddTag()
@@ -97,6 +107,10 @@ void TagManager::AddTag()
         tagname = newtagdialog->textValue();
     if(!tagname.isEmpty())
     {
+	tags->append(tagname);
+	UpdateList();
+    }
+    /*
         int tagid = UpdateBookmarkItems(tagname);
         if(tagid != -15)
         {
@@ -108,6 +122,7 @@ void TagManager::AddTag()
         else
             QMessageBox::information(this, "Tag Exists", "Tag Not Added. Tag Name Already Exists.", QMessageBox::Ok);
     }
+    */
 }
 
 void TagManager::SelectionChanged()
@@ -118,6 +133,12 @@ void TagManager::SelectionChanged()
 
 void TagManager::UpdateList()
 {
+    ui->listWidget->clear();
+    for(int i=0; i < tags->count(); i++)
+    {
+	new QListWidgetItem(tags->at(i), ui->listWidget);
+    }
+    /*
     ui->listWidget->clear();
     taglist.clear();
     tlist.clear();
@@ -132,6 +153,7 @@ void TagManager::UpdateList()
     {
         new QListWidgetItem(taglist.at(i), ui->listWidget);
     }
+    */
 }
 
 void TagManager::closeEvent(QCloseEvent* e)
