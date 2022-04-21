@@ -4,11 +4,12 @@
 // Copyright 2013-2022 Pasquale J. Rinaldi, Jr.
 // Distrubted under the terms of the GNU General Public License version 2
 
-#include "wombatinclude.h"
-#include "globals.h"
-#include "artifactparser.h"
-#include "wombatfunctions.h"
+//#include "wombatinclude.h"
+//#include "globals.h"
+//#include "artifactparser.h"
+//#include "wombatfunctions.h"
 #include "ui_htmlviewer.h"
+#include <QMouseEvent>
 
 namespace Ui
 {
@@ -23,8 +24,9 @@ public:
     HtmlViewer(QWidget* parent = 0);
     ~HtmlViewer();
     void ShowHtml(const QModelIndex &index);
-    void ShowArtifact(int artifacttype, const QModelIndex &index);
+    //void ShowArtifact(int artifacttype, const QModelIndex &index);
     void LoadHtml(QString filepath);
+    void SetSource(QString* repstr);
 
 private slots:
     void HideClicked();

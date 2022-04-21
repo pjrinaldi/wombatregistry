@@ -16,6 +16,8 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     connect(ui->tablewidget, SIGNAL(itemSelectionChanged()), this, SLOT(ValueSelected()), Qt::DirectConnection);
     connect(ui->actionOpenHive, SIGNAL(triggered()), this, SLOT(OpenHive()), Qt::DirectConnection);
     connect(ui->actionManageTags, SIGNAL(triggered()), this, SLOT(ManageTags()), Qt::DirectConnection);
+    connect(ui->actionPreviewReport, SIGNAL(triggered()), this, SLOT(PreviewReport()), Qt::DirectConnection);
+    reportstring = "prehtml code";
     /*
     QStringList taglist;
     taglist.clear();
@@ -135,6 +137,14 @@ void WombatForensics::HideTagManager()
      */ 
 
 }
+
+void WombatRegistry::PreviewReport()
+{
+    HtmlViewer* htmlviewer = new HtmlViewer();
+    htmlviewer->SetSource(&reportstring);
+    htmlviewer->show();
+}
+
 /*
 void WombatRegistry::HideClicked()
 {

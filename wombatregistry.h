@@ -16,6 +16,7 @@
 #include <QTimeZone>
 #include "ui_wombatregistry.h"
 #include "tagmanager.h"
+#include "htmlviewer.h"
 #include "libregf.h"
 //#include "tagging.h"
 //#include "reporting.h"
@@ -43,6 +44,7 @@ private slots:
     //void HideClicked();
     void OpenHive(void);
     void ManageTags(void);
+    void PreviewReport(void);
     void KeySelected(void);
     void ValueSelected(void);
     void TagMenu(const QPoint &point);
@@ -63,6 +65,7 @@ protected:
 private:
     Ui::WombatRegistry* ui;
     QLabel* statuslabel;
+    //HtmlViewer* htmlviewer;
     QString hivefilepath;
     QFile hivefile;
     void PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* curerr);
@@ -76,6 +79,7 @@ private:
     QString htmlentry;
     QString htmlvalue;
     QString hivename;
+    QString reportstring;
     QStringList tags;
 };
 

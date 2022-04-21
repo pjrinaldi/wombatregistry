@@ -30,6 +30,11 @@ void HtmlViewer::SourceChanged(const QUrl &url)
     //qDebug() << "url:" << url;
 }
 
+void HtmlViewer::SetSource(QString* repstr)
+{
+    //ui->textbrowser->setSource(
+}
+
 /*
 void HtmlViewer::GoHome()
 {
@@ -59,15 +64,16 @@ void HtmlViewer::HideClicked()
 void HtmlViewer::ShowHtml(const QModelIndex &index)
 {
     //ui->homebutton->setEnabled(false);
-    QString oldfile = wombatvariable.tmpfilepath + index.sibling(index.row(), treenodemodel->GetColumnIndex("id")).data().toString() + "-fhex";
+    //QString oldfile = wombatvariable.tmpfilepath + index.sibling(index.row(), treenodemodel->GetColumnIndex("id")).data().toString() + "-fhex";
     //qDebug() << "oldfile:" << oldfile;
     //QString newfile = oldfile + ".html";
     //QFile::copy(oldfile, newfile);
-    ui->textbrowser->setSource(QUrl::fromLocalFile(oldfile));
+    //ui->textbrowser->setSource(QUrl::fromLocalFile(oldfile));
     //ui->webView->setUrl(QUrl::fromLocalFile(newfile));
     this->show();
 }
 
+/*
 void HtmlViewer::ShowArtifact(int artifactid, const QModelIndex &index)
 {
     int nameindex = treenodemodel->GetColumnIndex("name");
@@ -89,6 +95,7 @@ void HtmlViewer::ShowArtifact(int artifactid, const QModelIndex &index)
     //ui->webView->setHtml(htmlstring);
     this->show();
 }
+*/
 
 //void HtmlViewer::ShowPrefetch(const QModelIndex
 
@@ -117,8 +124,10 @@ void HtmlViewer::Reload()
 void HtmlViewer::mousePressEvent(QMouseEvent* e)
 {
     //qDebug() << "url history:" << ui->textbrowser->historyUrl(
+    /*
     if(e->type() == QEvent::MouseButtonPress)
         isignals->ActivateReload();
+    */
 }
 
 void HtmlViewer::closeEvent(QCloseEvent* e)
