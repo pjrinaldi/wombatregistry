@@ -34,6 +34,7 @@ public:
     QAction *actionManageTags;
     QAction *actionAbout;
     QAction *actionPreviewReport;
+    QAction *actionPublish;
     QWidget *centralwidget;
     QVBoxLayout *verticalLayout;
     QSplitter *splitter_2;
@@ -73,6 +74,11 @@ public:
         QIcon icon4;
         icon4.addFile(QString::fromUtf8(":/bar/preview"), QSize(), QIcon::Normal, QIcon::Off);
         actionPreviewReport->setIcon(icon4);
+        actionPublish = new QAction(WombatRegistry);
+        actionPublish->setObjectName(QString::fromUtf8("actionPublish"));
+        QIcon icon5;
+        icon5.addFile(QString::fromUtf8(":/bar/publish"), QSize(), QIcon::Normal, QIcon::Off);
+        actionPublish->setIcon(icon5);
         centralwidget = new QWidget(WombatRegistry);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         verticalLayout = new QVBoxLayout(centralwidget);
@@ -130,6 +136,7 @@ public:
         toolBar->addAction(actionOpenHive);
         toolBar->addAction(actionManageTags);
         toolBar->addAction(actionPreviewReport);
+        toolBar->addAction(actionPublish);
         toolBar->addAction(actionAbout);
 
         retranslateUi(WombatRegistry);
@@ -164,6 +171,13 @@ public:
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(shortcut)
         actionPreviewReport->setShortcut(QCoreApplication::translate("WombatRegistry", "Ctrl+P", nullptr));
+#endif // QT_CONFIG(shortcut)
+        actionPublish->setText(QCoreApplication::translate("WombatRegistry", "Publish Report", nullptr));
+#if QT_CONFIG(tooltip)
+        actionPublish->setToolTip(QCoreApplication::translate("WombatRegistry", "Publish Report", nullptr));
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(shortcut)
+        actionPublish->setShortcut(QCoreApplication::translate("WombatRegistry", "Ctrl+G", nullptr));
 #endif // QT_CONFIG(shortcut)
         toolBar->setWindowTitle(QCoreApplication::translate("WombatRegistry", "toolBar", nullptr));
     } // retranslateUi
