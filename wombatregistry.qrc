@@ -10,14 +10,14 @@
     <file alias="help">Resources/help-contents.svg</file>
     <file alias="search">Resources/system-search.png</file>
     <file alias="messages">Resources/utilities-terminal.svg</file>
-    <file alias="wombat">./Resources/wombat_32.ico</file>
+    <file alias="wombat">Resources/wombat_32.ico</file>
   </qresource>
   <qresource prefix="/basic">
-    <file alias="folder">./Resources/folder.png</file>
-    <file alias="file">./Resources/text-x-generic.png</file>
-    <file alias="package">./Resources/emblem-package-2.png</file>
-    <file alias="folderexplorer">./Resources/foldersexplorer.png</file>
-    <file alias="filter">./Resources/filterlist.png</file>
+    <file alias="folder">Resources/folder.png</file>
+    <file alias="file">Resources/text-x-generic.png</file>
+    <file alias="package">Resources/emblem-package-2.png</file>
+    <file alias="folderexplorer">Resources/foldersexplorer.png</file>
+    <file alias="filter">Resources/filterlist.png</file>
   </qresource>
   <qresource prefix="/bar">
     <file alias="burrow">Resources/burrow.png</file>
@@ -34,7 +34,7 @@
     <file alias="settings">Resources/applications-system.png</file>
     <file alias="checkbox">Resources/checkbox.png</file>
     <file alias="managetags">Resources/managetags.png</file>
-    <file alias="tag">./Resources/bookmark.png</file>
-    <file alias="newtag">./Resources/bookmark-new.png</file>
+    <file alias="tag">Resources/bookmark.png</file>
+    <file alias="newtag">Resources/bookmark-new.png</file>
   </qresource>
 </RCC>

@@ -7,6 +7,19 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
 {
     ui->setupUi(this);
     this->menuBar()->hide();
+    statuslabel = new QLabel(this);
+    this->statusBar()->addPermanentWidget(statuslabel, 0);
+    StatusUpdate("Open a Hive to Begin");
+    ui->tablewidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tablewidget->setHorizontalHeaderLabels({"Value Name", "Value Type", "Tag"});
+    connect(ui->treewidget, SIGNAL(itemSelectionChanged()), this, SLOT(KeySelected()), Qt::DirectConnection);
+    connect(ui->tablewidget, SIGNAL(itemSelectionChanged()), this, SLOT(ValueSelected()), Qt::DirectConnection);
+    connect(ui->actionOpenHive, SIGNAL(triggered()), this, SLOT(OpenHive()), Qt::DirectConnection);
+    QStringList taglist;
+    taglist.clear();
+    tagmenu = new QMenu(ui->tablewidget);
+
+
     //ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //ui->tableWidget->setHorizontalHeaderLabels({"Value Name", "Value Type", "Tag"});
     //ui->label->setText("");
@@ -52,10 +65,43 @@ WombatRegistry::~WombatRegistry()
     delete ui;
 }
 
+void WombatRegistry::OpenHive()
+{
+    QFileDialog openhivedialog(this, tr("Open Registry Hive"), QDir::homePath());
+    openhivedialog.setLabelText(QFileDialog::Accept, "Open");
+    //openhivedialog.setOption(QFileDialog::DontUseNativeDialog, true);
+    if(openhivedialog.exec())
+    {
+        hivefilepath = openhivedialog.selectedFiles().first();
+        hivefile.setFileName(hivefilepath);
+        if(!hivefile.isOpen())
+            hivefile.open(QIODevice::ReadOnly);
+        if(hivefile.isOpen())
+        {
+            hivefile.seek(0);
+            uint32_t hiveheader = qFromBigEndian<uint32_t>(hivefile.read(4));
+            //qDebug() << "hiveheader:" << QString::number(hiveheader, 16);
+            if(hiveheader == 0x72656766) // valid "regf" header
+            {
+                LoadRegistryFile(hivefilepath);
+                hivename = hivefilepath.split("/").last().split(".").first();
+                if(!hivename.isEmpty())
+                {
+                    this->setWindowTitle(QString("Wombat Registry - ") + hivename);
+                }
+                StatusUpdate("Hive: " + openhivedialog.selectedFiles().first() + " successfully opened.");
+            }
+                                        
+        }
+        // open file, read header and verify it is a registry file to process.
+    }
+}
+/*
 void WombatRegistry::HideClicked()
 {
     //this->close();
 }
+*/
 
 /*
 void WombatRegistry::CreateNewTag()
@@ -463,15 +509,12 @@ void WombatRegistry::closeEvent(QCloseEvent* e)
     e->accept();
 }
 
-void WombatRegistry::LoadRegistryFile(QString regid, QString regname)
+void WombatRegistry::LoadRegistryFile(QString regfilepath)
 {
-    /*
     libregf_file_t* regfile = NULL;
     libregf_error_t* regerr = NULL;
     libregf_file_initialize(&regfile, &regerr);
-    QString regfilestr = wombatvariable.tmpfilepath + regid + "-fhex";
-    regfilepath = regfilestr;
-    libregf_file_open(regfile, regfilestr.toStdString().c_str(), LIBREGF_OPEN_READ, &regerr);
+    libregf_file_open(regfile, regfilepath.toStdString().c_str(), LIBREGF_OPEN_READ, &regerr);
     libregf_error_fprint(regerr, stderr);
     libregf_key_t* rootkey = NULL;
     libregf_file_get_root_key(regfile, &rootkey, &regerr);
@@ -479,22 +522,19 @@ void WombatRegistry::LoadRegistryFile(QString regid, QString regname)
     int rootsubkeycnt = 0;
     libregf_key_get_number_of_sub_keys(rootkey, &rootsubkeycnt, &regerr);
     libregf_error_fprint(regerr, stderr);
-        QTreeWidgetItem* rootitem = new QTreeWidgetItem(ui->treeWidget);
-    rootitem->setText(0, regname.toUpper());
-    ui->treeWidget->addTopLevelItem(rootitem);
+        QTreeWidgetItem* rootitem = new QTreeWidgetItem(ui->treewidget);
+    rootitem->setText(0, regfilepath.split("/").last().toUpper());
+    ui->treewidget->addTopLevelItem(rootitem);
     PopulateChildKeys(rootkey, rootitem, regerr);
-    ui->treeWidget->expandItem(rootitem);
+    ui->treewidget->expandItem(rootitem);
     libregf_key_free(&rootkey, &regerr);
     libregf_file_close(regfile, &regerr);
     libregf_file_free(&regfile, &regerr);
     libregf_error_free(&regerr);
-    this->show();
-    */
 }
 
 void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* regerr)
 {
-    /*
     int subkeycount = 0;
     libregf_key_get_number_of_sub_keys(curkey, &subkeycount, &regerr);
     if(subkeycount > 0)
@@ -519,7 +559,6 @@ void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* c
 	    libregf_key_free(&cursubkey, &regerr);
 	}
     }
-    */
 }
 
 QString WombatRegistry::DecryptRot13(QString encstr)

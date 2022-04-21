@@ -8,6 +8,10 @@
 //#include "globals.h"
 //#include "wombatfunctions.h"
 //#include "ui_registryviewer.h"
+#include <QDebug>
+#include <QFileDialog>
+#include <QLabel>
+#include <QtEndian>
 #include "ui_wombatregistry.h"
 #include "libregf.h"
 //#include "tagging.h"
@@ -25,10 +29,12 @@ class WombatRegistry : public QMainWindow
 public:
     explicit WombatRegistry(QWidget* parent = 0);
     ~WombatRegistry();
-    void LoadRegistryFile(QString regid, QString regname);
+    void LoadRegistryFile(QString hivefile);
+    //void LoadRegistryFile(QString regid, QString regname);
 
 private slots:
-    void HideClicked();
+    //void HideClicked();
+    void OpenHive(void);
     void KeySelected(void);
     void ValueSelected(void);
     void TagMenu(const QPoint &point);
@@ -37,6 +43,10 @@ private slots:
     void RemoveTag(void);
     //void DoubleClick(QTableWidgetItem* curitem);
     //void ImgHexMenu(const QPoint &point);
+    void StatusUpdate(QString tmptext)
+    {
+        statuslabel->setText(tmptext);
+    };
 signals:
     //void TagCarved(QString ctitle, QString ctag);
 protected:
@@ -44,6 +54,9 @@ protected:
 
 private:
     Ui::WombatRegistry* ui;
+    QLabel* statuslabel;
+    QString hivefilepath;
+    QFile hivefile;
     void PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* curerr);
     QString DecryptRot13(QString encstr);
     QChar Rot13Char(QChar curchar);
@@ -52,6 +65,7 @@ private:
     QStringList registrytaglist;
     QString htmlentry;
     QString htmlvalue;
+    QString hivename;
 };
 
 //Q_DECLARE_METATYPE(WombatRegistry*);
