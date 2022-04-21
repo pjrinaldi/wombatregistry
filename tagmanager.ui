@@ -14,7 +14,7 @@
    <string>Tag Manager</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="wombatforensics.qrc">
+   <iconset resource="wombatregistry.qrc">
     <normaloff>:/bar/managetags</normaloff>:/bar/managetags</iconset>
   </property>
   <property name="modal">
@@ -93,7 +93,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="wombatforensics.qrc"/>
+  <include location="wombatregistry.qrc"/>
  </resources>
  <connections/>
 </ui>
