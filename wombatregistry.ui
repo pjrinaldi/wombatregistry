@@ -118,6 +118,7 @@
    <addaction name="actionOpenHive"/>
    <addaction name="actionManageTags"/>
    <addaction name="actionPreviewReport"/>
+   <addaction name="actionPublish"/>
    <addaction name="actionAbout"/>
   </widget>
   <action name="actionOpenHive">
@@ -175,6 +176,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionPublish">
+   <property name="icon">
+    <iconset resource="wombatregistry.qrc">
+     <normaloff>:/bar/publish</normaloff>:/bar/publish</iconset>
+   </property>
+   <property name="text">
+    <string>Publish Report</string>
+   </property>
+   <property name="toolTip">
+    <string>Publish Report</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
  </widget>
