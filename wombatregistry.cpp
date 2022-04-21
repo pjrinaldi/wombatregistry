@@ -1,14 +1,15 @@
-#include "registryviewer.h"
+#include "wombatregistry.h"
 
 // Copyright 2013-2020 Pasquale J. Rinaldi, Jr.
 // Distrubted under the terms of the GNU General Public License version 2
 
-RegistryDialog::RegistryDialog(QWidget* parent) : QDialog(parent), ui(new Ui::RegistryDialog)
+WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui::WombatRegistry)
 {
     ui->setupUi(this);
-    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tableWidget->setHorizontalHeaderLabels({"Value Name", "Value Type", "Tag"});
-    ui->label->setText("");
+    this->menuBar()->hide();
+    //ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //ui->tableWidget->setHorizontalHeaderLabels({"Value Name", "Value Type", "Tag"});
+    //ui->label->setText("");
     /*
     connect(ui->treeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(KeySelected()), Qt::DirectConnection);
     connect(ui->tableWidget, SIGNAL(itemSelectionChanged()), this, SLOT(ValueSelected()), Qt::DirectConnection);
@@ -46,24 +47,24 @@ RegistryDialog::RegistryDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Re
     */
 }
 
-RegistryDialog::~RegistryDialog()
+WombatRegistry::~WombatRegistry()
 {
     delete ui;
 }
 
-void RegistryDialog::HideClicked()
+void WombatRegistry::HideClicked()
 {
     //this->close();
 }
 
 /*
-void RegistryDialog::CreateNewTag()
+void WombatRegistry::CreateNewTag()
 {
     qDebug() << "create new tag";
 }
 */
 
-void RegistryDialog::SetTag()
+void WombatRegistry::SetTag()
 {
     /*
     QString curtag = "";
@@ -92,7 +93,7 @@ void RegistryDialog::SetTag()
     */
 }
 
-void RegistryDialog::RemoveTag()
+void WombatRegistry::RemoveTag()
 {
     /*
     //qDebug() << "remove tag";
@@ -112,9 +113,9 @@ void RegistryDialog::RemoveTag()
     */
 }
 
-void RegistryDialog::ValueSelected(void)
+void WombatRegistry::ValueSelected(void)
 {
-    if(ui->tableWidget->selectedItems().count() > 0)
+    if(ui->tablewidget->selectedItems().count() > 0)
     {
         //QTimeZone tmpzone = QTimeZone(reporttimezone);
 	/*
@@ -314,7 +315,7 @@ void RegistryDialog::ValueSelected(void)
     }
 }
 
-void RegistryDialog::KeySelected(void)
+void WombatRegistry::KeySelected(void)
 {
     /*
     int itemindex = 0;
@@ -457,12 +458,12 @@ void RegistryDialog::KeySelected(void)
     libregf_error_free(&regerr);
     */
 }
-void RegistryDialog::closeEvent(QCloseEvent* e)
+void WombatRegistry::closeEvent(QCloseEvent* e)
 {
     e->accept();
 }
 
-void RegistryDialog::LoadRegistryFile(QString regid, QString regname)
+void WombatRegistry::LoadRegistryFile(QString regid, QString regname)
 {
     /*
     libregf_file_t* regfile = NULL;
@@ -491,7 +492,7 @@ void RegistryDialog::LoadRegistryFile(QString regid, QString regname)
     */
 }
 
-void RegistryDialog::PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* regerr)
+void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* regerr)
 {
     /*
     int subkeycount = 0;
@@ -521,7 +522,7 @@ void RegistryDialog::PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* c
     */
 }
 
-QString RegistryDialog::DecryptRot13(QString encstr)
+QString WombatRegistry::DecryptRot13(QString encstr)
 {
     /*
     QString decstr = "";
@@ -537,7 +538,7 @@ QString RegistryDialog::DecryptRot13(QString encstr)
     */
 }
 
-QChar RegistryDialog::Rot13Char(QChar curchar)
+QChar WombatRegistry::Rot13Char(QChar curchar)
 {
     /*
     QChar rot13char;
@@ -560,13 +561,13 @@ QChar RegistryDialog::Rot13Char(QChar curchar)
 }
 
 /*
-void RegistryDialog::DoubleClick(QTableWidgetItem* curitem)
+void WombatRegistry::DoubleClick(QTableWidgetItem* curitem)
 {
     qDebug() << "Double click...";
 }
 */
 
-void RegistryDialog::TagMenu(const QPoint &pt)
+void WombatRegistry::TagMenu(const QPoint &pt)
 {
     // when i need the current value for the right click, i can use a class variable defined in .h so i can access it in the SetTag and CreateNewTag right click menu options...
     //QTableWidgetItem* curitem = ui->tableWidget->itemAt(pt);

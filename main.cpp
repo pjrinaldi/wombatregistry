@@ -1,9 +1,9 @@
-#include "registryviewer.h"
+#include "wombatregistry.h"
 //#include "wombatinclude.h"
 //#include "wombatforensics.h"
 //#include <Magick++.h>
 
-// Copyright 2013-2019 Pasquale J. Rinaldi, Jr.
+// Copyright 2022-2022 Pasquale J. Rinaldi, Jr.
 // Distrubted under the terms of the GNU General Public License version 2
 
 void MyMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     a.setWindowIcon(QIcon(":/appicon"));
     //Magick::InitializeMagick(*argv);
     //a.setStyleSheet("QStatusBar::item { border: 0px solid black; }");
-    RegistryDialog r;
+    WombatRegistry r;
     r.show();
     //WombatForensics w;
     //qInstallMessageHandler(MyMessageOutput); // comment out to view debug statements in terminal

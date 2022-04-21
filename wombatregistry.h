@@ -1,29 +1,30 @@
-#ifndef REGISTRYVIEWER_H
-#define REGISTRYVIEWER_H
+#ifndef WOMBATREGISTRY_H
+#define WOMBATREGISTRY_H
 
-// Copyright 2013-2020 Pasquale J. Rinaldi, Jr.
+// Copyright 2022-2022 Pasquale J. Rinaldi, Jr.
 // Distrubted under the terms of the GNU General Public License version 2
 
 //#include "wombatinclude.h"
 //#include "globals.h"
 //#include "wombatfunctions.h"
-#include "ui_registryviewer.h"
+//#include "ui_registryviewer.h"
+#include "ui_wombatregistry.h"
 #include "libregf.h"
 //#include "tagging.h"
 //#include "reporting.h"
 
 namespace Ui
 {
-    class RegistryDialog;
+    class WombatRegistry;
 }
 
-class RegistryDialog : public QDialog
+class WombatRegistry : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    RegistryDialog(QWidget* parent = 0);
-    ~RegistryDialog();
+    explicit WombatRegistry(QWidget* parent = 0);
+    ~WombatRegistry();
     void LoadRegistryFile(QString regid, QString regname);
 
 private slots:
@@ -42,7 +43,7 @@ protected:
     void closeEvent(QCloseEvent* event);
 
 private:
-    Ui::RegistryDialog* ui;
+    Ui::WombatRegistry* ui;
     void PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* curerr);
     QString DecryptRot13(QString encstr);
     QChar Rot13Char(QChar curchar);
@@ -53,6 +54,6 @@ private:
     QString htmlvalue;
 };
 
-Q_DECLARE_METATYPE(RegistryDialog*);
+//Q_DECLARE_METATYPE(WombatRegistry*);
 
-#endif // REGISTRYVIEWER_H
+#endif // WOMBATREGISTRY_H
