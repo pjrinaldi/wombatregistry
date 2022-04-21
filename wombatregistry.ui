@@ -80,6 +80,11 @@
         <column/>
        </widget>
        <widget class="QPlainTextEdit" name="plaintext">
+        <property name="font">
+         <font>
+          <family>Source Code Pro</family>
+         </font>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>

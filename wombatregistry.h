@@ -12,10 +12,16 @@
 #include <QFileDialog>
 #include <QLabel>
 #include <QtEndian>
+#include <QDateTime>
+#include <QTimeZone>
 #include "ui_wombatregistry.h"
 #include "libregf.h"
 //#include "tagging.h"
 //#include "reporting.h"
+
+#define TICKS_PER_SECOND 10000000
+#define EPOCH_DIFFERENCE 11644473600LL
+#define NSEC_BTWN_1904_1970	(uint32_t) 2082844800U
 
 namespace Ui
 {
@@ -29,7 +35,7 @@ class WombatRegistry : public QMainWindow
 public:
     explicit WombatRegistry(QWidget* parent = 0);
     ~WombatRegistry();
-    void LoadRegistryFile(QString hivefile);
+    void LoadRegistryFile(void);
     //void LoadRegistryFile(QString regid, QString regname);
 
 private slots:
@@ -60,7 +66,9 @@ private:
     void PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* curerr);
     QString DecryptRot13(QString encstr);
     QChar Rot13Char(QChar curchar);
-    QString regfilepath;
+    QString ConvertUnixTimeToString(uint32_t input);
+    QString ConvertWindowsTimeToUnixTimeUTC(uint64_t input);
+    //QString regfilepath;
     QMenu* tagmenu;
     QStringList registrytaglist;
     QString htmlentry;

@@ -15,9 +15,11 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     connect(ui->treewidget, SIGNAL(itemSelectionChanged()), this, SLOT(KeySelected()), Qt::DirectConnection);
     connect(ui->tablewidget, SIGNAL(itemSelectionChanged()), this, SLOT(ValueSelected()), Qt::DirectConnection);
     connect(ui->actionOpenHive, SIGNAL(triggered()), this, SLOT(OpenHive()), Qt::DirectConnection);
+    /*
     QStringList taglist;
     taglist.clear();
     tagmenu = new QMenu(ui->tablewidget);
+    */
 
 
     //ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -83,7 +85,7 @@ void WombatRegistry::OpenHive()
             //qDebug() << "hiveheader:" << QString::number(hiveheader, 16);
             if(hiveheader == 0x72656766) // valid "regf" header
             {
-                LoadRegistryFile(hivefilepath);
+                LoadRegistryFile();
                 hivename = hivefilepath.split("/").last().split(".").first();
                 if(!hivename.isEmpty())
                 {
@@ -183,33 +185,36 @@ void WombatRegistry::ValueSelected(void)
 	htmlentry += "<td style='" + ReturnCssString(11) + "' id='" + this->windowTitle().mid(16) + "|" + ui->label->text() + "\\" + ui->tableWidget->selectedItems().first()->text() + "'>";
 	htmlentry += "<table style='" + ReturnCssString(2) + "' width='300px'><tr style='" + ReturnCssString(3) + "'><th style='" + ReturnCssString(6) + "' colspan='2'>" + ui->tableWidget->selectedItems().first()->text() + "</th></tr>";
 	htmlentry += "<tr style='" + ReturnCssString(12) + "'><td style='" + ReturnCssString(13) + "'>Path:</td><td style='" + ReturnCssString(14) + "'><span style='word-wrap:break-word;'>" + ui->label->text() + "</span></td></tr>";
-	int valueindex = ui->tableWidget->selectedItems().first()->row();
-	QString keypath = ui->label->text();
+*/
+	int valueindex = ui->tablewidget->selectedItems().first()->row();
+	QString keypath = statuslabel->text();
 	libregf_file_t* regfile = NULL;
 	libregf_error_t* regerr = NULL;
 	libregf_file_initialize(&regfile, &regerr);
-	libregf_file_open(regfile, regfilepath.toStdString().c_str(), LIBREGF_OPEN_READ, &regerr);
+	libregf_file_open(regfile, hivefilepath.toStdString().c_str(), LIBREGF_OPEN_READ, &regerr);
 	libregf_key_t* curkey = NULL;
 	libregf_file_get_key_by_utf8_path(regfile, (uint8_t*)(keypath.toUtf8().data()), keypath.toUtf8().size(), &curkey, &regerr);
 	libregf_value_t* curval = NULL;
 	libregf_key_get_value(curkey, valueindex, &curval, &regerr);
         uint64_t lastwritetime = 0;
         libregf_key_get_last_written_time(curkey, &lastwritetime, &regerr);
-	htmlentry += "<tr style='" + ReturnCssString(5) + "'><td style='" + ReturnCssString(13) + "'>Last Modified:</td><td style='" + ReturnCssString(14) + "'>" + ConvertWindowsTimeToUnixTime(lastwritetime) + "</td></tr>";
+/*
+        htmlentry += "<tr style='" + ReturnCssString(5) + "'><td style='" + ReturnCssString(13) + "'>Last Modified:</td><td style='" + ReturnCssString(14) + "'>" + ConvertWindowsTimeToUnixTime(lastwritetime) + "</td></tr>";
 	htmlentry += "<tr style='" + ReturnCssString(4) + "'><td style='" + ReturnCssString(13) + "'>ID:</td><td style='" + ReturnCssString(14) + "'>" + this->windowTitle().mid(16) + "</td></tr>";
         htmlentry += "<tr style='" + ReturnCssString(5) + "'><td style='" + ReturnCssString(13) + "'>&nbsp;</td><td style='" + ReturnCssString(7) + "'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='./registry/" + this->windowTitle().mid(16) + "." + ui->label->text().replace("\\", "-") + "-" + ui->tableWidget->selectedItems().first()->text() + "'>Link</a></td></tr>";
 	htmlentry += "</table></td>";
+        */
         QString valuedata = "Last Written Time:\t" + ConvertWindowsTimeToUnixTimeUTC(lastwritetime) + " UTC\n\n";
-	valuedata += "Name:\t" + ui->tableWidget->selectedItems().first()->text() + "\n\n";
-	if(ui->tableWidget->selectedItems().first()->text().contains("(unnamed)"))
+	valuedata += "Name:\t" + ui->tablewidget->selectedItems().first()->text() + "\n\n";
+	if(ui->tablewidget->selectedItems().first()->text().contains("(unnamed)"))
 	{
 	    valuedata += "Content\n-------\n\n";
-	    valuedata += "Hex:\t0x" + ui->tableWidget->selectedItems().at(1)->text() + "\n";
-	    valuedata += "Integer:\t" + QString::number(ui->tableWidget->selectedItems().at(1)->text().toInt(nullptr, 16)) + "\n";
+	    valuedata += "Hex:\t0x" + ui->tablewidget->selectedItems().at(1)->text() + "\n";
+	    valuedata += "Integer:\t" + QString::number(ui->tablewidget->selectedItems().at(1)->text().toInt(nullptr, 16)) + "\n";
 	}
 	else
 	{
-            QString valuetype = ui->tableWidget->selectedItems().at(1)->text();
+            QString valuetype = ui->tablewidget->selectedItems().at(1)->text();
             if(valuetype.contains("REG_SZ") || valuetype.contains("REG_EXPAND_SZ"))
             {
                 valuedata += "Content:\t";
@@ -225,9 +230,9 @@ void WombatRegistry::ValueSelected(void)
                 if(keypath.contains("UserAssist") && (keypath.contains("{750") || keypath.contains("{F4E") || keypath.contains("{5E6")))
                 {
                     valuedata += "ROT13 Decrypted Content:\t";
-                    valuedata += DecryptRot13(ui->tableWidget->selectedItems().first()->text()) + "\n";
+                    valuedata += DecryptRot13(ui->tablewidget->selectedItems().first()->text()) + "\n";
                 }
-                else if(keypath.contains("SAM") && ui->tableWidget->selectedItems().first()->text().count() == 1 && ui->tableWidget->selectedItems().first()->text().startsWith("F"))
+                else if(keypath.contains("SAM") && ui->tablewidget->selectedItems().first()->text().count() == 1 && ui->tablewidget->selectedItems().first()->text().startsWith("F"))
                 {
                     size_t datasize = 0;
                     libregf_value_get_value_data_size(curval, &datasize, &regerr);
@@ -246,7 +251,7 @@ void WombatRegistry::ValueSelected(void)
                     valuedata += "Last Time Password Changed:\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(24, 8))) + " UTC";
 	            //QString filenamestring = QString::fromStdString(QByteArray(info2content.mid(curpos + 3, 260).toStdString().c_str(), -1).toStdString());
                 }
-                else if(ui->tableWidget->selectedItems().first()->text().startsWith("ShutdownTime"))
+                else if(ui->tablewidget->selectedItems().first()->text().startsWith("ShutdownTime"))
                 {
                     size_t datasize = 0;
                     libregf_value_get_value_data_size(curval, &datasize, &regerr);
@@ -266,13 +271,13 @@ void WombatRegistry::ValueSelected(void)
                     valuedata += "Machine SID Location:\t" + varray.right(12).toHex();
                 }
                 */
-/*            }
+            }
             else if(valuetype.contains("REG_DWORD"))
             {
                 valuedata += "Content:\t";
                 uint32_t dwordvalue = 0;
                 libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
-                if(ui->tableWidget->selectedItems().first()->text().toLower().contains("date"))
+                if(ui->tablewidget->selectedItems().first()->text().toLower().contains("date"))
                     valuedata += ConvertUnixTimeToString(dwordvalue);
                 else
                     valuedata += QString::number(dwordvalue);
@@ -336,10 +341,10 @@ void WombatRegistry::ValueSelected(void)
             }
             valuedata += "\n";
         }
-	ui->plainTextEdit->setPlainText(valuedata);
+	ui->plaintext->setPlainText(valuedata);
 
-    	htmlvalue = "<html><body style='" + ReturnCssString(0) + "'>";
         /*
+    	htmlvalue = "<html><body style='" + ReturnCssString(0) + "'>";
 	QFile initfile(":/html/artifactprephtml");
 	initfile.open(QIODevice::ReadOnly);
 	if(initfile.isOpen())
@@ -351,21 +356,19 @@ void WombatRegistry::ValueSelected(void)
 	htmlvalue += valuedata;
 	htmlvalue += "</pre>";
 	htmlvalue += "</table></body></html>";
-
+*/
         libregf_value_free(&curval, &regerr);
         libregf_key_free(&curkey, &regerr);
         libregf_file_close(regfile, &regerr);
         libregf_file_free(&regfile, &regerr);
         libregf_error_free(&regerr);
-*/
     }
 }
 
 void WombatRegistry::KeySelected(void)
 {
-    /*
     int itemindex = 0;
-    QTreeWidgetItem* curitem = ui->treeWidget->selectedItems().first();
+    QTreeWidgetItem* curitem = ui->treewidget->selectedItems().first();
     bool toplevel = false;
     QStringList pathitems;
     pathitems.clear();
@@ -393,19 +396,22 @@ void WombatRegistry::KeySelected(void)
     }
     keypath.replace("/", sepchar);
     // attempt to open by path...
-    ui->label->setText(keypath);
+    StatusUpdate(keypath);
+    //ui->label->setText(keypath);
     libregf_file_t* regfile = NULL;
     libregf_error_t* regerr = NULL;
     libregf_file_initialize(&regfile, &regerr);
-    libregf_file_open(regfile, regfilepath.toStdString().c_str(), LIBREGF_OPEN_READ, &regerr);
+    qDebug() << "key regfilepath:" << hivefilepath;
+    libregf_file_open(regfile, hivefilepath.toStdString().c_str(), LIBREGF_OPEN_READ, &regerr);
     libregf_key_t* curkey = NULL;
     libregf_file_get_key_by_utf8_path(regfile, (uint8_t*)(keypath.toUtf8().data()), keypath.toUtf8().size(), &curkey, &regerr);
     // valid key, get values...
     int valuecount = 0;
     libregf_key_get_number_of_values(curkey, &valuecount, &regerr);
-    ui->tableWidget->clear();
-    ui->plainTextEdit->setPlainText("");
-    ui->tableWidget->setRowCount(valuecount);
+    qDebug() << "value count:" << valuecount;
+    ui->tablewidget->clear();
+    ui->plaintext->setPlainText("");
+    ui->tablewidget->setRowCount(valuecount);
     for(int i=0; i < valuecount; i++)
     {
 	libregf_value_t* curval = NULL;
@@ -420,17 +426,17 @@ void WombatRegistry::KeySelected(void)
 	if(namesize == 0)
 	{
 	    curtagvalue += "(unnamed)";
-	    ui->tableWidget->setHorizontalHeaderLabels({"Value Name", "Value", "Tag"});
-	    ui->tableWidget->setItem(i, 0, new QTableWidgetItem("(unnamed)"));
-	    ui->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::number(type, 16)));
-	    //ui->tableWidget->setItem(i, 2, new QTableWidgetItem(""));
+	    ui->tablewidget->setHorizontalHeaderLabels({"Value Name", "Value", "Tag"});
+	    ui->tablewidget->setItem(i, 0, new QTableWidgetItem("(unnamed)"));
+	    ui->tablewidget->setItem(i, 1, new QTableWidgetItem(QString::number(type, 16)));
+	    //ui->tablewidget->setItem(i, 2, new QTableWidgetItem(""));
 	}
 	else
 	{
 	    curtagvalue += QString::fromUtf8(reinterpret_cast<char*>(name));
             QString valuetypestr = "";
-	    ui->tableWidget->setHorizontalHeaderLabels({"Value Name", "Value Type", "Tag"});
-	    ui->tableWidget->setItem(i, 0, new QTableWidgetItem(QString::fromUtf8(reinterpret_cast<char*>(name))));
+	    ui->tablewidget->setHorizontalHeaderLabels({"Value Name", "Value Type", "Tag"});
+	    ui->tablewidget->setItem(i, 0, new QTableWidgetItem(QString::fromUtf8(reinterpret_cast<char*>(name))));
             if(type == 0x00) // none
             {
             }
@@ -481,8 +487,8 @@ void WombatRegistry::KeySelected(void)
             else
             {
             }
-	    ui->tableWidget->setItem(i, 1, new QTableWidgetItem(valuetypestr));
-	    //ui->tableWidget->setItem(i, 2, new QTableWidgetItem(""));
+	    ui->tablewidget->setItem(i, 1, new QTableWidgetItem(valuetypestr));
+	    //ui->tablewidget->setItem(i, 2, new QTableWidgetItem(""));
 	}
 	//qDebug() << "curtagvalue:" << curtagvalue;
 	QString tagstr = "";
@@ -493,28 +499,28 @@ void WombatRegistry::KeySelected(void)
 		tagstr = registrytaglist.at(j).split("|", Qt::SkipEmptyParts).last();
 	}
 	//qDebug() << "tagstr:" << tagstr;
-	ui->tableWidget->setItem(i, 2, new QTableWidgetItem(tagstr));
-        ui->tableWidget->resizeColumnToContents(0);
-        ui->tableWidget->setCurrentCell(0, 0);
+	ui->tablewidget->setItem(i, 2, new QTableWidgetItem(tagstr));
+        ui->tablewidget->resizeColumnToContents(0);
+        ui->tablewidget->setCurrentCell(0, 0);
 	libregf_value_free(&curval, &regerr);
     }
     libregf_key_free(&curkey, &regerr);
     libregf_file_close(regfile, &regerr);
     libregf_file_free(&regfile, &regerr);
     libregf_error_free(&regerr);
-    */
 }
 void WombatRegistry::closeEvent(QCloseEvent* e)
 {
     e->accept();
 }
 
-void WombatRegistry::LoadRegistryFile(QString regfilepath)
+void WombatRegistry::LoadRegistryFile(void)
 {
+    //qDebug() << "regfilepath:" << regfilepath;
     libregf_file_t* regfile = NULL;
     libregf_error_t* regerr = NULL;
     libregf_file_initialize(&regfile, &regerr);
-    libregf_file_open(regfile, regfilepath.toStdString().c_str(), LIBREGF_OPEN_READ, &regerr);
+    libregf_file_open(regfile, hivefilepath.toStdString().c_str(), LIBREGF_OPEN_READ, &regerr);
     libregf_error_fprint(regerr, stderr);
     libregf_key_t* rootkey = NULL;
     libregf_file_get_root_key(regfile, &rootkey, &regerr);
@@ -523,7 +529,7 @@ void WombatRegistry::LoadRegistryFile(QString regfilepath)
     libregf_key_get_number_of_sub_keys(rootkey, &rootsubkeycnt, &regerr);
     libregf_error_fprint(regerr, stderr);
         QTreeWidgetItem* rootitem = new QTreeWidgetItem(ui->treewidget);
-    rootitem->setText(0, regfilepath.split("/").last().toUpper());
+    rootitem->setText(0, hivefilepath.split("/").last().toUpper());
     ui->treewidget->addTopLevelItem(rootitem);
     PopulateChildKeys(rootkey, rootitem, regerr);
     ui->treewidget->expandItem(rootitem);
@@ -535,6 +541,7 @@ void WombatRegistry::LoadRegistryFile(QString regfilepath)
 
 void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* regerr)
 {
+    //qDebug() << "populate:" << hivefilepath;
     int subkeycount = 0;
     libregf_key_get_number_of_sub_keys(curkey, &subkeycount, &regerr);
     if(subkeycount > 0)
@@ -599,6 +606,27 @@ QChar WombatRegistry::Rot13Char(QChar curchar)
     */
 }
 
+QString WombatRegistry::ConvertUnixTimeToString(uint32_t input)
+{
+    //QTimeZone tmpzone = QTimeZone(reporttimezone);
+    time_t crtimet = (time_t)input;
+    QString timestr = QDateTime::fromSecsSinceEpoch(crtimet, QTimeZone::utc()).toString("MM/dd/yyyy hh:mm:ss AP");
+
+    return timestr;
+}
+
+QString WombatRegistry::ConvertWindowsTimeToUnixTimeUTC(uint64_t input)
+{
+    //QTimeZone tmpzone = QTimeZone(reporttimezone);
+    uint64_t temp;
+    temp = input / TICKS_PER_SECOND; //convert from 100ns intervals to seconds;
+    temp = temp - EPOCH_DIFFERENCE;  //subtract number of seconds between epochs
+    time_t crtimet = (time_t)temp;
+    QString timestr = "";
+    timestr = QDateTime::fromSecsSinceEpoch(crtimet, QTimeZone::utc()).toString("MM/dd/yyyy hh:mm:ss AP");
+
+    return timestr;
+}
 /*
 void WombatRegistry::DoubleClick(QTableWidgetItem* curitem)
 {

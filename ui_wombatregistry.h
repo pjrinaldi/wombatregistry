@@ -106,6 +106,9 @@ public:
         tablewidget->verticalHeader()->setVisible(false);
         plaintext = new QPlainTextEdit(splitter);
         plaintext->setObjectName(QString::fromUtf8("plaintext"));
+        QFont font;
+        font.setFamily(QString::fromUtf8("Source Code Pro"));
+        plaintext->setFont(font);
         plaintext->setReadOnly(true);
         splitter->addWidget(plaintext);
         splitter_2->addWidget(splitter);
