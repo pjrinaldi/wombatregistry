@@ -77,7 +77,7 @@
           <enum>Qt::PlainText</enum>
          </property>
          <property name="pixmap">
-          <pixmap resource="wombatforensics.qrc">:/about</pixmap>
+          <pixmap resource="wombatregistry.qrc">:/about</pixmap>
          </property>
          <property name="scaledContents">
           <bool>false</bool>
@@ -128,7 +128,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="wombatforensics.qrc"/>
+  <include location="wombatregistry.qrc"/>
  </resources>
  <connections/>
 </ui>

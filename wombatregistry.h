@@ -16,6 +16,7 @@
 #include "ui_wombatregistry.h"
 #include "tagmanager.h"
 #include "htmlviewer.h"
+#include "aboutbox.h"
 #include "libregf.h"
 #include "cssstrings.h"
 //#include "tagging.h"
@@ -45,6 +46,7 @@ private slots:
     void OpenHive(void);
     void ManageTags(void);
     void PreviewReport(void);
+    void ShowAbout(void);
     void KeySelected(void);
     void ValueSelected(void);
     void TagMenu(const QPoint &point);

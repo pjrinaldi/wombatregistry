@@ -17,6 +17,7 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     connect(ui->actionOpenHive, SIGNAL(triggered()), this, SLOT(OpenHive()), Qt::DirectConnection);
     connect(ui->actionManageTags, SIGNAL(triggered()), this, SLOT(ManageTags()), Qt::DirectConnection);
     connect(ui->actionPreviewReport, SIGNAL(triggered()), this, SLOT(PreviewReport()), Qt::DirectConnection);
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(ShowAbout()), Qt::DirectConnection);
     // initialize Preview Report HTML code
     reportstring = "<html><body style='" + ReturnCssString(0) + "'>\n";
     reportstring += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'></span></h1></div>\n"; // figure out title of report
@@ -187,6 +188,12 @@ void WombatRegistry::PreviewReport()
     HtmlViewer* htmlviewer = new HtmlViewer();
     htmlviewer->SetSource(&reportstring);
     htmlviewer->show();
+}
+
+void WombatRegistry::ShowAbout()
+{
+    AboutBox* aboutbox = new AboutBox();
+    aboutbox->exec();
 }
 
 /*
