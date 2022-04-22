@@ -11,8 +11,11 @@ TagManager::TagManager(QWidget* parent) : QDialog(parent), ui(new Ui::TagManager
     connect(ui->removebutton, SIGNAL(clicked()), this, SLOT(RemoveTag()));
     connect(ui->listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(SelectionChanged()));
     ui->removebutton->setEnabled(false);
+    ui->modifybutton->setEnabled(false);
+    /*
     if(tags != NULL)
 	UpdateList();
+    */
 }
 
 TagManager::~TagManager()
@@ -23,6 +26,8 @@ TagManager::~TagManager()
 void TagManager::SetTagList(QStringList* tagslist)
 {
     tags = tagslist;
+    if(tags != NULL)
+	UpdateList();
 }
 
 void TagManager::HideClicked()
@@ -75,6 +80,13 @@ void TagManager::ModifyTag()
 
 void TagManager::RemoveTag()
 {
+    QString selectedtag = ui->listWidget->currentItem()->text();
+    int tagindex = tags->indexOf(selectedtag);
+    tags->removeAt(tagindex);
+    ui->listWidget->removeItemWidget(ui->listWidget->currentItem());
+    ui->removebutton->setEnabled(false);
+    ui->modifybutton->setEnabled(false);
+    UpdateList();
     /*
     QString selectedtag = ui->listWidget->currentItem()->text();
     QString tmpstr = "";
@@ -133,6 +145,7 @@ void TagManager::SelectionChanged()
 {
     //qDebug() << "selectionid:" << ui->listWidget->currentRow();
     ui->removebutton->setEnabled(true);
+    ui->modifybutton->setEnabled(true);
 }
 
 void TagManager::UpdateList()
