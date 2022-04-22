@@ -153,7 +153,6 @@ void WombatRegistry::ManageTags()
     //connect(tagmanage, SIGNAL(HideManagerWindow()), this, SLOT(HideTagManager()), Qt::DirectConnection);
     tagmanager->SetTagList(&tags);
     tagmanager->exec();
-    qDebug() << "tags:" << tags;
     UpdateTagsMenu();
     /*
     tagmanage->setWindowIcon(QIcon(":/bar/managetags"));
@@ -325,7 +324,7 @@ void WombatRegistry::ValueSelected(void)
 	htmlentry += "<table style='" + ReturnCssString(2) + "' width='300px'><tr style='" + ReturnCssString(3) + "'><th style='" + ReturnCssString(6) + "' colspan='2'>" + ui->tableWidget->selectedItems().first()->text() + "</th></tr>";
 	htmlentry += "<tr style='" + ReturnCssString(12) + "'><td style='" + ReturnCssString(13) + "'>Path:</td><td style='" + ReturnCssString(14) + "'><span style='word-wrap:break-word;'>" + ui->label->text() + "</span></td></tr>";
 */
-	int valueindex = ui->tablewidget->selectedItems().first()->row();
+	int valueindex = ui->tablewidget->selectedItems().at(1)->row();
 	QString keypath = statuslabel->text();
 	libregf_file_t* regfile = NULL;
 	libregf_error_t* regerr = NULL;
@@ -344,8 +343,8 @@ void WombatRegistry::ValueSelected(void)
 	htmlentry += "</table></td>";
         */
         QString valuedata = "Last Written Time:\t" + ConvertWindowsTimeToUnixTimeUTC(lastwritetime) + " UTC\n\n";
-	valuedata += "Name:\t" + ui->tablewidget->selectedItems().first()->text() + "\n\n";
-	if(ui->tablewidget->selectedItems().first()->text().contains("(unnamed)"))
+	valuedata += "Name:\t" + ui->tablewidget->selectedItems().at(1)->text() + "\n\n";
+	if(ui->tablewidget->selectedItems().at(1)->text().contains("(unnamed)"))
 	{
 	    valuedata += "Content\n-------\n\n";
 	    valuedata += "Hex:\t0x" + ui->tablewidget->selectedItems().at(1)->text() + "\n";
@@ -353,7 +352,7 @@ void WombatRegistry::ValueSelected(void)
 	}
 	else
 	{
-            QString valuetype = ui->tablewidget->selectedItems().at(1)->text();
+            QString valuetype = ui->tablewidget->selectedItems().at(2)->text();
             if(valuetype.contains("REG_SZ") || valuetype.contains("REG_EXPAND_SZ"))
             {
                 valuedata += "Content:\t";
@@ -369,9 +368,9 @@ void WombatRegistry::ValueSelected(void)
                 if(keypath.contains("UserAssist") && (keypath.contains("{750") || keypath.contains("{F4E") || keypath.contains("{5E6")))
                 {
                     valuedata += "ROT13 Decrypted Content:\t";
-                    valuedata += DecryptRot13(ui->tablewidget->selectedItems().first()->text()) + "\n";
+                    valuedata += DecryptRot13(ui->tablewidget->selectedItems().at(1)->text()) + "\n";
                 }
-                else if(keypath.contains("SAM") && ui->tablewidget->selectedItems().first()->text().count() == 1 && ui->tablewidget->selectedItems().first()->text().startsWith("F"))
+                else if(keypath.contains("SAM") && ui->tablewidget->selectedItems().at(1)->text().count() == 1 && ui->tablewidget->selectedItems().at(1)->text().startsWith("F"))
                 {
                     size_t datasize = 0;
                     libregf_value_get_value_data_size(curval, &datasize, &regerr);
@@ -390,7 +389,7 @@ void WombatRegistry::ValueSelected(void)
                     valuedata += "Last Time Password Changed:\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(24, 8))) + " UTC";
 	            //QString filenamestring = QString::fromStdString(QByteArray(info2content.mid(curpos + 3, 260).toStdString().c_str(), -1).toStdString());
                 }
-                else if(ui->tablewidget->selectedItems().first()->text().startsWith("ShutdownTime"))
+                else if(ui->tablewidget->selectedItems().at(1)->text().startsWith("ShutdownTime"))
                 {
                     size_t datasize = 0;
                     libregf_value_get_value_data_size(curval, &datasize, &regerr);
@@ -416,7 +415,7 @@ void WombatRegistry::ValueSelected(void)
                 valuedata += "Content:\t";
                 uint32_t dwordvalue = 0;
                 libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
-                if(ui->tablewidget->selectedItems().first()->text().toLower().contains("date"))
+                if(ui->tablewidget->selectedItems().at(1)->text().toLower().contains("date"))
                     valuedata += ConvertUnixTimeToString(dwordvalue);
                 else
                     valuedata += QString::number(dwordvalue);

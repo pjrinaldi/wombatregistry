@@ -68,7 +68,6 @@ protected:
 private:
     Ui::WombatRegistry* ui;
     QLabel* statuslabel;
-    //HtmlViewer* htmlviewer;
     QString hivefilepath;
     QFile hivefile;
     void PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* curerr);
@@ -76,9 +75,7 @@ private:
     QChar Rot13Char(QChar curchar);
     QString ConvertUnixTimeToString(uint32_t input);
     QString ConvertWindowsTimeToUnixTimeUTC(uint64_t input);
-    //QString regfilepath;
     QMenu* tagmenu;
-    //QTableWidgetItem* currow;
     QAction* newtagaction;
     QAction* remtagaction;
     QStringList registrytaglist;
@@ -89,7 +86,5 @@ private:
     QByteArray reporttimezone;
     QStringList tags;
 };
-
-//Q_DECLARE_METATYPE(WombatRegistry*);
 
 #endif // WOMBATREGISTRY_H
