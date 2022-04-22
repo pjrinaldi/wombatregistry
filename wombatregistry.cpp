@@ -101,6 +101,7 @@ void WombatRegistry::ManageTags()
     tagmanager->SetTagList(&tags);
     tagmanager->exec();
     qDebug() << "tags:" << tags;
+    UpdateTagsMenu();
     /*
     tagmanage->setWindowIcon(QIcon(":/bar/managetags"));
     connect(tagmanage, SIGNAL(ReadBookmarks()), this, SLOT(ReadBookmarks()), Qt::DirectConnection);

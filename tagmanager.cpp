@@ -33,9 +33,10 @@ void TagManager::HideClicked()
 
 void TagManager::ModifyTag()
 {
-    /*
     QString selectedtag = ui->listWidget->currentItem()->text();
-    int selectedtagid = ui->listWidget->currentRow();
+    //int selectedtagid = ui->listWidget->currentRow();
+    int tagindex = tags->indexOf(selectedtag);
+    //qDebug() << "tagindex:" << tagindex << selectedtag;
     QString tmpstr = "";
     QString modtagname = "";
     QInputDialog* modtagdialog = new QInputDialog(this);
@@ -50,6 +51,9 @@ void TagManager::ModifyTag()
         modtagname = modtagdialog->textValue();
     if(!modtagname.isEmpty())
     {
+	ui->listWidget->currentItem()->setText(modtagname);
+	tags->replace(tagindex, modtagname);
+	/*
         if(UpdateBookmarkItems(modtagname) != -15)
         {
             ui->listWidget->currentItem()->setText(modtagname);
@@ -65,8 +69,8 @@ void TagManager::ModifyTag()
         }
         else
             QMessageBox::information(this, "Tag Exists", "Tag Name Not Modified. New Tag Name already Exists.", QMessageBox::Ok);
+	*/
     }
-    */
 }
 
 void TagManager::RemoveTag()

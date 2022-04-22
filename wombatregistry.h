@@ -7,7 +7,6 @@
 //#include "wombatinclude.h"
 //#include "globals.h"
 //#include "wombatfunctions.h"
-//#include "ui_registryviewer.h"
 #include <QDebug>
 #include <QFileDialog>
 #include <QLabel>
