@@ -17,6 +17,7 @@
 #include "tagmanager.h"
 #include "htmlviewer.h"
 #include "libregf.h"
+#include "cssstrings.h"
 //#include "tagging.h"
 //#include "reporting.h"
 
@@ -83,6 +84,7 @@ private:
     QString htmlvalue;
     QString hivename;
     QString reportstring;
+    QByteArray reporttimezone;
     QStringList tags;
 };
 

@@ -17,7 +17,58 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     connect(ui->actionOpenHive, SIGNAL(triggered()), this, SLOT(OpenHive()), Qt::DirectConnection);
     connect(ui->actionManageTags, SIGNAL(triggered()), this, SLOT(ManageTags()), Qt::DirectConnection);
     connect(ui->actionPreviewReport, SIGNAL(triggered()), this, SLOT(PreviewReport()), Qt::DirectConnection);
-    reportstring = "prehtml code";
+    // initialize Preview Report HTML code
+    reportstring = "<html><body style='" + ReturnCssString(0) + "'>\n";
+    reportstring += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'></span></h1></div>\n"; // figure out title of report
+    reportstring += "<div id='tz'><h4>Report Time Zone:&nbsp;" + reporttimezone + "</h4><div><br/>\n"; // create reporttimezone variable
+    reportstring += "<div id='toc'><h2>Contents</h2>";
+    reportstring += "<div id='elinks'>";
+    reportstring += "<!--firstlink-->";
+    reportstring += "<!--lastlink-->";
+    reportstring += "</div><br/>";
+    reportstring += "</div><br/><br/>";
+    reportstring += "<h2>Tagged Items</h2>";
+    reportstring += "<div id='tags'>";
+    reportstring += "<!--firsttag-->";
+    reportstring += "<!--lasttag--></div>";
+    reportstring += "</body></html>";
+
+    /*
+    QString initialhtml = "";
+    previewfile.setFileName(wombatvariable.tmpmntpath + "previewreport.html");
+    previewfile.open(QIODevice::WriteOnly | QIODevice::Text);
+    if(previewfile.isOpen())
+    {
+        QTimeZone itz = QTimeZone(reporttimezone);
+        //previewfile.write(initialhtml.toStdString().c_str());
+        QString initialstr = "<html><body style='" + ReturnCssString(0) + "'>";
+        initialstr = "<div style='" + ReturnCssString(1) + "'><h1>Case Title:&nbsp;<span id='casename'>" + wombatvariable.casename + "</span></h1></div>\n";
+        initialstr += "<div id='tz'><h4>Report Time Zone:&nbsp;" + reporttimezone + "</h4><div><br/>\n";
+        initialstr += "<div id='toc'><h2>Contents</h2>";
+        initialstr += "<div id='elinks'>";
+        initialstr += "<!--firstelink-->";
+        initialstr += "<!--lastelink-->";
+        initialstr += "</div><br/>";
+        initialstr += "<div id='tlinks'>";
+        initialstr += "<!--firsttlink-->";
+        initialstr += "<!--lasttlink-->";
+        initialstr += "</div><br/><br/>";
+        initialstr += "</div><br/><br/>";
+        initialstr += "<h2>Evidence Items</h2>";
+        initialstr += "<div id='evidence'>";
+        initialstr += "<!--firstevid-->";
+        initialstr += "<!--lastevid-->";
+        initialstr += "\n</div><br/><br/>";
+        initialstr += "<h2>Tagged Items</h2>";
+        initialstr += "<div id='tags'>";
+        initialstr += "<!--firsttag-->";
+        initialstr += "<!--lasttag--></div>";
+        previewfile.write(initialstr.toStdString().c_str());
+ 
+   }
+    previewfile.close();
+
+     */ 
     
     tags.clear();
     tagmenu = new QMenu(ui->tablewidget);
