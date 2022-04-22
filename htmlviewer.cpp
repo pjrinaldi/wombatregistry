@@ -6,9 +6,15 @@
 HtmlViewer::HtmlViewer(QWidget* parent) : QDialog(parent), ui(new Ui::HtmlViewer)
 {
     ui->setupUi(this);
+
+    // NOT SURE I NEED THE BUTTONS AT THE TOP... WILL HAVE TO DECIDE ONCE I FIGURE OUT
+    // THE REPORTING LAYOUT AND STRUCTURE
+
     //pagehistory.clear();
     //ui->homebutton->setVisible(false);
     //connect(ui->homebutton, SIGNAL(clicked()), this, SLOT(GoHome()));
+    //ui->backbutton->setVisible(false);
+    //ui->forbutton->setVisible(false);
     connect(ui->backbutton, SIGNAL(clicked()), ui->textbrowser, SLOT(backward()));
     connect(ui->forbutton, SIGNAL(clicked()), ui->textbrowser, SLOT(forward()));
     connect(ui->textbrowser, SIGNAL(sourceChanged(const QUrl&)), this, SLOT(SourceChanged(const QUrl&)));
@@ -32,6 +38,7 @@ void HtmlViewer::SourceChanged(const QUrl &url)
 
 void HtmlViewer::SetSource(QString* repstr)
 {
+    //ui->textbrowser->setHtml(repstr);
     //ui->textbrowser->setSource(
 }
 
