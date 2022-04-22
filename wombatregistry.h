@@ -78,7 +78,7 @@ private:
     QString ConvertWindowsTimeToUnixTimeUTC(uint64_t input);
     //QString regfilepath;
     QMenu* tagmenu;
-    QTableWidgetItem* currow;
+    //QTableWidgetItem* currow;
     QAction* newtagaction;
     QAction* remtagaction;
     QStringList registrytaglist;

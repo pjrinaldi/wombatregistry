@@ -21,6 +21,7 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     // initialize Preview Report HTML code
     reportstring = "<html><body style='" + ReturnCssString(0) + "'>\n";
     reportstring += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'></span></h1></div>\n"; // figure out title of report
+    // OR DO I CARE ABOUT TIMEZONE AND JUST WANT TO LEAVE IT IN UTC...
     reportstring += "<div id='tz'><h4>Report Time Zone:&nbsp;" + reporttimezone + "</h4><div><br/>\n"; // create reporttimezone variable
     reportstring += "<div id='toc'><h2>Contents</h2>";
     reportstring += "<div id='elinks'>";
@@ -220,11 +221,7 @@ void WombatRegistry::CreateNewTag()
 	tags.append(tagname);
         UpdateTagsMenu();
     }
-    // ADD TAG TO THE REGISTRY ENTRY...
-    //QTableWidgetItem* curitem = ui->tablewidget->itemAt(pt);
-    qDebug() << "curitem:" << ui->tablewidget->item(currow->row(), 2)->text();
-    //if(ui->tablewidget->item(curitem->row(), 0)->text().isEmpty())
-    //qDebug() << "create new tag";
+    ui->tablewidget->selectedItems().first()->setText(tagname);
 }
 
 void WombatRegistry::UpdateTagsMenu()
@@ -238,7 +235,7 @@ void WombatRegistry::UpdateTagsMenu()
     for(int i=0; i < tags.count(); i++)
     {
 	QAction* tmpaction = new QAction(tags.at(i), tagmenu);
-	tmpaction->setIcon(QIcon(":/bar/addtotag"));
+	tmpaction->setIcon(QIcon(":/bar/tag"));
 	tmpaction->setData(QVariant("t" + QString::number(i)));
 	connect(tmpaction, SIGNAL(triggered()), this, SLOT(SetTag()));
 	tagmenu->addAction(tmpaction);
@@ -252,10 +249,10 @@ void WombatRegistry::UpdateTagsMenu()
 
 void WombatRegistry::SetTag()
 {
-    /*
     QString curtag = "";
     QString regstring = "";
     QAction* tagaction = qobject_cast<QAction*>(sender());
+    /*
     regstring += this->windowTitle().mid(16) + "|"; // file id
     regstring += ui->label->text() + "\\"; // key
     regstring += ui->tableWidget->selectedItems().first()->text() + "|";
@@ -263,8 +260,12 @@ void WombatRegistry::SetTag()
 	curtag = regstring + ui->tableWidget->selectedItems().last()->text();
     regstring += tagaction->iconText();
     QString idkeyvalue = this->windowTitle().mid(16) + "|" + ui->label->text() + "\\" + ui->tableWidget->selectedItems().first()->text();
-    ui->tableWidget->selectedItems().last()->setText(tagaction->iconText());
+    */
+    if(!ui->tablewidget->selectedItems().first()->text().isEmpty())
+	curtag = ui->tablewidget->selectedItems().first()->text();
+    ui->tablewidget->selectedItems().first()->setText(tagaction->iconText());
     //qDebug() << "curtag to remove:" << curtag;
+    /*
     if(!curtag.isEmpty())
 	RemTag("registry", curtag);
     AddTag("registry", regstring); // add htmlentry and htmlvalue to this function...
@@ -281,16 +282,16 @@ void WombatRegistry::SetTag()
 
 void WombatRegistry::RemoveTag()
 {
+    QAction* tagaction = qobject_cast<QAction*>(sender());
+    ui->tablewidget->selectedItems().first()->setText("");
     /*
     //qDebug() << "remove tag";
     QString regstring = "";
-    QAction* tagaction = qobject_cast<QAction*>(sender());
     regstring += this->windowTitle().mid(16) + "|"; // file id
     regstring += ui->label->text() + "\\"; // key
     regstring += ui->tableWidget->selectedItems().first()->text() + "|";
     regstring += tagaction->iconText() + ",";
     QString idkeyvalue = this->windowTitle().mid(16) + "|" + ui->label->text() + "\\" + ui->tableWidget->selectedItems().first()->text();
-    ui->tableWidget->selectedItems().last()->setText("");
     RemTag("registry", idkeyvalue + "|" + ui->tableWidget->selectedItems().last()->text());
     // REMOVE FROM PREVIEW REPORT
     RemoveFileItem(idkeyvalue);
@@ -770,14 +771,9 @@ void WombatRegistry::TagMenu(const QPoint &pt)
 {
     QTableWidgetItem* currow = ui->tablewidget->itemAt(pt);
     if(ui->tablewidget->item(currow->row(), 0)->text().isEmpty())
-    {
-        qDebug() << "show add tag menu";
-        //ui->
-    }
+	remtagaction->setEnabled(false);
     else
-    {
-        qDebug() << "show remove tag menu";
-    }
+	remtagaction->setEnabled(true);
     tagmenu->exec(ui->tablewidget->mapToGlobal(pt));
     
     // when i need the current value for the right click, i can use a class variable defined in .h so i can access it in the SetTag and CreateNewTag right click menu options...
