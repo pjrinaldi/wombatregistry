@@ -6,6 +6,7 @@
 HtmlViewer::HtmlViewer(QWidget* parent) : QDialog(parent), ui(new Ui::HtmlViewer)
 {
     ui->setupUi(this);
+    setWindowTitle("Report Preview");
 
     // NOT SURE I NEED THE BUTTONS AT THE TOP... WILL HAVE TO DECIDE ONCE I FIGURE OUT
     // THE REPORTING LAYOUT AND STRUCTURE
@@ -38,8 +39,7 @@ void HtmlViewer::SourceChanged(const QUrl &url)
 
 void HtmlViewer::SetSource(QString* repstr)
 {
-    //ui->textbrowser->setHtml(repstr);
-    //ui->textbrowser->setSource(
+    ui->textbrowser->setHtml(*repstr);
 }
 
 /*

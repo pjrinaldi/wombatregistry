@@ -22,7 +22,7 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     reportstring = "<html><body style='" + ReturnCssString(0) + "'>\n";
     reportstring += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'></span></h1></div>\n"; // figure out title of report
     // OR DO I CARE ABOUT TIMEZONE AND JUST WANT TO LEAVE IT IN UTC...
-    reportstring += "<div id='tz'><h4>Report Time Zone:&nbsp;" + reporttimezone + "</h4><div><br/>\n"; // create reporttimezone variable
+    reportstring += "<div id='tz'><h4>Report Time Zone:&nbsp;" + reporttimezone + "</h4></div><br/>\n"; // create reporttimezone variable
     reportstring += "<div id='toc'><h2>Contents</h2>";
     reportstring += "<div id='elinks'>";
     reportstring += "<!--firstlink-->";
@@ -154,6 +154,7 @@ void WombatRegistry::ManageTags()
     tagmanager->SetTagList(&tags);
     tagmanager->exec();
     UpdateTagsMenu();
+    UpdatePreviewLinks();
     /*
     tagmanage->setWindowIcon(QIcon(":/bar/managetags"));
     connect(tagmanage, SIGNAL(ReadBookmarks()), this, SLOT(ReadBookmarks()), Qt::DirectConnection);
@@ -183,9 +184,36 @@ void WombatForensics::HideTagManager()
 
 }
 
+void WombatRegistry::UpdatePreviewLinks()
+{
+    QString origstr = "";
+    QString linkstr = "";
+    QStringList beginsplit = reportstring.split("<!--firstlink-->", Qt::SkipEmptyParts);
+    QString precontent = beginsplit.first();
+    precontent += "<!--firstlink-->";
+    QString curcontent = beginsplit.last().split("<!--lastlink-->").first();
+    QString postcontent = beginsplit.last().split("<!--lastlink-->").last();
+    postcontent = "<!--lastlink-->" + postcontent;
+    QStringList linklist = curcontent.split("\n", Qt::SkipEmptyParts);
+    linkstr = "";
+    for(int i=0; i < tags.count(); i++)
+    {
+        linkstr += "<span id='t" + QString::number(i) + "'><a href='#t" + QString::number(i) + "'>" + tags.at(i) + "</a></span><br/>\n";
+    }
+    reportstring += precontent + linkstr + postcontent;
+
+    /*
+    if(tagid == linklist.count())
+        linkstr += "<span id='l" + QString::number(tagid) + "'><a href='#t" + QString::number(tagid) + "'>" + tagname + "</a></span><br/>\n";
+    curcontent += linkstr;
+    isignals->ActivateReload();
+     */ 
+}
+
 void WombatRegistry::PreviewReport()
 {
     HtmlViewer* htmlviewer = new HtmlViewer();
+    //qDebug() << "reportstring:" << reportstring;
     htmlviewer->SetSource(&reportstring);
     htmlviewer->show();
 }
@@ -281,7 +309,7 @@ void WombatRegistry::SetTag()
 
 void WombatRegistry::RemoveTag()
 {
-    QAction* tagaction = qobject_cast<QAction*>(sender());
+    //QAction* tagaction = qobject_cast<QAction*>(sender());
     ui->tablewidget->selectedItems().first()->setText("");
     /*
     //qDebug() << "remove tag";

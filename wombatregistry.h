@@ -54,6 +54,7 @@ private slots:
     void CreateNewTag(void);
     void RemoveTag(void);
     void UpdateTagsMenu(void);
+    void UpdatePreviewLinks(void);
     //void DoubleClick(QTableWidgetItem* curitem);
     //void ImgHexMenu(const QPoint &point);
     void StatusUpdate(QString tmptext)
