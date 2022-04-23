@@ -84,8 +84,12 @@ private:
     QString htmlvalue;
     QString hivename;
     QString reportstring;
+    QString prehtml;
+    QString psthtml;
     QByteArray reporttimezone;
     QStringList tags;
+    QStringList taggeditems;
+    QStringList taggedcontent;
 };
 
 #endif // WOMBATREGISTRY_H

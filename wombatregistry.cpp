@@ -21,6 +21,7 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     // initialize Preview Report HTML code
     reportstring = "<html><body style='" + ReturnCssString(0) + "'>\n";
     reportstring += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'></span></h1></div>\n"; // figure out title of report
+    prehtml = reportstring;
     // OR DO I CARE ABOUT TIMEZONE AND JUST WANT TO LEAVE IT IN UTC...
     reportstring += "<div id='tz'><h4>Report Time Zone:&nbsp;" + reporttimezone + "</h4></div><br/>\n"; // create reporttimezone variable
     reportstring += "<div id='toc'><h2>Contents</h2>";
@@ -33,6 +34,7 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     reportstring += "<div id='tags'>";
     reportstring += "<!--firsttag-->";
     reportstring += "<!--lasttag--></div>";
+    psthtml = "</body></html>";
     reportstring += "</body></html>";
 
     /*
@@ -186,6 +188,17 @@ void WombatForensics::HideTagManager()
 
 void WombatRegistry::UpdatePreviewLinks()
 {
+    // POSSIBLY REBUILD THE MAIN PAGE EVERY TIME, RATHER THAN FIND AND REPLACE...
+    QString curcontent = "";
+    curcontent += "<div id='toc'><h2>Contents</h2>";
+    for(int i=0; i < tags.count(); i++)
+    {
+        curcontent += "<span id='t" + QString::number(i) + "'><a href='#t" + QString::number(i) + "'>" + tags.at(i) + "</a></span><br/>\n";
+    }
+    reportstring = prehtml + curcontent + psthtml;
+
+    // OLD METHOD TO FIND AND REPLACE
+    /*
     QString origstr = "";
     QString linkstr = "";
     QStringList beginsplit = reportstring.split("<!--firstlink-->", Qt::SkipEmptyParts);
@@ -201,6 +214,7 @@ void WombatRegistry::UpdatePreviewLinks()
         linkstr += "<span id='t" + QString::number(i) + "'><a href='#t" + QString::number(i) + "'>" + tags.at(i) + "</a></span><br/>\n";
     }
     reportstring = precontent + linkstr + postcontent;
+    */
 
     /*
     if(tagid == linklist.count())
@@ -277,8 +291,20 @@ void WombatRegistry::UpdateTagsMenu()
 void WombatRegistry::SetTag()
 {
     QString curtag = "";
-    QString regstring = "";
+    //QString regstring = "";
     QAction* tagaction = qobject_cast<QAction*>(sender());
+    //regstring += statuslabel->text() + "\\";
+    //regstring += ui->tablewidget->selectedItems().at(1)->text() + "|";
+    //if(!ui->tablewidget->selectedItems().first()->text().isEmpty())
+    //    curtag = regstring + ui->tablewidget->selectedItems().first()->text();
+    //regstring += tagaction->iconText();
+    QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
+    QString htmlvalue = ui->plaintext->toPlainText();
+    //qDebug() << "regstring:" << regstring;
+    //qDebug() << "curtag:" << curtag;
+    qDebug() << "idkeyvalue:" << idkeyvalue;
+    qDebug() << "htmlvalue:" << htmlvalue;
+
     /*
     regstring += this->windowTitle().mid(16) + "|"; // file id
     regstring += ui->label->text() + "\\"; // key
@@ -288,8 +314,8 @@ void WombatRegistry::SetTag()
     regstring += tagaction->iconText();
     QString idkeyvalue = this->windowTitle().mid(16) + "|" + ui->label->text() + "\\" + ui->tableWidget->selectedItems().first()->text();
     */
-    if(!ui->tablewidget->selectedItems().first()->text().isEmpty())
-	curtag = ui->tablewidget->selectedItems().first()->text();
+    //if(!ui->tablewidget->selectedItems().first()->text().isEmpty())
+	//curtag = ui->tablewidget->selectedItems().first()->text();
     ui->tablewidget->selectedItems().first()->setText(tagaction->iconText());
     //qDebug() << "curtag to remove:" << curtag;
     /*
