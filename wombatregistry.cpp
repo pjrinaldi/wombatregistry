@@ -200,7 +200,7 @@ void WombatRegistry::UpdatePreviewLinks()
     {
         linkstr += "<span id='t" + QString::number(i) + "'><a href='#t" + QString::number(i) + "'>" + tags.at(i) + "</a></span><br/>\n";
     }
-    reportstring += precontent + linkstr + postcontent;
+    reportstring = precontent + linkstr + postcontent;
 
     /*
     if(tagid == linklist.count())
