@@ -166,7 +166,7 @@ void WombatRegistry::ManageTags()
     tagmanager->SetTagList(&tags);
     tagmanager->exec();
     UpdateTagsMenu();
-    UpdatePreviewLinks();
+    //UpdatePreviewLinks();
     /*
     tagmanage->setWindowIcon(QIcon(":/bar/managetags"));
     connect(tagmanage, SIGNAL(ReadBookmarks()), this, SLOT(ReadBookmarks()), Qt::DirectConnection);
@@ -203,7 +203,7 @@ void WombatRegistry::UpdatePreviewLinks()
     curcontent += "<div id='toc'><h2>Contents</h2>";
     for(int i=0; i < tags.count(); i++)
     {
-        curcontent += "<span id='t" + QString::number(i) + "'><a href='#t" + QString::number(i) + "'>" + tags.at(i) + "</a></span><br/>\n";
+        curcontent += "<span" + QString::number(i) + "'><a href='#t" + QString::number(i) + "'>" + tags.at(i) + "</a></span><br/>\n";
     }
     curcontent += "<h2>Tagged Items</h2>";
     for(int i=0; i < tags.count(); i++)
@@ -211,8 +211,25 @@ void WombatRegistry::UpdatePreviewLinks()
         curcontent += "<div id='t" + QString::number(i) + "'><h3>" + tags.at(i) + "</h3><br/><br/><table><tr>";
         for(int j=0; j < taggeditems.count(); j++)
         {
+            //qDebug() << "taggeditem:" << i << taggeditems.at(i);
             if(taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(0) == tags.at(i))
-                curcontent += "<td>" + taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(1) + "</td>";
+            {
+                curcontent += "<td style='>" + ReturnCssString(11) + "<a href='" + QDir::tempPath() + "/wr/tagged/" + QString::number(i) + "-" + QString::number(j) + ".html'>" + taggeditems.at(j).split("|").at(1) + "</td>";
+                QString htmlvalue = "<html><body style='" + ReturnCssString(0) + "'>";
+                htmlvalue += "<div style='" + ReturnCssString(1) + "'>Registry Analysis</div><br/>";
+                htmlvalue += "<pre>";
+                htmlvalue += taggeditems.at(j).split("|").at(2);
+                htmlvalue + "</pre><body></html>";
+                QFile htmlfile(QDir::tempPath() + "/wr/tagged/" + QString::number(i) + "-" + QString::number(j) + ".html");
+                if(!htmlfile.isOpen())
+                    htmlfile.open(QIODevice::WriteOnly | QIODevice::Text);
+                if(htmlfile.isOpen())
+                {
+                    htmlfile.write(htmlvalue.toStdString().c_str());
+                    htmlfile.close();
+                }
+                //+ taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(1) + "</td>";
+            }
                 /*
                  *
                 htmlentry = "";
@@ -271,6 +288,7 @@ void WombatRegistry::UpdatePreviewLinks()
 
 void WombatRegistry::PreviewReport()
 {
+    UpdatePreviewLinks();
     HtmlViewer* htmlviewer = new HtmlViewer();
     //qDebug() << "reportstring:" << reportstring;
     htmlviewer->SetSource(&reportstring);
@@ -308,6 +326,7 @@ void WombatRegistry::CreateNewTag()
         UpdateTagsMenu();
     }
     ui->tablewidget->selectedItems().first()->setText(tagname);
+    taggeditems.append(tagname + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
 }
 
 void WombatRegistry::UpdateTagsMenu()
@@ -345,6 +364,7 @@ void WombatRegistry::SetTag()
     //regstring += tagaction->iconText();
     QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
     QString htmlvalue = ui->plaintext->toPlainText();
+    taggeditems.append(tagaction->iconText() + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
     //qDebug() << "regstring:" << regstring;
     //qDebug() << "curtag:" << curtag;
     //qDebug() << "idkeyvalue:" << idkeyvalue;
