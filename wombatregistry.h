@@ -89,7 +89,7 @@ private:
     QByteArray reporttimezone;
     QStringList tags;
     QStringList taggeditems;
-    QStringList taggedcontent;
+    //QStringList taggedcontent;
 };
 
 #endif // WOMBATREGISTRY_H

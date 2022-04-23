@@ -18,11 +18,18 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     connect(ui->actionManageTags, SIGNAL(triggered()), this, SLOT(ManageTags()), Qt::DirectConnection);
     connect(ui->actionPreviewReport, SIGNAL(triggered()), this, SLOT(PreviewReport()), Qt::DirectConnection);
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(ShowAbout()), Qt::DirectConnection);
+    // initialize temp directory for html code...
+    QDir tmpdir;
+    tmpdir.mkpath(QDir::tempPath() + "/wr");
+    tmpdir.mkpath(QDir::tempPath() + "/wr/tagged");
     // initialize Preview Report HTML code
-    reportstring = "<html><body style='" + ReturnCssString(0) + "'>\n";
-    reportstring += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'></span></h1></div>\n"; // figure out title of report
-    prehtml = reportstring;
+    prehtml = "<html><body style='" + ReturnCssString(0) + "'>\n";
+    prehtml += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'>Registry Report</span></h1></div>\n";
+    //reportstring = "<html><body style='" + ReturnCssString(0) + "'>\n";
+    //reportstring += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'></span></h1></div>\n"; // figure out title of report
+    //prehtml = reportstring;
     // OR DO I CARE ABOUT TIMEZONE AND JUST WANT TO LEAVE IT IN UTC...
+    /*
     reportstring += "<div id='tz'><h4>Report Time Zone:&nbsp;" + reporttimezone + "</h4></div><br/>\n"; // create reporttimezone variable
     reportstring += "<div id='toc'><h2>Contents</h2>";
     reportstring += "<div id='elinks'>";
@@ -34,8 +41,9 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     reportstring += "<div id='tags'>";
     reportstring += "<!--firsttag-->";
     reportstring += "<!--lasttag--></div>";
+    */
     psthtml = "</body></html>";
-    reportstring += "</body></html>";
+    //reportstring += "</body></html>";
 
     /*
     QString initialhtml = "";
@@ -115,6 +123,8 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
 WombatRegistry::~WombatRegistry()
 {
     delete ui;
+    QDir tmpdir(QDir::tempPath() + "/wr");
+    tmpdir.removeRecursively();
 }
 
 void WombatRegistry::OpenHive()
@@ -195,6 +205,41 @@ void WombatRegistry::UpdatePreviewLinks()
     {
         curcontent += "<span id='t" + QString::number(i) + "'><a href='#t" + QString::number(i) + "'>" + tags.at(i) + "</a></span><br/>\n";
     }
+    curcontent += "<h2>Tagged Items</h2>";
+    for(int i=0; i < tags.count(); i++)
+    {
+        curcontent += "<div id='t" + QString::number(i) + "'><h3>" + tags.at(i) + "</h3><br/><br/><table><tr>";
+        for(int j=0; j < taggeditems.count(); j++)
+        {
+            if(taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(0) == tags.at(i))
+                curcontent += "<td>" + taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(1) + "</td>";
+                /*
+                 *
+                htmlentry = "";
+                htmlentry += "<td style='" + ReturnCssString(11) + "' id='" + this->windowTitle().mid(16) + "|" + ui->label->text() + "\\" + ui->tableWidget->selectedItems().first()->text() + "'>";
+                htmlentry += "<table style='" + ReturnCssString(2) + "' width='300px'><tr style='" + ReturnCssString(3) + "'><th style='" + ReturnCssString(6) + "' colspan='2'>" + ui->tableWidget->selectedItems().first()->text() + "</th></tr>";
+                htmlentry += "<tr style='" + ReturnCssString(12) + "'><td style='" + ReturnCssString(13) + "'>Path:</td><td style='" + ReturnCssString(14) + "'><span style='word-wrap:break-word;'>" + ui->label->text() + "</span></td></tr>";
+                htmlentry += "<tr style='" + ReturnCssString(5) + "'><td style='" + ReturnCssString(13) + "'>Last Modified:</td><td style='" + ReturnCssString(14) + "'>" + ConvertWindowsTimeToUnixTime(lastwritetime) + "</td></tr>";
+                htmlentry += "<tr style='" + ReturnCssString(4) + "'><td style='" + ReturnCssString(13) + "'>ID:</td><td style='" + ReturnCssString(14) + "'>" + this->windowTitle().mid(16) + "</td></tr>";
+                htmlentry += "<tr style='" + ReturnCssString(5) + "'><td style='" + ReturnCssString(13) + "'>&nbsp;</td><td style='" + ReturnCssString(7) + "'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='./registry/" + this->windowTitle().mid(16) + "." + ui->label->text().replace("\\", "-") + "-" + ui->tableWidget->selectedItems().first()->text() + "'>Link</a></td></tr>";
+                htmlentry += "</table></td>";
+                htmlvalue = "<html><body style='" + ReturnCssString(0) + "'>";
+                QFile initfile(":/html/artifactprephtml");
+                initfile.open(QIODevice::ReadOnly);
+                if(initfile.isOpen())
+                    htmlvalue = initfile.readAll();
+                initfile.close();
+                htmlvalue += "<div style='" + ReturnCssString(1) + "'>Registry Analysis</div><br/>";
+                htmlvalue += "<pre>";
+                htmlvalue += valuedata;
+                htmlvalue += "</pre>";
+                htmlvalue += "</table></body></html>";
+                */ 
+        }
+        curcontent += "</tr></table></div><br/>\n";
+        //curcontent += "<div id='t" + QString::number(tagid) + "'><h3>" + tagname + "</h3><br/><br/><table><tr><!--firstfile--><!--lastfile--></tr></table></div><br/>\n";
+    }
+    //reportstring += "<h2>Tagged Items</h2>";
     reportstring = prehtml + curcontent + psthtml;
 
     // OLD METHOD TO FIND AND REPLACE
@@ -302,8 +347,8 @@ void WombatRegistry::SetTag()
     QString htmlvalue = ui->plaintext->toPlainText();
     //qDebug() << "regstring:" << regstring;
     //qDebug() << "curtag:" << curtag;
-    qDebug() << "idkeyvalue:" << idkeyvalue;
-    qDebug() << "htmlvalue:" << htmlvalue;
+    //qDebug() << "idkeyvalue:" << idkeyvalue;
+    //qDebug() << "htmlvalue:" << htmlvalue;
 
     /*
     regstring += this->windowTitle().mid(16) + "|"; // file id
