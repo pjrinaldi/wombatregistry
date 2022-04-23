@@ -79,7 +79,7 @@ private:
     QMenu* tagmenu;
     QAction* newtagaction;
     QAction* remtagaction;
-    QStringList registrytaglist;
+    //QStringList registrytaglist;
     QString htmlentry;
     QString htmlvalue;
     QString hivename;

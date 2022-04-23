@@ -677,7 +677,8 @@ void WombatRegistry::KeySelected(void)
 	libregf_value_get_utf8_name(curval, name, namesize, &regerr);
 	uint32_t type = 0;
 	libregf_value_get_value_type(curval, &type, &regerr);
-	QString curtagvalue = this->windowTitle().mid(16) + "|" + keypath + "\\";
+	//QString curtagvalue = this->windowTitle().mid(16) + "|" + keypath + "\\";
+        QString curtagvalue = keypath + "\\";
 	if(namesize == 0)
 	{
 	    curtagvalue += "(unnamed)";
@@ -747,12 +748,19 @@ void WombatRegistry::KeySelected(void)
 	}
 	//qDebug() << "curtagvalue:" << curtagvalue;
 	QString tagstr = "";
+        for(int j=0; j < taggeditems.count(); j++)
+        {
+            if(taggeditems.at(j).contains(curtagvalue))
+                tagstr = taggeditems.at(j).split("|", Qt::SkipEmptyParts).first();
+        }
+        /*
 	for(int j=0; j < registrytaglist.count(); j++)
 	{
 	    //qDebug() << "registry tag list at(" << j << ") :" << registrytaglist.at(j);
 	    if(registrytaglist.at(j).contains(curtagvalue))
 		tagstr = registrytaglist.at(j).split("|", Qt::SkipEmptyParts).last();
 	}
+        */
 	//qDebug() << "tagstr:" << tagstr;
 	ui->tablewidget->setItem(i, 0, new QTableWidgetItem(tagstr));
         ui->tablewidget->resizeColumnToContents(0);
