@@ -13,6 +13,7 @@
 #include <QtEndian>
 #include <QDateTime>
 #include <QTimeZone>
+//#include <QUrl>
 #include "ui_wombatregistry.h"
 #include "tagmanager.h"
 #include "htmlviewer.h"

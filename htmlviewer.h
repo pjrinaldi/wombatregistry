@@ -32,8 +32,8 @@ private slots:
     void HideClicked();
     void Reload();
     void GoHome();
-    //void GoForward();
-    //void GoBackward();
+    void GoForward();
+    void GoBackward();
     void SourceChanged(const QUrl &url);
     
 signals:

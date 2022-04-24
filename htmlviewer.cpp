@@ -13,15 +13,15 @@ HtmlViewer::HtmlViewer(QWidget* parent) : QDialog(parent), ui(new Ui::HtmlViewer
     // THE REPORTING LAYOUT AND STRUCTURE
 
     //pagehistory.clear();
-    //ui->homebutton->setVisible(false);
+    ui->homebutton->setVisible(false);
     connect(ui->homebutton, SIGNAL(clicked()), this, SLOT(GoHome()));
-    ui->backbutton->setVisible(false);
-    ui->forbutton->setVisible(false);
+    //ui->backbutton->setVisible(false);
+    //ui->forbutton->setVisible(false);
     connect(ui->backbutton, SIGNAL(clicked()), ui->textbrowser, SLOT(backward()));
     connect(ui->forbutton, SIGNAL(clicked()), ui->textbrowser, SLOT(forward()));
     //connect(ui->textbrowser, SIGNAL(sourceChanged(const QUrl&)), this, SLOT(SourceChanged(const QUrl&)));
-    //connect(ui->textbrowser, SIGNAL(backwardAvailable(bool)), ui->backbutton, SLOT(setEnabled(bool)));
-    //connect(ui->textbrowser, SIGNAL(forwardAvailable(bool)), ui->forbutton, SLOT(setEnabled(bool)));
+    connect(ui->textbrowser, SIGNAL(backwardAvailable(bool)), ui->backbutton, SLOT(setEnabled(bool)));
+    connect(ui->textbrowser, SIGNAL(forwardAvailable(bool)), ui->forbutton, SLOT(setEnabled(bool)));
     //homepage = wombatvariable.tmpmntpath + "previewreport.html";
     //qDebug() << "homepage:" << homepage;
 }
@@ -58,7 +58,6 @@ void HtmlViewer::GoHome()
     //Reload();
 }
 
-/*
 void HtmlViewer::GoBackward()
 {
     ui->textbrowser->backward();
@@ -68,7 +67,6 @@ void HtmlViewer::GoForward()
 {
     ui->textbrowser->forward();
 }
-*/
 
 void HtmlViewer::HideClicked()
 {

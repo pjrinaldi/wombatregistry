@@ -258,6 +258,14 @@ void WombatRegistry::UpdatePreviewLinks()
     }
     //reportstring += "<h2>Tagged Items</h2>";
     reportstring = prehtml + curcontent + psthtml;
+    QFile indxfile(QDir::tempPath() + "/wr/index.html");
+    if(!indxfile.isOpen())
+        indxfile.open(QIODevice::WriteOnly | QIODevice::Text);
+    if(indxfile.isOpen())
+    {
+        indxfile.write(reportstring.toStdString().c_str());
+        indxfile.close();
+    }
 
     // OLD METHOD TO FIND AND REPLACE
     /*
@@ -290,8 +298,9 @@ void WombatRegistry::PreviewReport()
 {
     UpdatePreviewLinks();
     HtmlViewer* htmlviewer = new HtmlViewer();
+    htmlviewer->LoadHtml(QDir::tempPath() + "/wr/index.html");
     //qDebug() << "reportstring:" << reportstring;
-    htmlviewer->SetSource(&reportstring);
+    //htmlviewer->SetSource(&reportstring);
     htmlviewer->show();
 }
 
