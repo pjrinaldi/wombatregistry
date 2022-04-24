@@ -31,7 +31,7 @@ public:
 private slots:
     void HideClicked();
     void Reload();
-    //void GoHome();
+    void GoHome();
     //void GoForward();
     //void GoBackward();
     void SourceChanged(const QUrl &url);
@@ -47,6 +47,7 @@ private:
     Ui::HtmlViewer* ui;
     qint64 curobjaddr;
     QByteArray htmldata;
+    QString homepage;
     //QStringList pagehistory;
     //QString homepage;
 };

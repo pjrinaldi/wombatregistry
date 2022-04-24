@@ -26,6 +26,7 @@ class Ui_HtmlViewer
 public:
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
+    QPushButton *homebutton;
     QPushButton *backbutton;
     QPushButton *forbutton;
     QSpacerItem *horizontalSpacer;
@@ -45,20 +46,29 @@ public:
         horizontalLayout->setSpacing(2);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         horizontalLayout->setContentsMargins(6, 6, 6, 6);
+        homebutton = new QPushButton(HtmlViewer);
+        homebutton->setObjectName(QString::fromUtf8("homebutton"));
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/bar/home"), QSize(), QIcon::Normal, QIcon::Off);
+        homebutton->setIcon(icon);
+        homebutton->setIconSize(QSize(32, 32));
+
+        horizontalLayout->addWidget(homebutton);
+
         backbutton = new QPushButton(HtmlViewer);
         backbutton->setObjectName(QString::fromUtf8("backbutton"));
-        QIcon icon;
-        icon.addFile(QString::fromUtf8(":/bar/previous"), QSize(), QIcon::Normal, QIcon::Off);
-        backbutton->setIcon(icon);
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/bar/previous"), QSize(), QIcon::Normal, QIcon::Off);
+        backbutton->setIcon(icon1);
         backbutton->setIconSize(QSize(32, 32));
 
         horizontalLayout->addWidget(backbutton);
 
         forbutton = new QPushButton(HtmlViewer);
         forbutton->setObjectName(QString::fromUtf8("forbutton"));
-        QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/bar/next"), QSize(), QIcon::Normal, QIcon::Off);
-        forbutton->setIcon(icon1);
+        QIcon icon2;
+        icon2.addFile(QString::fromUtf8(":/bar/next"), QSize(), QIcon::Normal, QIcon::Off);
+        forbutton->setIcon(icon2);
         forbutton->setIconSize(QSize(32, 32));
 
         horizontalLayout->addWidget(forbutton);
@@ -86,6 +96,7 @@ public:
     void retranslateUi(QDialog *HtmlViewer)
     {
         HtmlViewer->setWindowTitle(QCoreApplication::translate("HtmlViewer", "Html Viewer", nullptr));
+        homebutton->setText(QString());
         backbutton->setText(QString());
         forbutton->setText(QString());
     } // retranslateUi

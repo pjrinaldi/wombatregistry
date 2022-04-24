@@ -214,7 +214,7 @@ void WombatRegistry::UpdatePreviewLinks()
             //qDebug() << "taggeditem:" << i << taggeditems.at(i);
             if(taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(0) == tags.at(i))
             {
-                curcontent += "<td style='>" + ReturnCssString(11) + "<a href='" + QDir::tempPath() + "/wr/tagged/" + QString::number(i) + "-" + QString::number(j) + ".html'>" + taggeditems.at(j).split("|").at(1) + "</td>";
+                curcontent += "<td style='" + ReturnCssString(11) + "'><a href='" + QDir::tempPath() + "/wr/tagged/" + QString::number(i) + "-" + QString::number(j) + ".html'>" + taggeditems.at(j).split("|").at(1) + "</a></td>";
                 QString htmlvalue = "<html><body style='" + ReturnCssString(0) + "'>";
                 htmlvalue += "<div style='" + ReturnCssString(1) + "'>Registry Analysis</div><br/>";
                 htmlvalue += "<pre>";
@@ -400,8 +400,13 @@ void WombatRegistry::SetTag()
 
 void WombatRegistry::RemoveTag()
 {
-    //QAction* tagaction = qobject_cast<QAction*>(sender());
+    QAction* tagaction = qobject_cast<QAction*>(sender());
     ui->tablewidget->selectedItems().first()->setText("");
+    for(int i=0; i < taggeditems.count(); i++)
+    {
+        if(taggeditems.at(i).contains(tagaction->iconText()))
+            taggeditems.removeAt(i);
+    }
     /*
     //qDebug() << "remove tag";
     QString regstring = "";

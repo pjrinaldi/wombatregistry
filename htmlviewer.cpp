@@ -7,20 +7,21 @@ HtmlViewer::HtmlViewer(QWidget* parent) : QDialog(parent), ui(new Ui::HtmlViewer
 {
     ui->setupUi(this);
     setWindowTitle("Report Preview");
+    homepage = "";
 
     // NOT SURE I NEED THE BUTTONS AT THE TOP... WILL HAVE TO DECIDE ONCE I FIGURE OUT
     // THE REPORTING LAYOUT AND STRUCTURE
 
     //pagehistory.clear();
     //ui->homebutton->setVisible(false);
-    //connect(ui->homebutton, SIGNAL(clicked()), this, SLOT(GoHome()));
-    //ui->backbutton->setVisible(false);
-    //ui->forbutton->setVisible(false);
+    connect(ui->homebutton, SIGNAL(clicked()), this, SLOT(GoHome()));
+    ui->backbutton->setVisible(false);
+    ui->forbutton->setVisible(false);
     connect(ui->backbutton, SIGNAL(clicked()), ui->textbrowser, SLOT(backward()));
     connect(ui->forbutton, SIGNAL(clicked()), ui->textbrowser, SLOT(forward()));
-    connect(ui->textbrowser, SIGNAL(sourceChanged(const QUrl&)), this, SLOT(SourceChanged(const QUrl&)));
-    connect(ui->textbrowser, SIGNAL(backwardAvailable(bool)), ui->backbutton, SLOT(setEnabled(bool)));
-    connect(ui->textbrowser, SIGNAL(forwardAvailable(bool)), ui->forbutton, SLOT(setEnabled(bool)));
+    //connect(ui->textbrowser, SIGNAL(sourceChanged(const QUrl&)), this, SLOT(SourceChanged(const QUrl&)));
+    //connect(ui->textbrowser, SIGNAL(backwardAvailable(bool)), ui->backbutton, SLOT(setEnabled(bool)));
+    //connect(ui->textbrowser, SIGNAL(forwardAvailable(bool)), ui->forbutton, SLOT(setEnabled(bool)));
     //homepage = wombatvariable.tmpmntpath + "previewreport.html";
     //qDebug() << "homepage:" << homepage;
 }
@@ -33,24 +34,30 @@ HtmlViewer::~HtmlViewer()
 
 void HtmlViewer::SourceChanged(const QUrl &url)
 {
+    //if(ui->textbrowser->isBackwardAvailable())
+    //    ui->backbutton->setEnabled(true);
+    //qDebug() << "is backward available:" << ui->textbrowser->isBackwardAvailable();
     //pagehistory.append(url->
     //qDebug() << "url:" << url;
 }
 
 void HtmlViewer::SetSource(QString* repstr)
 {
+    if(homepage.isEmpty())
+        homepage = *repstr;
     ui->textbrowser->setHtml(*repstr);
 }
 
-/*
 void HtmlViewer::GoHome()
 {
+    ui->textbrowser->setHtml(homepage);
     //homepage = wombatvariable.tmpmntpath + "previewreport.html";
     //qDebug() << "go home:" << homepage;
-    ui->textbrowser->setSource(QUrl::fromLocalFile(homepage));
+    //ui->textbrowser->setHtml(*repstr);
+    //ui->textbrowser->setSource(QUrl::fromLocalFile(homepage));
     //Reload();
 }
-*/
+
 /*
 void HtmlViewer::GoBackward()
 {
