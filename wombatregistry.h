@@ -4,24 +4,19 @@
 // Copyright 2022-2022 Pasquale J. Rinaldi, Jr.
 // Distrubted under the terms of the GNU General Public License version 2
 
-//#include "wombatinclude.h"
-//#include "globals.h"
-//#include "wombatfunctions.h"
 #include <QDebug>
 #include <QFileDialog>
 #include <QLabel>
 #include <QtEndian>
 #include <QDateTime>
 #include <QTimeZone>
-//#include <QUrl>
+#include <QDirIterator>
 #include "ui_wombatregistry.h"
 #include "tagmanager.h"
 #include "htmlviewer.h"
 #include "aboutbox.h"
 #include "libregf.h"
 #include "cssstrings.h"
-//#include "tagging.h"
-//#include "reporting.h"
 
 #define TICKS_PER_SECOND 10000000
 #define EPOCH_DIFFERENCE 11644473600LL
@@ -47,6 +42,7 @@ private slots:
     void OpenHive(void);
     void ManageTags(void);
     void PreviewReport(void);
+    void PublishReport(void);
     void ShowAbout(void);
     void KeySelected(void);
     void ValueSelected(void);

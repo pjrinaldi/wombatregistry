@@ -17,6 +17,7 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     connect(ui->actionOpenHive, SIGNAL(triggered()), this, SLOT(OpenHive()), Qt::DirectConnection);
     connect(ui->actionManageTags, SIGNAL(triggered()), this, SLOT(ManageTags()), Qt::DirectConnection);
     connect(ui->actionPreviewReport, SIGNAL(triggered()), this, SLOT(PreviewReport()), Qt::DirectConnection);
+    connect(ui->actionPublish, SIGNAL(triggered()), this, SLOT(PublishReport()), Qt::DirectConnection);
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(ShowAbout()), Qt::DirectConnection);
     // initialize temp directory for html code...
     QDir tmpdir;
@@ -302,6 +303,32 @@ void WombatRegistry::PreviewReport()
     //qDebug() << "reportstring:" << reportstring;
     //htmlviewer->SetSource(&reportstring);
     htmlviewer->show();
+}
+
+void WombatRegistry::PublishReport()
+{
+    QString savepath = QFileDialog::getExistingDirectory(this, tr("Select Report Folder"), QDir::homePath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    //qDebug() << "savepath:" << savepath;
+    if(!savepath.isEmpty())
+    {
+        // Make tagged path to store tagged registry files
+        QDir tmppath;
+        //tmppath.mkpath(savepath + "/tagged/");
+        //QFile::copy(QDir::tempPath() + "/wr/index.html", savepath + "/index.html");
+        QDirIterator it(QString(QDir::tempPath() + "/wr/tagged"), QDirIterator::NoIteratorFlags);
+        while(it.hasNext())
+        {
+            QString curfile = it.next();
+            if(curfile.endsWith("."))
+                qDebug() << "curfile:" << curfile;
+            else
+                qDebug() << "curfile:" << curfile;
+        }
+    }
+    /*
+    QFile::copy(wombatvariable.tmpmntpath + "previewreport.html", currentreportpath + "index.html");
+    */ 
+
 }
 
 void WombatRegistry::ShowAbout()
