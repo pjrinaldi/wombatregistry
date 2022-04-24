@@ -44,7 +44,10 @@ void HtmlViewer::SourceChanged(const QUrl &url)
 void HtmlViewer::SetSource(QString* repstr)
 {
     if(homepage.isEmpty())
+    {
+        //homepage = QString::fromUtf8(QByteArray::fromBase64(*repstr));
         homepage = *repstr;
+    }
     ui->textbrowser->setHtml(*repstr);
 }
 
