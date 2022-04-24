@@ -208,7 +208,7 @@ void WombatRegistry::UpdatePreviewLinks()
     curcontent += "<h2>Tagged Items</h2>";
     for(int i=0; i < tags.count(); i++)
     {
-        curcontent += "<div id='t" + QString::number(i) + "'><h3>" + tags.at(i) + "</h3><br/><br/><table><tr>";
+        curcontent += "<div id='t" + QString::number(i) + "'><h3>" + tags.at(i) + "</h3><br/><table><tr>";
         for(int j=0; j < taggeditems.count(); j++)
         {
             //qDebug() << "taggeditem:" << i << taggeditems.at(i);
