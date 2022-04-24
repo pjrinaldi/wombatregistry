@@ -23,7 +23,7 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     tmpdir.mkpath(QDir::tempPath() + "/wr");
     tmpdir.mkpath(QDir::tempPath() + "/wr/tagged");
     // initialize Preview Report HTML code
-    prehtml = "<html><body style='" + ReturnCssString(0) + "'>\n";
+    prehtml = "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body style='" + ReturnCssString(0) + "'>\n";
     prehtml += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'>Registry Report</span></h1></div>\n";
     //reportstring = "<html><body style='" + ReturnCssString(0) + "'>\n";
     //reportstring += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'></span></h1></div>\n"; // figure out title of report
@@ -215,11 +215,10 @@ void WombatRegistry::UpdatePreviewLinks()
             if(taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(0) == tags.at(i))
             {
                 curcontent += "<td style='" + ReturnCssString(11) + "'><a href='" + QDir::tempPath() + "/wr/tagged/" + QString::number(i) + "-" + QString::number(j) + ".html'>" + taggeditems.at(j).split("|").at(1) + "</a></td>";
-                QString htmlvalue = "<html><body style='" + ReturnCssString(0) + "'>";
+                QString htmlvalue = "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body style='" + ReturnCssString(0) + "'>";
                 htmlvalue += "<div style='" + ReturnCssString(1) + "'>Registry Analysis</div><br/>";
                 htmlvalue += "<pre>";
-                htmlvalue += taggeditems.at(j).split("|").at(2);
-                //htmlvalue += QString::fromStdString(QByteArray::fromBase64(taggeditems.at(j).split("|").at(2).toUtf8()).toStdString());
+                htmlvalue += taggeditems.at(j).split("|").at(2).toUtf8();
                 htmlvalue + "</pre><body></html>";
                 QFile htmlfile(QDir::tempPath() + "/wr/tagged/" + QString::number(i) + "-" + QString::number(j) + ".html");
                 if(!htmlfile.isOpen())
@@ -328,7 +327,6 @@ void WombatRegistry::CreateNewTag()
     }
     ui->tablewidget->selectedItems().first()->setText(tagname);
     taggeditems.append(tagname + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
-    //taggeditems.append(tagname + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText().toUtf8().toBase64());
 }
 
 void WombatRegistry::UpdateTagsMenu()
@@ -365,9 +363,8 @@ void WombatRegistry::SetTag()
     //    curtag = regstring + ui->tablewidget->selectedItems().first()->text();
     //regstring += tagaction->iconText();
     QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
-    QString htmlvalue = ui->plaintext->toPlainText();
+    //QString htmlvalue = ui->plaintext->toPlainText();
     taggeditems.append(tagaction->iconText() + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
-    //taggeditems.append(tagaction->iconText() + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText().toUtf8().toBase64());
     //qDebug() << "regstring:" << regstring;
     //qDebug() << "curtag:" << curtag;
     //qDebug() << "idkeyvalue:" << idkeyvalue;
