@@ -200,6 +200,9 @@ void WombatForensics::HideTagManager()
 void WombatRegistry::UpdatePreviewLinks()
 {
     // POSSIBLY REBUILD THE MAIN PAGE EVERY TIME, RATHER THAN FIND AND REPLACE...
+    QDir tmpdir(QDir::tempPath() + "/wr/tagged");
+    tmpdir.removeRecursively();
+    tmpdir.mkpath(QDir::tempPath() + "/wr/tagged");
     QString curcontent = "";
     curcontent += "<div id='toc'><h2>Contents</h2>";
     for(int i=0; i < tags.count(); i++)
@@ -361,6 +364,12 @@ void WombatRegistry::CreateNewTag()
         UpdateTagsMenu();
     }
     ui->tablewidget->selectedItems().first()->setText(tagname);
+    QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
+    for(int i=0; i < taggeditems.count(); i++)
+    {
+        if(taggeditems.at(i).contains(idkeyvalue))
+            taggeditems.removeAt(i);
+    }
     taggeditems.append(tagname + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
 }
 
@@ -389,15 +398,22 @@ void WombatRegistry::UpdateTagsMenu()
 
 void WombatRegistry::SetTag()
 {
-    QString curtag = "";
+    //QString curtag = "";
     //QString regstring = "";
     QAction* tagaction = qobject_cast<QAction*>(sender());
     //regstring += statuslabel->text() + "\\";
     //regstring += ui->tablewidget->selectedItems().at(1)->text() + "|";
-    //if(!ui->tablewidget->selectedItems().first()->text().isEmpty())
-    //    curtag = regstring + ui->tablewidget->selectedItems().first()->text();
-    //regstring += tagaction->iconText();
     QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
+    if(!ui->tablewidget->selectedItems().first()->text().isEmpty())
+    {
+        for(int i=0; i < taggeditems.count(); i++)
+        {
+            if(taggeditems.at(i).contains(idkeyvalue))
+                taggeditems.removeAt(i);
+        }
+        //curtag = regstring + ui->tablewidget->selectedItems().first()->text();
+    }
+    //regstring += tagaction->iconText();
     //QString htmlvalue = ui->plaintext->toPlainText();
     taggeditems.append(tagaction->iconText() + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
     //qDebug() << "regstring:" << regstring;
@@ -435,11 +451,12 @@ void WombatRegistry::SetTag()
 
 void WombatRegistry::RemoveTag()
 {
-    QAction* tagaction = qobject_cast<QAction*>(sender());
+    //QAction* tagaction = qobject_cast<QAction*>(sender());
     ui->tablewidget->selectedItems().first()->setText("");
+    QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
     for(int i=0; i < taggeditems.count(); i++)
     {
-        if(taggeditems.at(i).contains(tagaction->iconText()))
+        if(taggeditems.at(i).contains(idkeyvalue))
             taggeditems.removeAt(i);
     }
     /*
