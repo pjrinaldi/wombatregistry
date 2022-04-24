@@ -35,10 +35,8 @@ public:
     explicit WombatRegistry(QWidget* parent = 0);
     ~WombatRegistry();
     void LoadRegistryFile(void);
-    //void LoadRegistryFile(QString regid, QString regname);
 
 private slots:
-    //void HideClicked();
     void OpenHive(void);
     void ManageTags(void);
     void PreviewReport(void);
@@ -52,14 +50,10 @@ private slots:
     void RemoveTag(void);
     void UpdateTagsMenu(void);
     void UpdatePreviewLinks(void);
-    //void DoubleClick(QTableWidgetItem* curitem);
-    //void ImgHexMenu(const QPoint &point);
     void StatusUpdate(QString tmptext)
     {
         statuslabel->setText(tmptext);
     };
-signals:
-    //void TagCarved(QString ctitle, QString ctag);
 protected:
     void closeEvent(QCloseEvent* event);
 
@@ -76,7 +70,6 @@ private:
     QMenu* tagmenu;
     QAction* newtagaction;
     QAction* remtagaction;
-    //QStringList registrytaglist;
     QString htmlentry;
     QString htmlvalue;
     QString hivename;
@@ -86,7 +79,6 @@ private:
     QByteArray reporttimezone;
     QStringList tags;
     QStringList taggeditems;
-    //QStringList taggedcontent;
 };
 
 #endif // WOMBATREGISTRY_H

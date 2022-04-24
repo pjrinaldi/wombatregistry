@@ -4,10 +4,6 @@
 // Copyright 2013-2019 Pasquale J. Rinaldi, Jr.
 // Distrubted under the terms of the GNU General Public License version 2
 
-//#include "wombatinclude.h"
-//#include "globals.h"
-//#include "wombatfunctions.h"
-//#include "reporting.h"
 #include <QCloseEvent>
 #include <QStringList>
 #include <QInputDialog>
@@ -36,7 +32,6 @@ private slots:
     void SelectionChanged();
 signals:
     void HideManagerWindow();
-    //void ReadBookmarks();
 protected:
     void closeEvent(QCloseEvent* event);
 
@@ -44,14 +39,6 @@ private:
     Ui::TagManager* ui;
 
     QStringList* tags = NULL;
-    /*
-    QFile bookmarkfile;
-    QStringList taglist;
-    QStringList llist;
-    QStringList tlist;
-    QString linkstr = "";
-    QString tagstr = "";
-    */
 };
 
 Q_DECLARE_METATYPE(TagManager*);

@@ -26,99 +26,14 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     // initialize Preview Report HTML code
     prehtml = "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body style='" + ReturnCssString(0) + "'>\n";
     prehtml += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'>Registry Report</span></h1></div>\n";
-    //reportstring = "<html><body style='" + ReturnCssString(0) + "'>\n";
-    //reportstring += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'></span></h1></div>\n"; // figure out title of report
-    //prehtml = reportstring;
-    // OR DO I CARE ABOUT TIMEZONE AND JUST WANT TO LEAVE IT IN UTC...
-    /*
-    reportstring += "<div id='tz'><h4>Report Time Zone:&nbsp;" + reporttimezone + "</h4></div><br/>\n"; // create reporttimezone variable
-    reportstring += "<div id='toc'><h2>Contents</h2>";
-    reportstring += "<div id='elinks'>";
-    reportstring += "<!--firstlink-->";
-    reportstring += "<!--lastlink-->";
-    reportstring += "</div><br/>";
-    reportstring += "</div><br/><br/>";
-    reportstring += "<h2>Tagged Items</h2>";
-    reportstring += "<div id='tags'>";
-    reportstring += "<!--firsttag-->";
-    reportstring += "<!--lasttag--></div>";
-    */
     psthtml = "</body></html>";
-    //reportstring += "</body></html>";
 
-    /*
-    QString initialhtml = "";
-    previewfile.setFileName(wombatvariable.tmpmntpath + "previewreport.html");
-    previewfile.open(QIODevice::WriteOnly | QIODevice::Text);
-    if(previewfile.isOpen())
-    {
-        QTimeZone itz = QTimeZone(reporttimezone);
-        //previewfile.write(initialhtml.toStdString().c_str());
-        QString initialstr = "<html><body style='" + ReturnCssString(0) + "'>";
-        initialstr = "<div style='" + ReturnCssString(1) + "'><h1>Case Title:&nbsp;<span id='casename'>" + wombatvariable.casename + "</span></h1></div>\n";
-        initialstr += "<div id='tz'><h4>Report Time Zone:&nbsp;" + reporttimezone + "</h4><div><br/>\n";
-        initialstr += "<div id='toc'><h2>Contents</h2>";
-        initialstr += "<div id='elinks'>";
-        initialstr += "<!--firstelink-->";
-        initialstr += "<!--lastelink-->";
-        initialstr += "</div><br/>";
-        initialstr += "<div id='tlinks'>";
-        initialstr += "<!--firsttlink-->";
-        initialstr += "<!--lasttlink-->";
-        initialstr += "</div><br/><br/>";
-        initialstr += "</div><br/><br/>";
-        initialstr += "<h2>Evidence Items</h2>";
-        initialstr += "<div id='evidence'>";
-        initialstr += "<!--firstevid-->";
-        initialstr += "<!--lastevid-->";
-        initialstr += "\n</div><br/><br/>";
-        initialstr += "<h2>Tagged Items</h2>";
-        initialstr += "<div id='tags'>";
-        initialstr += "<!--firsttag-->";
-        initialstr += "<!--lasttag--></div>";
-        previewfile.write(initialstr.toStdString().c_str());
- 
-   }
-    previewfile.close();
-
-     */ 
-    
     tags.clear();
     tagmenu = new QMenu(ui->tablewidget);
     UpdateTagsMenu();
 
     ui->tablewidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tablewidget, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(TagMenu(const QPoint &)), Qt::DirectConnection);
-
-    /*
-    bookmarkfile.open(QIODevice::ReadOnly | QIODevice::Text);
-    if(bookmarkfile.isOpen())
-	taglist = QString(bookmarkfile.readLine()).split(",", Qt::SkipEmptyParts);
-    bookmarkfile.close();
-    for(int i=0; i < taglist.count(); i++)
-    {
-	QAction* tmpaction = new QAction(taglist.at(i), tagmenu);
-	tmpaction->setIcon(QIcon(":/bar/addtotag"));
-	tmpaction->setData(QVariant("t" + QString::number(i)));
-	connect(tmpaction, SIGNAL(triggered()), this, SLOT(SetTag()));
-	tagmenu->addAction(tmpaction);
-    }
-    tagmenu->addSeparator();
-    QAction* remtagaction = new QAction("Remove Tag", tagmenu);
-    remtagaction->setIcon(QIcon(":/bar/tag-rem"));
-    connect(remtagaction, SIGNAL(triggered()), this, SLOT(RemoveTag()));
-    tagmenu->addAction(remtagaction);
-    */
-
-    /*
-    QFile registryfile;
-    registryfile.setFileName(wombatvariable.tmpmntpath + "registrytags");
-    registryfile.open(QIODevice::ReadOnly | QIODevice::Text);
-    registrytaglist.clear();
-    if(registryfile.isOpen())
-	registrytaglist = QString(registryfile.readLine()).split(",", Qt::SkipEmptyParts);
-    registryfile.close();
-    */
 }
 
 WombatRegistry::~WombatRegistry()
@@ -132,7 +47,6 @@ void WombatRegistry::OpenHive()
 {
     QFileDialog openhivedialog(this, tr("Open Registry Hive"), QDir::homePath());
     openhivedialog.setLabelText(QFileDialog::Accept, "Open");
-    //openhivedialog.setOption(QFileDialog::DontUseNativeDialog, true);
     if(openhivedialog.exec())
     {
         hivefilepath = openhivedialog.selectedFiles().first();
@@ -143,7 +57,6 @@ void WombatRegistry::OpenHive()
         {
             hivefile.seek(0);
             uint32_t hiveheader = qFromBigEndian<uint32_t>(hivefile.read(4));
-            //qDebug() << "hiveheader:" << QString::number(hiveheader, 16);
             if(hiveheader == 0x72656766) // valid "regf" header
             {
                 LoadRegistryFile();
@@ -156,45 +69,15 @@ void WombatRegistry::OpenHive()
             }
                                         
         }
-        // open file, read header and verify it is a registry file to process.
     }
 }
 
 void WombatRegistry::ManageTags()
 {
     TagManager* tagmanager = new TagManager(this);
-    //connect(tagmanage, SIGNAL(HideManagerWindow()), this, SLOT(HideTagManager()), Qt::DirectConnection);
     tagmanager->SetTagList(&tags);
     tagmanager->exec();
     UpdateTagsMenu();
-    //UpdatePreviewLinks();
-    /*
-    tagmanage->setWindowIcon(QIcon(":/bar/managetags"));
-    connect(tagmanage, SIGNAL(ReadBookmarks()), this, SLOT(ReadBookmarks()), Qt::DirectConnection);
-
-void WombatForensics::HideTagManager()
-{
-    treemenu->clear();
-    ReadBookmarks();
-    treemenu->addAction(ui->actionView_File);
-    treemenu->addAction(ui->actionView_Properties);
-    treemenu->addAction(viewmenu->menuAction());
-    treemenu->addSeparator();
-    treemenu->addAction(ui->actionCheck);
-    treemenu->addAction(remcheckedaction);
-    treemenu->addSeparator();
-    treemenu->addMenu(bookmarkmenu);
-    treemenu->addAction(remtagaction);
-    treemenu->addSeparator();
-    treemenu->addMenu(tagcheckedmenu);
-    treemenu->addAction(remtagaction1);
-    treemenu->addSeparator();
-    treemenu->addAction(ui->actionDigDeeper);
-    treemenu->addAction(ui->actionExport);
-    treemenu->addAction(ui->actionExportForensicImage);
-}
-     */ 
-
 }
 
 void WombatRegistry::UpdatePreviewLinks()
@@ -215,7 +98,6 @@ void WombatRegistry::UpdatePreviewLinks()
         curcontent += "<div id='t" + QString::number(i) + "'><h3>" + tags.at(i) + "</h3><br/><table><tr>";
         for(int j=0; j < taggeditems.count(); j++)
         {
-            //qDebug() << "taggeditem:" << i << taggeditems.at(i);
             if(taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(0) == tags.at(i))
             {
                 curcontent += "<td style='" + ReturnCssString(11) + "'><a href='" + QDir::tempPath() + "/wr/tagged/" + QString::number(i) + "-" + QString::number(j) + ".html'>" + taggeditems.at(j).split("|").at(1) + "</a></td>";
@@ -232,35 +114,10 @@ void WombatRegistry::UpdatePreviewLinks()
                     htmlfile.write(htmlvalue.toStdString().c_str());
                     htmlfile.close();
                 }
-                //+ taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(1) + "</td>";
             }
-                /*
-                 *
-                htmlentry = "";
-                htmlentry += "<td style='" + ReturnCssString(11) + "' id='" + this->windowTitle().mid(16) + "|" + ui->label->text() + "\\" + ui->tableWidget->selectedItems().first()->text() + "'>";
-                htmlentry += "<table style='" + ReturnCssString(2) + "' width='300px'><tr style='" + ReturnCssString(3) + "'><th style='" + ReturnCssString(6) + "' colspan='2'>" + ui->tableWidget->selectedItems().first()->text() + "</th></tr>";
-                htmlentry += "<tr style='" + ReturnCssString(12) + "'><td style='" + ReturnCssString(13) + "'>Path:</td><td style='" + ReturnCssString(14) + "'><span style='word-wrap:break-word;'>" + ui->label->text() + "</span></td></tr>";
-                htmlentry += "<tr style='" + ReturnCssString(5) + "'><td style='" + ReturnCssString(13) + "'>Last Modified:</td><td style='" + ReturnCssString(14) + "'>" + ConvertWindowsTimeToUnixTime(lastwritetime) + "</td></tr>";
-                htmlentry += "<tr style='" + ReturnCssString(4) + "'><td style='" + ReturnCssString(13) + "'>ID:</td><td style='" + ReturnCssString(14) + "'>" + this->windowTitle().mid(16) + "</td></tr>";
-                htmlentry += "<tr style='" + ReturnCssString(5) + "'><td style='" + ReturnCssString(13) + "'>&nbsp;</td><td style='" + ReturnCssString(7) + "'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='./registry/" + this->windowTitle().mid(16) + "." + ui->label->text().replace("\\", "-") + "-" + ui->tableWidget->selectedItems().first()->text() + "'>Link</a></td></tr>";
-                htmlentry += "</table></td>";
-                htmlvalue = "<html><body style='" + ReturnCssString(0) + "'>";
-                QFile initfile(":/html/artifactprephtml");
-                initfile.open(QIODevice::ReadOnly);
-                if(initfile.isOpen())
-                    htmlvalue = initfile.readAll();
-                initfile.close();
-                htmlvalue += "<div style='" + ReturnCssString(1) + "'>Registry Analysis</div><br/>";
-                htmlvalue += "<pre>";
-                htmlvalue += valuedata;
-                htmlvalue += "</pre>";
-                htmlvalue += "</table></body></html>";
-                */ 
         }
         curcontent += "</tr></table></div><br/>\n";
-        //curcontent += "<div id='t" + QString::number(tagid) + "'><h3>" + tagname + "</h3><br/><br/><table><tr><!--firstfile--><!--lastfile--></tr></table></div><br/>\n";
     }
-    //reportstring += "<h2>Tagged Items</h2>";
     reportstring = prehtml + curcontent + psthtml;
     QFile indxfile(QDir::tempPath() + "/wr/index.html");
     if(!indxfile.isOpen())
@@ -270,32 +127,6 @@ void WombatRegistry::UpdatePreviewLinks()
         indxfile.write(reportstring.toStdString().c_str());
         indxfile.close();
     }
-
-    // OLD METHOD TO FIND AND REPLACE
-    /*
-    QString origstr = "";
-    QString linkstr = "";
-    QStringList beginsplit = reportstring.split("<!--firstlink-->", Qt::SkipEmptyParts);
-    QString precontent = beginsplit.first();
-    precontent += "<!--firstlink-->";
-    QString curcontent = beginsplit.last().split("<!--lastlink-->").first();
-    QString postcontent = beginsplit.last().split("<!--lastlink-->").last();
-    postcontent = "<!--lastlink-->" + postcontent;
-    QStringList linklist = curcontent.split("\n", Qt::SkipEmptyParts);
-    linkstr = "";
-    for(int i=0; i < tags.count(); i++)
-    {
-        linkstr += "<span id='t" + QString::number(i) + "'><a href='#t" + QString::number(i) + "'>" + tags.at(i) + "</a></span><br/>\n";
-    }
-    reportstring = precontent + linkstr + postcontent;
-    */
-
-    /*
-    if(tagid == linklist.count())
-        linkstr += "<span id='l" + QString::number(tagid) + "'><a href='#t" + QString::number(tagid) + "'>" + tagname + "</a></span><br/>\n";
-    curcontent += linkstr;
-    isignals->ActivateReload();
-     */ 
 }
 
 void WombatRegistry::PreviewReport()
@@ -303,8 +134,6 @@ void WombatRegistry::PreviewReport()
     UpdatePreviewLinks();
     HtmlViewer* htmlviewer = new HtmlViewer();
     htmlviewer->LoadHtml(QDir::tempPath() + "/wr/index.html");
-    //qDebug() << "reportstring:" << reportstring;
-    //htmlviewer->SetSource(&reportstring);
     htmlviewer->show();
 }
 
@@ -312,25 +141,22 @@ void WombatRegistry::PublishReport()
 {
     UpdatePreviewLinks();
     QString savepath = QFileDialog::getExistingDirectory(this, tr("Select Report Folder"), QDir::homePath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    //qDebug() << "savepath:" << savepath;
     if(!savepath.isEmpty())
     {
         // Make tagged path to store tagged registry files
         QDir tmppath;
-        //tmppath.mkpath(savepath + "/tagged/");
-        //QFile::copy(QDir::tempPath() + "/wr/index.html", savepath + "/index.html");
+        tmppath.mkpath(savepath + "/tagged/");
+        QFile::copy(QDir::tempPath() + "/wr/index.html", savepath + "/index.html");
         QDirIterator it(QString(QDir::tempPath() + "/wr/tagged"), QDirIterator::NoIteratorFlags);
         while(it.hasNext())
         {
             QString curfile = it.next();
             if(curfile.endsWith("html"))
-                qDebug() << "curfile:" << curfile;
+            {
+                QFile::copy(curfile, savepath + "/tagged/" + curfile.split("/").last());
+            }
         }
     }
-    /*
-    QFile::copy(wombatvariable.tmpmntpath + "previewreport.html", currentreportpath + "index.html");
-    */ 
-
 }
 
 void WombatRegistry::ShowAbout()
@@ -338,13 +164,6 @@ void WombatRegistry::ShowAbout()
     AboutBox* aboutbox = new AboutBox();
     aboutbox->exec();
 }
-
-/*
-void WombatRegistry::HideClicked()
-{
-    //this->close();
-}
-*/
 
 void WombatRegistry::CreateNewTag()
 {
@@ -398,11 +217,7 @@ void WombatRegistry::UpdateTagsMenu()
 
 void WombatRegistry::SetTag()
 {
-    //QString curtag = "";
-    //QString regstring = "";
     QAction* tagaction = qobject_cast<QAction*>(sender());
-    //regstring += statuslabel->text() + "\\";
-    //regstring += ui->tablewidget->selectedItems().at(1)->text() + "|";
     QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
     if(!ui->tablewidget->selectedItems().first()->text().isEmpty())
     {
@@ -411,47 +226,14 @@ void WombatRegistry::SetTag()
             if(taggeditems.at(i).contains(idkeyvalue))
                 taggeditems.removeAt(i);
         }
-        //curtag = regstring + ui->tablewidget->selectedItems().first()->text();
     }
-    //regstring += tagaction->iconText();
-    //QString htmlvalue = ui->plaintext->toPlainText();
     taggeditems.append(tagaction->iconText() + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
-    //qDebug() << "regstring:" << regstring;
-    //qDebug() << "curtag:" << curtag;
-    //qDebug() << "idkeyvalue:" << idkeyvalue;
-    //qDebug() << "htmlvalue:" << htmlvalue;
 
-    /*
-    regstring += this->windowTitle().mid(16) + "|"; // file id
-    regstring += ui->label->text() + "\\"; // key
-    regstring += ui->tableWidget->selectedItems().first()->text() + "|";
-    if(!ui->tableWidget->selectedItems().last()->text().isEmpty())
-	curtag = regstring + ui->tableWidget->selectedItems().last()->text();
-    regstring += tagaction->iconText();
-    QString idkeyvalue = this->windowTitle().mid(16) + "|" + ui->label->text() + "\\" + ui->tableWidget->selectedItems().first()->text();
-    */
-    //if(!ui->tablewidget->selectedItems().first()->text().isEmpty())
-	//curtag = ui->tablewidget->selectedItems().first()->text();
     ui->tablewidget->selectedItems().first()->setText(tagaction->iconText());
-    //qDebug() << "curtag to remove:" << curtag;
-    /*
-    if(!curtag.isEmpty())
-	RemTag("registry", curtag);
-    AddTag("registry", regstring); // add htmlentry and htmlvalue to this function...
-    RemoveFileItem(idkeyvalue);
-    RemoveArtifactFile("registry", idkeyvalue);
-    AddFileItem(tagaction->iconText(), htmlentry);
-    CreateArtifactFile("registry", idkeyvalue, htmlvalue);
-    // ADD TO PREVIEW REPORT
-    //RemoveFileItem(curindex.sibling(curindex.row(), 11).data().toString());
-    //AddFileItem(tagname, filestr);
-    //CreateArtifactFile("registry", curtag, htmlvalue);
-    */
 }
 
 void WombatRegistry::RemoveTag()
 {
-    //QAction* tagaction = qobject_cast<QAction*>(sender());
     ui->tablewidget->selectedItems().first()->setText("");
     QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
     for(int i=0; i < taggeditems.count(); i++)
@@ -459,47 +241,12 @@ void WombatRegistry::RemoveTag()
         if(taggeditems.at(i).contains(idkeyvalue))
             taggeditems.removeAt(i);
     }
-    /*
-    //qDebug() << "remove tag";
-    QString regstring = "";
-    regstring += this->windowTitle().mid(16) + "|"; // file id
-    regstring += ui->label->text() + "\\"; // key
-    regstring += ui->tableWidget->selectedItems().first()->text() + "|";
-    regstring += tagaction->iconText() + ",";
-    QString idkeyvalue = this->windowTitle().mid(16) + "|" + ui->label->text() + "\\" + ui->tableWidget->selectedItems().first()->text();
-    RemTag("registry", idkeyvalue + "|" + ui->tableWidget->selectedItems().last()->text());
-    // REMOVE FROM PREVIEW REPORT
-    RemoveFileItem(idkeyvalue);
-    RemoveArtifactFile("registry", idkeyvalue);
-    //RemoveFileItem(selectedindex.sibling(selectedindex.row(), 11).data().toString());
-    */
 }
 
 void WombatRegistry::ValueSelected(void)
 {
     if(ui->tablewidget->selectedItems().count() > 0)
     {
-        //QTimeZone tmpzone = QTimeZone(reporttimezone);
-	/*
-        QString filestr = "<td class='fitem' id='" + curindex.sibling(curindex.row(), 11).data().toString() + "'>";
-        filestr += "<table width='300px'><tr><th colspan='2'>" + curindex.sibling(curindex.row(), 0).data().toString() + "</th></tr>";
-        filestr += "<tr class='odd vtop'><td class='pvalue'>File Path:</td><td class='property'><span style='word-wrap:break-word;'>" + curindex.sibling(curindex.row(), 1).data().toString() + "</span></td></tr>";
-        filestr += "<tr class='even'><td class='pvalue'>File Size:</td><td class='property'>" + curindex.sibling(curindex.row(), 2).data().toString() + " bytes</td></tr>";
-        if(!curindex.sibling(curindex.row(), 3).data().toString().isEmpty())
-            filestr += "<tr class='odd'><td class='pvalue'>Created:</td><td class='property'>" + QDateTime::fromSecsSinceEpoch(QDateTime::fromString(curindex.sibling(curindex.row(), 3).data().toString(), "MM/dd/yyyy hh:mm:ss AP").toSecsSinceEpoch(), tmpzone).toString("MM/dd/yyyy hh:mm:ss AP") + "</td></tr>";
-        filestr += "<tr class='even'><td class='pvalue'>ID:</td><td class='property'>" + curindex.sibling(curindex.row(), 11).data().toString() + "</td></tr>";
-        filestr += "<tr class='odd'><td class='pvalue'>&nbsp;</td><td class='lvalue'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:void(0)' onclick='ShowContent(\"./files/" + curindex.sibling(curindex.row(), 11).data().toString() + "\")'>Link</a></td></tr>";
-        filestr += "</table></td>";
-        RemoveFileItem(curindex.sibling(curindex.row(), 11).data().toString());
-        AddFileItem(tagname, filestr);
-	*/
-
-/*
-	htmlentry = "";
-	htmlentry += "<td style='" + ReturnCssString(11) + "' id='" + this->windowTitle().mid(16) + "|" + ui->label->text() + "\\" + ui->tableWidget->selectedItems().first()->text() + "'>";
-	htmlentry += "<table style='" + ReturnCssString(2) + "' width='300px'><tr style='" + ReturnCssString(3) + "'><th style='" + ReturnCssString(6) + "' colspan='2'>" + ui->tableWidget->selectedItems().first()->text() + "</th></tr>";
-	htmlentry += "<tr style='" + ReturnCssString(12) + "'><td style='" + ReturnCssString(13) + "'>Path:</td><td style='" + ReturnCssString(14) + "'><span style='word-wrap:break-word;'>" + ui->label->text() + "</span></td></tr>";
-*/
 	int valueindex = ui->tablewidget->selectedItems().at(1)->row();
 	QString keypath = statuslabel->text();
 	libregf_file_t* regfile = NULL;
@@ -512,12 +259,6 @@ void WombatRegistry::ValueSelected(void)
 	libregf_key_get_value(curkey, valueindex, &curval, &regerr);
         uint64_t lastwritetime = 0;
         libregf_key_get_last_written_time(curkey, &lastwritetime, &regerr);
-/*
-        htmlentry += "<tr style='" + ReturnCssString(5) + "'><td style='" + ReturnCssString(13) + "'>Last Modified:</td><td style='" + ReturnCssString(14) + "'>" + ConvertWindowsTimeToUnixTime(lastwritetime) + "</td></tr>";
-	htmlentry += "<tr style='" + ReturnCssString(4) + "'><td style='" + ReturnCssString(13) + "'>ID:</td><td style='" + ReturnCssString(14) + "'>" + this->windowTitle().mid(16) + "</td></tr>";
-        htmlentry += "<tr style='" + ReturnCssString(5) + "'><td style='" + ReturnCssString(13) + "'>&nbsp;</td><td style='" + ReturnCssString(7) + "'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='./registry/" + this->windowTitle().mid(16) + "." + ui->label->text().replace("\\", "-") + "-" + ui->tableWidget->selectedItems().first()->text() + "'>Link</a></td></tr>";
-	htmlentry += "</table></td>";
-        */
         QString valuedata = "Last Written Time:\t" + ConvertWindowsTimeToUnixTimeUTC(lastwritetime) + " UTC\n\n";
 	valuedata += "Name:\t" + ui->tablewidget->selectedItems().at(1)->text() + "\n\n";
 	if(ui->tablewidget->selectedItems().at(1)->text().contains("(unnamed)"))
@@ -563,7 +304,6 @@ void WombatRegistry::ValueSelected(void)
                     valuedata += "Last Logon Time:\t\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(8, 8))) + " UTC\n";
                     valuedata += "Last Failed Login:\t\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(40, 8))) + " UTC\n";
                     valuedata += "Last Time Password Changed:\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(24, 8))) + " UTC";
-	            //QString filenamestring = QString::fromStdString(QByteArray(info2content.mid(curpos + 3, 260).toStdString().c_str(), -1).toStdString());
                 }
                 else if(ui->tablewidget->selectedItems().at(1)->text().startsWith("ShutdownTime"))
                 {
@@ -574,17 +314,6 @@ void WombatRegistry::ValueSelected(void)
                     QByteArray valarray = QByteArray::fromRawData((char*)data, datasize);
                     valuedata += "Shutdown Time:\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(valarray)) + " UTC";
                 }
-                /*
-                else if(keypath.contains("SAM") && ui->tableWidget->selectedItems().first()->text().count() == 1 && ui->tableWidget->selectedItems().first()->text().startsWith("V"))
-                {
-                    size_t datasize = 0;
-                    libregf_value_get_value_data_size(curval, &datasize, &regerr);
-                    uint8_t data[datasize];
-                    libregf_value_get_value_data(curval, data, datasize, &regerr);
-                    QByteArray varray = QByteArray::fromRawData((char*)data, datasize);
-                    valuedata += "Machine SID Location:\t" + varray.right(12).toHex();
-                }
-                */
             }
             else if(valuetype.contains("REG_DWORD"))
             {
@@ -657,20 +386,6 @@ void WombatRegistry::ValueSelected(void)
         }
 	ui->plaintext->setPlainText(valuedata);
 
-        /*
-    	htmlvalue = "<html><body style='" + ReturnCssString(0) + "'>";
-	QFile initfile(":/html/artifactprephtml");
-	initfile.open(QIODevice::ReadOnly);
-	if(initfile.isOpen())
-	    htmlvalue = initfile.readAll();
-	initfile.close();
-        */
-/*	htmlvalue += "<div style='" + ReturnCssString(1) + "'>Registry Analysis</div><br/>";
-	htmlvalue += "<pre>";
-	htmlvalue += valuedata;
-	htmlvalue += "</pre>";
-	htmlvalue += "</table></body></html>";
-*/
         libregf_value_free(&curval, &regerr);
         libregf_key_free(&curkey, &regerr);
         libregf_file_close(regfile, &regerr);
@@ -711,7 +426,6 @@ void WombatRegistry::KeySelected(void)
     keypath.replace("/", sepchar);
     // attempt to open by path...
     StatusUpdate(keypath);
-    //ui->label->setText(keypath);
     libregf_file_t* regfile = NULL;
     libregf_error_t* regerr = NULL;
     libregf_file_initialize(&regfile, &regerr);
@@ -734,7 +448,6 @@ void WombatRegistry::KeySelected(void)
 	libregf_value_get_utf8_name(curval, name, namesize, &regerr);
 	uint32_t type = 0;
 	libregf_value_get_value_type(curval, &type, &regerr);
-	//QString curtagvalue = this->windowTitle().mid(16) + "|" + keypath + "\\";
         QString curtagvalue = keypath + "\\";
 	if(namesize == 0)
 	{
@@ -742,7 +455,6 @@ void WombatRegistry::KeySelected(void)
 	    ui->tablewidget->setHorizontalHeaderLabels({"Tag", "Value Name", "Value"});
 	    ui->tablewidget->setItem(i, 1, new QTableWidgetItem("(unnamed)"));
 	    ui->tablewidget->setItem(i, 2, new QTableWidgetItem(QString::number(type, 16)));
-	    //ui->tablewidget->setItem(i, 2, new QTableWidgetItem(""));
 	}
 	else
 	{
@@ -801,24 +513,13 @@ void WombatRegistry::KeySelected(void)
             {
             }
 	    ui->tablewidget->setItem(i, 2, new QTableWidgetItem(valuetypestr));
-	    //ui->tablewidget->setItem(i, 2, new QTableWidgetItem(""));
 	}
-	//qDebug() << "curtagvalue:" << curtagvalue;
 	QString tagstr = "";
         for(int j=0; j < taggeditems.count(); j++)
         {
             if(taggeditems.at(j).contains(curtagvalue))
                 tagstr = taggeditems.at(j).split("|", Qt::SkipEmptyParts).first();
         }
-        /*
-	for(int j=0; j < registrytaglist.count(); j++)
-	{
-	    //qDebug() << "registry tag list at(" << j << ") :" << registrytaglist.at(j);
-	    if(registrytaglist.at(j).contains(curtagvalue))
-		tagstr = registrytaglist.at(j).split("|", Qt::SkipEmptyParts).last();
-	}
-        */
-	//qDebug() << "tagstr:" << tagstr;
 	ui->tablewidget->setItem(i, 0, new QTableWidgetItem(tagstr));
         ui->tablewidget->resizeColumnToContents(0);
         ui->tablewidget->setCurrentCell(0, 0);
@@ -836,7 +537,6 @@ void WombatRegistry::closeEvent(QCloseEvent* e)
 
 void WombatRegistry::LoadRegistryFile(void)
 {
-    //qDebug() << "regfilepath:" << regfilepath;
     libregf_file_t* regfile = NULL;
     libregf_error_t* regerr = NULL;
     libregf_file_initialize(&regfile, &regerr);
@@ -861,7 +561,6 @@ void WombatRegistry::LoadRegistryFile(void)
 
 void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* regerr)
 {
-    //qDebug() << "populate:" << hivefilepath;
     int subkeycount = 0;
     libregf_key_get_number_of_sub_keys(curkey, &subkeycount, &regerr);
     if(subkeycount > 0)
@@ -924,7 +623,6 @@ QChar WombatRegistry::Rot13Char(QChar curchar)
 
 QString WombatRegistry::ConvertUnixTimeToString(uint32_t input)
 {
-    //QTimeZone tmpzone = QTimeZone(reporttimezone);
     time_t crtimet = (time_t)input;
     QString timestr = QDateTime::fromSecsSinceEpoch(crtimet, QTimeZone::utc()).toString("MM/dd/yyyy hh:mm:ss AP");
 
@@ -933,7 +631,6 @@ QString WombatRegistry::ConvertUnixTimeToString(uint32_t input)
 
 QString WombatRegistry::ConvertWindowsTimeToUnixTimeUTC(uint64_t input)
 {
-    //QTimeZone tmpzone = QTimeZone(reporttimezone);
     uint64_t temp;
     temp = input / TICKS_PER_SECOND; //convert from 100ns intervals to seconds;
     temp = temp - EPOCH_DIFFERENCE;  //subtract number of seconds between epochs
@@ -943,12 +640,6 @@ QString WombatRegistry::ConvertWindowsTimeToUnixTimeUTC(uint64_t input)
 
     return timestr;
 }
-/*
-void WombatRegistry::DoubleClick(QTableWidgetItem* curitem)
-{
-    qDebug() << "Double click...";
-}
-*/
 
 void WombatRegistry::TagMenu(const QPoint &pt)
 {
@@ -958,30 +649,4 @@ void WombatRegistry::TagMenu(const QPoint &pt)
     else
 	remtagaction->setEnabled(true);
     tagmenu->exec(ui->tablewidget->mapToGlobal(pt));
-    
-    // when i need the current value for the right click, i can use a class variable defined in .h so i can access it in the SetTag and CreateNewTag right click menu options...
-    //QTableWidgetItem* curitem = ui->tableWidget->itemAt(pt);
-    //qDebug() << "cur item:" << ui->tableWidget->item(curitem->row(), 0)->text();
 }
-
-/*
-void WombatForensics::TreeContextMenu(const QPoint &pt)
-{
-    QModelIndex index = ui->dirTreeView->indexAt(pt);
-    if(index.isValid())
-    {
-        actionitem = static_cast<TreeNode*>(index.internalPointer());
-        if(!actionitem->IsChecked())
-        {
-            ui->actionCheck->setText("Check Selected");
-            ui->actionCheck->setIcon(QIcon(":/echeck"));
-        }
-        else
-        {
-            ui->actionCheck->setText("UnCheck Selected");
-            ui->actionCheck->setIcon(QIcon(":/remcheck"));
-        }
-        treemenu->exec(ui->dirTreeView->mapToGlobal(pt));
-    }
-}
-*/

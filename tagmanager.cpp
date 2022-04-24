@@ -12,10 +12,6 @@ TagManager::TagManager(QWidget* parent) : QDialog(parent), ui(new Ui::TagManager
     connect(ui->listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(SelectionChanged()));
     ui->removebutton->setEnabled(false);
     ui->modifybutton->setEnabled(false);
-    /*
-    if(tags != NULL)
-	UpdateList();
-    */
 }
 
 TagManager::~TagManager()
@@ -39,9 +35,7 @@ void TagManager::HideClicked()
 void TagManager::ModifyTag()
 {
     QString selectedtag = ui->listWidget->currentItem()->text();
-    //int selectedtagid = ui->listWidget->currentRow();
     int tagindex = tags->indexOf(selectedtag);
-    //qDebug() << "tagindex:" << tagindex << selectedtag;
     QString tmpstr = "";
     QString modtagname = "";
     QInputDialog* modtagdialog = new QInputDialog(this);
@@ -58,23 +52,6 @@ void TagManager::ModifyTag()
     {
 	ui->listWidget->currentItem()->setText(modtagname);
 	tags->replace(tagindex, modtagname);
-	/*
-        if(UpdateBookmarkItems(modtagname) != -15)
-        {
-            ui->listWidget->currentItem()->setText(modtagname);
-            for(int i=0; i < ui->listWidget->count(); i++)
-                tmpstr += ((QListWidgetItem*)ui->listWidget->item(i))->text() + ",";
-            bookmarkfile.open(QIODevice::WriteOnly | QIODevice::Text);
-            if(bookmarkfile.isOpen())
-                bookmarkfile.write(tmpstr.toStdString().c_str());
-            bookmarkfile.close();
-            UpdateList();
-            UpdateTLinkItem(selectedtagid, selectedtag, modtagname);
-            UpdateTagItem(selectedtagid, selectedtag, modtagname);
-        }
-        else
-            QMessageBox::information(this, "Tag Exists", "Tag Name Not Modified. New Tag Name already Exists.", QMessageBox::Ok);
-	*/
     }
 }
 
@@ -87,26 +64,6 @@ void TagManager::RemoveTag()
     ui->removebutton->setEnabled(false);
     ui->modifybutton->setEnabled(false);
     UpdateList();
-    /*
-    QString selectedtag = ui->listWidget->currentItem()->text();
-    QString tmpstr = "";
-    for(int i = 0; i < taglist.count(); i++)
-    {
-        if(taglist.at(i).contains(selectedtag))
-            taglist.removeAt(i);
-    }
-    for(int i=0; i < taglist.count(); i++)
-        tmpstr += taglist.at(i) + ",";
-    bookmarkfile.open(QIODevice::WriteOnly | QIODevice::Text);
-    if(bookmarkfile.isOpen())
-        bookmarkfile.write(tmpstr.toStdString().c_str());
-    bookmarkfile.close();
-    //qDebug() << "tmpstr:" << tmpstr;
-    ui->removebutton->setEnabled(false);
-    UpdateList();
-    RemoveTLinkItem(selectedtag);
-    RemoveTagItem(selectedtag);
-    */
 }
 
 void TagManager::AddTag()
@@ -126,24 +83,10 @@ void TagManager::AddTag()
 	tags->append(tagname);
 	UpdateList();
     }
-    /*
-        int tagid = UpdateBookmarkItems(tagname);
-        if(tagid != -15)
-        {
-            emit ReadBookmarks();
-            UpdateList();
-            AddTLinkItem(tagid, tagname);
-            AddTagItem(tagid, tagname);
-        }
-        else
-            QMessageBox::information(this, "Tag Exists", "Tag Not Added. Tag Name Already Exists.", QMessageBox::Ok);
-    }
-    */
 }
 
 void TagManager::SelectionChanged()
 {
-    //qDebug() << "selectionid:" << ui->listWidget->currentRow();
     ui->removebutton->setEnabled(true);
     ui->modifybutton->setEnabled(true);
 }
@@ -155,22 +98,6 @@ void TagManager::UpdateList()
     {
 	new QListWidgetItem(tags->at(i), ui->listWidget);
     }
-    /*
-    ui->listWidget->clear();
-    taglist.clear();
-    tlist.clear();
-    llist.clear();
-    bookmarkfile.setFileName(wombatvariable.tmpmntpath + "bookmarks");
-    bookmarkfile.open(QIODevice::ReadOnly | QIODevice::Text);
-    if(bookmarkfile.isOpen())
-        taglist = QString(bookmarkfile.readLine()).split(",", Qt::SkipEmptyParts);
-    bookmarkfile.close();
-    //taglist.removeDuplicates();
-    for(int i=0; i < taglist.count(); i++)
-    {
-        new QListWidgetItem(taglist.at(i), ui->listWidget);
-    }
-    */
 }
 
 void TagManager::closeEvent(QCloseEvent* e)
