@@ -307,6 +307,7 @@ void WombatRegistry::PreviewReport()
 
 void WombatRegistry::PublishReport()
 {
+    UpdatePreviewLinks();
     QString savepath = QFileDialog::getExistingDirectory(this, tr("Select Report Folder"), QDir::homePath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     //qDebug() << "savepath:" << savepath;
     if(!savepath.isEmpty())
@@ -319,9 +320,7 @@ void WombatRegistry::PublishReport()
         while(it.hasNext())
         {
             QString curfile = it.next();
-            if(curfile.endsWith("."))
-                qDebug() << "curfile:" << curfile;
-            else
+            if(curfile.endsWith("html"))
                 qDebug() << "curfile:" << curfile;
         }
     }
