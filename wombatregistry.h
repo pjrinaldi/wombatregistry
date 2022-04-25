@@ -79,6 +79,7 @@ private:
     QByteArray reporttimezone;
     QStringList tags;
     QStringList taggeditems;
+    QStringList hives;
 };
 
 #endif // WOMBATREGISTRY_H

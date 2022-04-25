@@ -32,6 +32,8 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     tagmenu = new QMenu(ui->tablewidget);
     UpdateTagsMenu();
 
+    hives.clear();
+
     ui->tablewidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tablewidget, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(TagMenu(const QPoint &)), Qt::DirectConnection);
 }
@@ -50,6 +52,7 @@ void WombatRegistry::OpenHive()
     if(openhivedialog.exec())
     {
         hivefilepath = openhivedialog.selectedFiles().first();
+	hives.append(hivefilepath);
         hivefile.setFileName(hivefilepath);
         if(!hivefile.isOpen())
             hivefile.open(QIODevice::ReadOnly);
@@ -398,6 +401,13 @@ void WombatRegistry::KeySelected(void)
 {
     int itemindex = 0;
     QTreeWidgetItem* curitem = ui->treewidget->selectedItems().first();
+    qDebug() << "toplevel item count:" << ui->treewidget->topLevelItemCount();
+    for(int i=0; i < ui->treewidget->topLevelItemCount(); i++)
+    {
+	qDebug() << "top level item:" << ui->treewidget->topLevelItem(i)->text(0);
+	qDebug() << "hives:" << hives.at(i);
+    }
+    //qDebug() << "selected toplevelitem:" << 
     bool toplevel = false;
     QStringList pathitems;
     pathitems.clear();
