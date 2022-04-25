@@ -6,7 +6,7 @@ The registry parsing is thanks to the [libregf library from Joachim Metz](https:
 On top of using his library to parse the registry artifacts, I added the ability to tag individual values for inclusion in a report.
 I also auto parse a few common registry keys/values and am happy to autoparse more upon request.
 
-This tool is closer to yaru for it's display and I like the fine grained reporting better than other registry tools. Plus it runs on linux and is free.
+This tool is closer to yaru for it's display and I like the fine grained reporting better than other registry tools. Plus it runs on linux and is open source and free.
 
 The libregf library is statically linked, so other than qt5, you shouldn't need any dependencies.
 
