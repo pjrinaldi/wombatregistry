@@ -67,12 +67,12 @@ private:
     QChar Rot13Char(QChar curchar);
     QString ConvertUnixTimeToString(uint32_t input);
     QString ConvertWindowsTimeToUnixTimeUTC(uint64_t input);
+    int GetRootIndex(QTreeWidgetItem* curitem);
     QMenu* tagmenu;
     QAction* newtagaction;
     QAction* remtagaction;
     QString htmlentry;
     QString htmlvalue;
-    QString hivename;
     QString reportstring;
     QString prehtml;
     QString psthtml;

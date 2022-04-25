@@ -63,14 +63,9 @@ void WombatRegistry::OpenHive()
             if(hiveheader == 0x72656766) // valid "regf" header
             {
                 LoadRegistryFile();
-                hivename = hivefilepath.split("/").last().split(".").first();
-                if(!hivename.isEmpty())
-                {
-                    this->setWindowTitle(QString("Wombat Registry - ") + hivename);
-                }
                 StatusUpdate("Hive: " + openhivedialog.selectedFiles().first() + " successfully opened.");
             }
-                                        
+	    hivefile.close();
         }
     }
 }
@@ -250,6 +245,9 @@ void WombatRegistry::ValueSelected(void)
 {
     if(ui->tablewidget->selectedItems().count() > 0)
     {
+	QTreeWidgetItem* curitem = ui->treewidget->selectedItems().first();
+	int rootindex = GetRootIndex(curitem);
+	hivefilepath = hives.at(rootindex);
 	int valueindex = ui->tablewidget->selectedItems().at(1)->row();
 	QString keypath = statuslabel->text();
 	libregf_file_t* regfile = NULL;
@@ -397,17 +395,20 @@ void WombatRegistry::ValueSelected(void)
     }
 }
 
+int WombatRegistry::GetRootIndex(QTreeWidgetItem* curitem)
+{
+    if(ui->treewidget->indexOfTopLevelItem(curitem) == -1)
+	GetRootIndex(curitem->parent());
+    else
+	return ui->treewidget->indexOfTopLevelItem(curitem);
+}
+
 void WombatRegistry::KeySelected(void)
 {
     int itemindex = 0;
     QTreeWidgetItem* curitem = ui->treewidget->selectedItems().first();
-    qDebug() << "toplevel item count:" << ui->treewidget->topLevelItemCount();
-    for(int i=0; i < ui->treewidget->topLevelItemCount(); i++)
-    {
-	qDebug() << "top level item:" << ui->treewidget->topLevelItem(i)->text(0);
-	qDebug() << "hives:" << hives.at(i);
-    }
-    //qDebug() << "selected toplevelitem:" << 
+    int rootindex = GetRootIndex(curitem);
+    hivefilepath = hives.at(rootindex);
     bool toplevel = false;
     QStringList pathitems;
     pathitems.clear();
@@ -559,7 +560,8 @@ void WombatRegistry::LoadRegistryFile(void)
     libregf_key_get_number_of_sub_keys(rootkey, &rootsubkeycnt, &regerr);
     libregf_error_fprint(regerr, stderr);
         QTreeWidgetItem* rootitem = new QTreeWidgetItem(ui->treewidget);
-    rootitem->setText(0, hivefilepath.split("/").last().toUpper());
+    rootitem->setText(0, hivefilepath.split("/").last().toUpper() + " (" + hivefilepath + ")");
+    //rootitem->setText(0, hivefilepath.split("/").last().toUpper());
     ui->treewidget->addTopLevelItem(rootitem);
     PopulateChildKeys(rootkey, rootitem, regerr);
     ui->treewidget->expandItem(rootitem);
