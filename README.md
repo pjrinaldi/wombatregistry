@@ -1,4 +1,4 @@
-# wombatregistry
+# Wombat Registry
 Stand Alone Version of the Registry Viewer found in Wombat Forensics
 
 I needed a free linux based registry viewer and report generator, so I decoupled the registry viewer from wombat forensics.
