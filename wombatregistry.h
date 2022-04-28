@@ -61,6 +61,7 @@ private:
     Ui::WombatRegistry* ui;
     QLabel* statuslabel;
     QString hivefilepath;
+    QString prevhivepath;
     QFile hivefile;
     void PopulateChildKeys(libregf_key_t* curkey, QTreeWidgetItem* curitem, libregf_error_t* curerr);
     QString DecryptRot13(QString encstr);

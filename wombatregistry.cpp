@@ -47,11 +47,14 @@ WombatRegistry::~WombatRegistry()
 
 void WombatRegistry::OpenHive()
 {
-    QFileDialog openhivedialog(this, tr("Open Registry Hive"), QDir::homePath());
+    if(prevhivepath.isEmpty())
+	prevhivepath = QDir::homePath();
+    QFileDialog openhivedialog(this, tr("Open Registry Hive"), prevhivepath);
     openhivedialog.setLabelText(QFileDialog::Accept, "Open");
     if(openhivedialog.exec())
     {
         hivefilepath = openhivedialog.selectedFiles().first();
+	prevhivepath = hivefilepath;
 	hives.append(hivefilepath);
         hivefile.setFileName(hivefilepath);
         if(!hivefile.isOpen())
