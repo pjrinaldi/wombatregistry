@@ -6,7 +6,7 @@
 AboutBox::AboutBox(QWidget* parent) : QDialog(parent), ui(new Ui::AboutBox)
 {
     ui->setupUi(this);
-    QString abouttext = "<h3>About Wombat Registry v0.2</h3>";
+    QString abouttext = "<h3>About Wombat Registry v0.3</h3>";
     abouttext += "<h5>License: GPLv2</h5>";
     abouttext += "<h4>Copyright 2022-2022 Pasquale J. Rinaldi, Jr.</h4>";
     abouttext += "<h5>Email: pjrinaldi@gmail.com</h5>";
