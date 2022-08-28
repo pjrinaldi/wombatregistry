@@ -452,6 +452,23 @@ void WombatRegistry::KeySelected(void)
     ui->tablewidget->clear();
     ui->plaintext->setPlainText("");
     ui->tablewidget->setRowCount(valuecount);
+    qDebug() << "value count:" << valuecount;
+    if(valuecount == 0) // no values, so create empty key
+    {
+        QString curtagvalue = keypath + "\\" + "(empty)";
+        ui->tablewidget->setHorizontalHeaderLabels({"Tag", "Value Name", "Value"});
+        ui->tablewidget->setItem(0, 1, new QTableWidgetItem("(empty)"));
+        ui->tablewidget->setItem(0, 2, new QTableWidgetItem("0x00"));
+	QString tagstr = "";
+        for(int j=0; j < taggeditems.count(); j++)
+        {
+            if(taggeditems.at(j).contains(curtagvalue))
+                tagstr = taggeditems.at(j).split("|", Qt::SkipEmptyParts).first();
+        }
+	ui->tablewidget->setItem(0, 0, new QTableWidgetItem(tagstr));
+        ui->tablewidget->resizeColumnToContents(0);
+        ui->tablewidget->setCurrentCell(0, 0);
+    }
     for(int i=0; i < valuecount; i++)
     {
 	libregf_value_t* curval = NULL;
