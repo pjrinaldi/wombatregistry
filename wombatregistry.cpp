@@ -1,7 +1,7 @@
 #include "wombatregistry.h"
 
 // Copyright 2013-2020 Pasquale J. Rinaldi, Jr.
-// Distrubuted under the terms of the GNU General Public License version 2
+// Distributed under the terms of the GNU General Public License version 2
 
 WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui::WombatRegistry)
 {
@@ -452,9 +452,9 @@ void WombatRegistry::KeySelected(void)
     ui->tablewidget->clear();
     ui->plaintext->setPlainText("");
     ui->tablewidget->setRowCount(valuecount);
-    qDebug() << "value count:" << valuecount;
     if(valuecount == 0) // no values, so create empty key
     {
+	ui->tablewidget->setRowCount(1);
         QString curtagvalue = keypath + "\\" + "(empty)";
         ui->tablewidget->setHorizontalHeaderLabels({"Tag", "Value Name", "Value"});
         ui->tablewidget->setItem(0, 1, new QTableWidgetItem("(empty)"));
