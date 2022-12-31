@@ -16,7 +16,7 @@ QString ReturnCssString(qint8 cssid)
     QString tdavalcss = "padding-left: 10px; padding-top: 2.5px; padding-right: 10px; padding-bottom: 2.5px; width:150px;";
     QString tdavalvtopcss = "padding-left: 10px; padding-top: 2.5px; padding-right: 10px; padding-bottom: 2.5px; width:150px; vertical-align: top;";
     QString tdsubheadcss = "background-color: #ad9f68; text-transform: uppercase; font-size: 12px; font-weight: bold; font-family: verdana, sans; padding: 5px 10px 5px 10px; border-bottom: 2px solid #3a291a;";
-    QString tdfitemcss = "padding-left: 10px; padding-top: 2.5px; padding-right: 10px; padding-bottom: 2.5px; width:150px; vertical-align: top;";
+    QString tdfitemcss = "padding-left: 10px; padding-top: 2.5px; padding-right: 10px; padding-bottom: 2.5px; width:150px; vertical-align: top; border-top: 1px solid black; border-bottom: 1px solid black;";
     QString troddvtopcss = "text-transform: uppercase; font-family: verdana, sans; font-size: 12px; text-align: left; background-color: #d6ceb5; vertical-align: top;";
     QString tdpvaluecss = "padding-left: 10px; padding-top: 2.5px; padding-right: 10px; padding-bottom: 2.5px; width:72px";
     QString tdpropcss = "padding-left: 10px; padding-top: 2.5px; padding-right: 10px; padding-bottom: 2.5px; width:188px";

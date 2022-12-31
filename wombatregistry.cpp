@@ -22,7 +22,6 @@ WombatRegistry::WombatRegistry(QWidget* parent) : QMainWindow(parent), ui(new Ui
     // initialize temp directory for html code...
     QDir tmpdir;
     tmpdir.mkpath(QDir::tempPath() + "/wr");
-    tmpdir.mkpath(QDir::tempPath() + "/wr/tagged");
     // initialize Preview Report HTML code
     prehtml = "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body style='" + ReturnCssString(0) + "'>\n";
     prehtml += "<div style='" + ReturnCssString(1) + "'><h1><span id='casename'>Registry Report</span></h1></div>\n";
@@ -83,10 +82,6 @@ void WombatRegistry::ManageTags()
 
 void WombatRegistry::UpdatePreviewLinks()
 {
-    // POSSIBLY REBUILD THE MAIN PAGE EVERY TIME, RATHER THAN FIND AND REPLACE...
-    QDir tmpdir(QDir::tempPath() + "/wr/tagged");
-    tmpdir.removeRecursively();
-    tmpdir.mkpath(QDir::tempPath() + "/wr/tagged");
     QString curcontent = "";
     curcontent += "<div id='toc'><h2>Contents</h2>";
     for(int i=0; i < tags.count(); i++)
@@ -96,28 +91,18 @@ void WombatRegistry::UpdatePreviewLinks()
     curcontent += "<h2>Tagged Items</h2>";
     for(int i=0; i < tags.count(); i++)
     {
-        curcontent += "<div id='t" + QString::number(i) + "'><h3>" + tags.at(i) + "</h3><br/><table><tr>";
+        curcontent += "<div id='t" + QString::number(i) + "'><h3>" + tags.at(i) + "</h3><br/><table>";
         for(int j=0; j < taggeditems.count(); j++)
         {
             if(taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(0) == tags.at(i))
             {
-                curcontent += "<td style='" + ReturnCssString(11) + "'><a href='" + QDir::tempPath() + "/wr/tagged/" + QString::number(i) + "-" + QString::number(j) + ".html'>" + taggeditems.at(j).split("|").at(1) + "</a></td>";
-                QString htmlvalue = "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body style='" + ReturnCssString(0) + "'>";
-                htmlvalue += "<div style='" + ReturnCssString(1) + "'>Registry Analysis</div><br/>";
-                htmlvalue += "<pre>";
-                htmlvalue += taggeditems.at(j).split("|").at(2).toUtf8();
-                htmlvalue + "</pre><body></html>";
-                QFile htmlfile(QDir::tempPath() + "/wr/tagged/" + QString::number(i) + "-" + QString::number(j) + ".html");
-                if(!htmlfile.isOpen())
-                    htmlfile.open(QIODevice::WriteOnly | QIODevice::Text);
-                if(htmlfile.isOpen())
-                {
-                    htmlfile.write(htmlvalue.toStdString().c_str());
-                    htmlfile.close();
-                }
+                curcontent += "<tr><td style='" + ReturnCssString(11) + "'>" + taggeditems.at(j).split("|").at(1);
+                curcontent += "<div><pre>";
+                curcontent += taggeditems.at(j).split("|").at(2).toUtf8();
+                curcontent += "</pre></div></td></tr>";
             }
         }
-        curcontent += "</tr></table></div><br/>\n";
+        curcontent += "</table></div><br/>\n";
     }
     reportstring = prehtml + curcontent + psthtml;
     QFile indxfile(QDir::tempPath() + "/wr/index.html");
@@ -144,19 +129,7 @@ void WombatRegistry::PublishReport()
     QString savepath = QFileDialog::getExistingDirectory(this, tr("Select Report Folder"), QDir::homePath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if(!savepath.isEmpty())
     {
-        // Make tagged path to store tagged registry files
-        QDir tmppath;
-        tmppath.mkpath(savepath + "/tagged/");
         QFile::copy(QDir::tempPath() + "/wr/index.html", savepath + "/index.html");
-        QDirIterator it(QString(QDir::tempPath() + "/wr/tagged"), QDirIterator::NoIteratorFlags);
-        while(it.hasNext())
-        {
-            QString curfile = it.next();
-            if(curfile.endsWith("html"))
-            {
-                QFile::copy(curfile, savepath + "/tagged/" + curfile.split("/").last());
-            }
-        }
     }
 }
 
@@ -332,13 +305,6 @@ void WombatRegistry::ValueSelected(void)
                         if(qFromLittleEndian<uint16_t>(valarray.mid(j*2, 2)) == 0x0000)
                             break;
                     }
-
-                    /*
-                        QString filename = "";
-                        for(int j=0; j < filenamelength; j++)
-                            filename += QString(QChar(qFromLittleEndian<uint16_t>(fnattrbuf.mid(66 + j*2, 2))));
-                     */
-
                 }
             }
             else if(valuetype.contains("REG_DWORD"))
