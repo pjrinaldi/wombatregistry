@@ -12,7 +12,7 @@ There is tag management if you like to create your tags ahead of time rather tha
 Plus it runs on linux and is open source and free.
 
 It is a pretty simple and straightforward tool.
-The libregf library is statically linked, so other than qt5, you shouldn't need any dependencies.
+The libregf library is dynamically linked, so you will have to build this library and ensure it is in your path first.
 
 Screenshot of the main window
 
