@@ -1,8 +1,8 @@
 #ifndef WOMBATREGISTRY_H
 #define WOMBATREGISTRY_H
 
-// Copyright 2022-2022 Pasquale J. Rinaldi, Jr.
-// Distrubted under the terms of the GNU General Public License version 2
+// Copyright 2022-2023 Pasquale J. Rinaldi, Jr.
+// Distributed under the terms of the GNU General Public License version 2
 
 #include <QDebug>
 #include <QFileDialog>

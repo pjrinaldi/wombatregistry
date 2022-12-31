@@ -1,6 +1,6 @@
 #include "cssstrings.h"
 
-// Copyright 2013-2021 Pasquale J. Rinaldi, Jr.
+// Copyright 2013-2023 Pasquale J. Rinaldi, Jr.
 // Distributed under the terms of the GNU General Public License version 2
 
 QString ReturnCssString(qint8 cssid)
