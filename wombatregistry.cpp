@@ -318,6 +318,28 @@ void WombatRegistry::ValueSelected(void)
                     QByteArray valarray = QByteArray::fromRawData((char*)data, datasize);
                     valuedata += "Shutdown Time:\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(valarray)) + " UTC";
                 }
+                else if(keypath.contains("RecentDocs") && !ui->tablewidget->selectedItems().at(1)->text().startsWith("MRUListEx"))
+                {
+                    size_t datasize = 0;
+                    libregf_value_get_value_data_size(curval, &datasize, &regerr);
+                    uint8_t data[datasize];
+                    libregf_value_get_value_data(curval, data, datasize, &regerr);
+                    QByteArray valarray = QByteArray::fromRawData((char*)data, datasize);
+                    valuedata += "Name:\t";
+                    for(int j=0; j < valarray.count(); j++)
+                    {
+                        valuedata += QString(QChar(qFromLittleEndian<uint16_t>(valarray.mid(j*2, 2))));
+                        if(qFromLittleEndian<uint16_t>(valarray.mid(j*2, 2)) == 0x0000)
+                            break;
+                    }
+
+                    /*
+                        QString filename = "";
+                        for(int j=0; j < filenamelength; j++)
+                            filename += QString(QChar(qFromLittleEndian<uint16_t>(fnattrbuf.mid(66 + j*2, 2))));
+                     */
+
+                }
             }
             else if(valuetype.contains("REG_DWORD"))
             {

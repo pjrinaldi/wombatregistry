@@ -10,8 +10,7 @@ SOURCES = main.cpp wombatregistry.cpp tagmanager.cpp htmlviewer.cpp aboutbox.cpp
 RESOURCES += wombatregistry.qrc
 release: DESTDIR = release
 debug:   DESTDIR = debug
-linux:LIBS = libregf.a
-
+linux:LIBS = -lregf
 if(!debug_and_release|build_pass):CONFIG(debug, debug|release) {
 }
 #linux:
