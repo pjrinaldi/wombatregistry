@@ -371,25 +371,42 @@ void WombatRegistry::ValueSelected(void)
         libregf_value_get_value_data(curval, data, datasize, &regerr);
         QByteArray dataarray = QByteArray::fromRawData((char*)data, datasize);
         valuedata += "\n\nBinary Content\n--------------\n\n";
-        int linecount = datasize / 16;
-        //int remainder = datasize % 16;
-        for(int i=0; i < linecount; i++)
+        if(datasize < 16)
         {
-            valuedata += QString::number(i * 16, 16).rightJustified(8, '0') + "\t";
-            for(int j=0; j < 16; j++)
+            valuedata += QString::number(0, 16).rightJustified(8, '0') + "\t";
+            for(int i=0; i < datasize; i++)
+                valuedata += QString("%1").arg(data[i], 2, 16, QChar('0')).toUpper() + " ";
+            for(int i=0; i < datasize; i++)
             {
-                valuedata += QString("%1").arg(data[j+i*16], 2, 16, QChar('0')).toUpper() + " ";
-            }
-            for(int j=0; j < 16; j++)
-            {
-                if(!QChar(dataarray.at(j+i*16)).isPrint())
-                {
+                if(!QChar(dataarray.at(i)).isPrint())
                     valuedata += ".";
-                }
                 else
-                    valuedata += QString("%1").arg(dataarray.at(j+i*16));
+                    valuedata += QString("%1").arg(dataarray.at(i));
             }
             valuedata += "\n";
+        }
+        else
+        {
+            int linecount = datasize / 16;
+            //int remainder = datasize % 16;
+            for(int i=0; i < linecount; i++)
+            {
+                valuedata += QString::number(i * 16, 16).rightJustified(8, '0') + "\t";
+                for(int j=0; j < 16; j++)
+                {
+                    valuedata += QString("%1").arg(data[j+i*16], 2, 16, QChar('0')).toUpper() + " ";
+                }
+                for(int j=0; j < 16; j++)
+                {
+                    if(!QChar(dataarray.at(j+i*16)).isPrint())
+                    {
+                        valuedata += ".";
+                    }
+                    else
+                        valuedata += QString("%1").arg(dataarray.at(j+i*16));
+                }
+                valuedata += "\n";
+            }
         }
 	ui->plaintext->setPlainText(valuedata);
 
