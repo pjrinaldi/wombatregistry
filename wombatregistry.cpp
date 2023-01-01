@@ -291,19 +291,34 @@ void WombatRegistry::ValueSelected(void)
                     QByteArray valarray = QByteArray::fromRawData((char*)data, datasize);
                     valuedata += "Shutdown Time:\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(valarray)) + " UTC";
                 }
-                else if(keypath.contains("RecentDocs") && !ui->tablewidget->selectedItems().at(1)->text().startsWith("MRUListEx"))
+                else if(keypath.contains("RecentDocs"))
                 {
                     size_t datasize = 0;
                     libregf_value_get_value_data_size(curval, &datasize, &regerr);
                     uint8_t data[datasize];
                     libregf_value_get_value_data(curval, data, datasize, &regerr);
                     QByteArray valarray = QByteArray::fromRawData((char*)data, datasize);
-                    valuedata += "Name:\t";
-                    for(int j=0; j < valarray.count(); j++)
+                    if(ui->tablewidget->selectedItems().at(1)->text().startsWith("MRUListEx"))
                     {
-                        valuedata += QString(QChar(qFromLittleEndian<uint16_t>(valarray.mid(j*2, 2))));
-                        if(qFromLittleEndian<uint16_t>(valarray.mid(j*2, 2)) == 0x0000)
-                            break;
+                        valuedata += "Order:\t[";
+                        for(int j=0; j < valarray.count() / 4; j++)
+                        {
+                            if(qFromLittleEndian<uint32_t>(valarray.mid(j*4, 4)) < 0xFFFF)
+                                valuedata += QString::number(qFromLittleEndian<uint32_t>(valarray.mid(j*4, 4)));
+                            if(j < ((valarray.count() / 4) - 2))
+                                valuedata += ", ";
+                        }
+                        valuedata += "]";
+                    }
+                    else
+                    {
+                        valuedata += "Name:\t";
+                        for(int j=0; j < valarray.count(); j++)
+                        {
+                            valuedata += QString(QChar(qFromLittleEndian<uint16_t>(valarray.mid(j*2, 2))));
+                            if(qFromLittleEndian<uint16_t>(valarray.mid(j*2, 2)) == 0x0000)
+                                break;
+                        }
                     }
                 }
             }
