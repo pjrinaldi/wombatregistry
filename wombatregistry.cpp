@@ -420,10 +420,17 @@ void WombatRegistry::ValueSelected(void)
 
 int WombatRegistry::GetRootIndex(QTreeWidgetItem* curitem)
 {
+    if(curitem->parent() == NULL)
+        return ui->treewidget->indexOfTopLevelItem(curitem);
+    else
+        GetRootIndex(curitem->parent());
+    /*
+    qDebug() << "curitem:" << curitem->text(0) << "topleveitemindex:" << ui->treewidget->indexOfTopLevelItem(curitem);
     if(ui->treewidget->indexOfTopLevelItem(curitem) == -1)
 	GetRootIndex(curitem->parent());
     else
 	return ui->treewidget->indexOfTopLevelItem(curitem);
+    */
 }
 
 void WombatRegistry::KeySelected(void)
