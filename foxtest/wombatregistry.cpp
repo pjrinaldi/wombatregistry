@@ -9,6 +9,7 @@
 #include "/usr/local/include/fox-1.7/fx.h"
 #include "libregf.h"
 #include "folder-open.h"
+#include "managetags.h"
 
 class WombatRegistry : public FXMainWindow
 {
@@ -25,6 +26,8 @@ class WombatRegistry : public FXMainWindow
         FXTreeItem* rootitem;
 	FXIcon* openicon;
         FXButton* openbutton;
+	FXIcon* managetagsicon;
+	FXButton* managetagsbutton;
         FXStatusBar* statusbar;
         std::string prevhivepath;
         std::string hivefilepath;
@@ -43,6 +46,7 @@ class WombatRegistry : public FXMainWindow
             ID_TREELIST = 1,
             ID_OPEN = 100,
             ID_TREESELECT = 101,
+	    ID_MANAGETAGS = 102,
             ID_LAST
         };
         WombatRegistry(FXApp* a);
@@ -74,6 +78,8 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     plaintext = new FXText(hsplitter);
     openicon = new FXPNGIcon(this->getApp(), folderopen);
     openbutton = new FXButton(toolbar, "", openicon, this, ID_OPEN, BUTTON_TOOLBAR);
+    managetagsicon = new FXPNGIcon(this->getApp(), managetags);
+    managetagsbutton = new FXButton(toolbar, "", managetagsicon, this, ID_MANAGETAGS, BUTTON_TOOLBAR);
     statusbar->getStatusLine()->setNormalText("Open a Hive File to Begin");
 
     //rootitem = treelist->getFirstItem();
