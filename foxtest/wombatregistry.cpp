@@ -1,5 +1,11 @@
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
+#include <unistd.h>
+#include <vector>
+#include <string.h>
+#include <filesystem>
+#include <byteswap.h>
 #include "/usr/local/include/fox-1.7/fx.h"
 #include "folder-open.h"
 
@@ -18,6 +24,12 @@ class WombatRegistry : public FXMainWindow
         FXTreeItem* rootitem;
 	FXIcon* openicon;
         FXButton* openbutton;
+        FXStatusBar* statusbar;
+        std::string prevhivepath;
+        std::string hivefilepath;
+        std::vector<std::filesystem::path> hives;
+        std::ifstream* filebufptr;
+        //std::vector<std::string> hives;
 
     protected:
         WombatRegistry() {}
@@ -29,12 +41,11 @@ class WombatRegistry : public FXMainWindow
         {
             ID_TREELIST = 1,
             ID_OPEN,
-            //ID_CANVAS = FXMainWindow::ID_LAST,
-            //ID_CLEAR,
             ID_LAST
         };
         WombatRegistry(FXApp* a);
         long onMouseDown(FXObject*, FXSelector, void*);
+        long OpenHive(FXObject*, FXSelector, void*);
         virtual void create();
 
 };
@@ -93,6 +104,7 @@ FXIMPLEMENT(ScribbleWindow,FXMainWindow,ScribbleWindowMap,ARRAYNUMBER(ScribbleWi
 FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_CHANGED, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
     FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
+    FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_OPEN, WombatRegistry::OpenHive),
     //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_CANVAS, WombatRegistry::onMouseDown),
 };
 
@@ -103,15 +115,13 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     mainframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
     toolbar = new FXToolBar(mainframe, this, LAYOUT_TOP|LAYOUT_LEFT);
     vsplitter = new FXSplitter(mainframe, SPLITTER_NORMAL|LAYOUT_FILL);
+    statusbar = new FXStatusBar(mainframe, LAYOUT_BOTTOM|LAYOUT_LEFT|LAYOUT_FILL_X);
     treelist = new FXTreeList(vsplitter, this, ID_TREELIST, TREELIST_SHOWS_LINES|TREELIST_SINGLESELECT|TREELIST_ROOT_BOXES|TREELIST_SHOWS_BOXES);
     hsplitter = new FXSplitter(vsplitter, SPLITTER_VERTICAL);
     tablelist = new FXTable(hsplitter);
     plaintext = new FXText(hsplitter);
     openicon = new FXPNGIcon(this->getApp(), folderopen);
     openbutton = new FXButton(toolbar, "Open", openicon, this, ID_OPEN, BUTTON_NORMAL);
-    //toolbar->setHeight(150);
-    //toolbar->layout();
-    //openbutton = new FXButton(toolbar, "Open", NULL, this, 0, BUTTON_TOOLBAR);
 
     //rootitem = treelist->getFirstItem();
     rootitem = new FXTreeItem("Root Item");
@@ -122,9 +132,26 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     //treelist->makeItemVisible(rootitem);
     //treelist->appendItem(0, mainitem);
     //treelist->appendItem(mainitem, new FXTreeItem("Test 2"));
+    hives.clear();
 
 
 }
+
+
+/*
+void ReadContent(std::ifstream* rawcontent, int8_t* tmpbuf, uint64_t offset, uint64_t size)
+{
+    rawcontent->seekg(offset);
+    rawcontent->read((char*)tmpbuf, size);
+}
+
+void ReturnUint32(uint32_t* tmp32, uint8_t* tmp8)
+{
+    *tmp32 = (uint32_t)tmp8[0] | (uint32_t)tmp8[1] << 8 | (uint32_t)tmp8[2] << 16 | (uint32_t)tmp8[3] << 24;
+}
+ */
+
+
 
 /*
 // Construct a ScribbleWindow
@@ -183,6 +210,48 @@ long WombatRegistry::onMouseDown(FXObject*, FXSelector, void*)
     printf("hello there.");
     return 1;
 }
+
+long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
+{
+    FXString filename = FXFileDialog::getOpenFilename(this, "Open Hive", "~");
+    hivefilepath = filename.text();
+    prevhivepath = hivefilepath;
+    hives.push_back(std::filesystem::canonical(hivefilepath));
+    std::ifstream filebuffer(hivefilepath.c_str(), std::ios::in|std::ios::binary);
+    filebufptr = &filebuffer;
+    filebufptr->seekg(0);
+    char* registryheader = new char[4];
+    filebufptr->read(registryheader, 4);
+    std::string regheadstr(registryheader);
+    delete[] registryheader;
+    //else if(hfssigstr.find("H+") != std::string::npos) // HFS+
+    if(regheadstr.find("regf") != std::string::npos) // win nt reg file
+    {
+        std::cout << "it's a registry file, begin parsing..." << std::endl;
+    }
+    else
+        std::cout << "check failed..." << std::endl;
+    filebuffer.close();
+    /*
+        hivefile.setFileName(hivefilepath);
+        if(!hivefile.isOpen())
+            hivefile.open(QIODevice::ReadOnly);
+        if(hivefile.isOpen())
+        {
+            hivefile.seek(0);
+            uint32_t hiveheader = qFromBigEndian<uint32_t>(hivefile.read(4));
+            if(hiveheader == 0x72656766) // valid "regf" header
+            {
+                LoadRegistryFile();
+                StatusUpdate("Hive: " + openhivedialog.selectedFiles().first() + " successfully opened.");
+            }
+	    hivefile.close();
+        }
+     */ 
+    //std::cout << "file name selected:" << filename.text() << std::endl;
+    return 1;
+}
+
 /*
 // Create and initialize
   void ScribbleWindow::create(){
