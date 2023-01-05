@@ -16,9 +16,12 @@ ManageTags::ManageTags(FXWindow* parent, const FXString& title):FXDialogBox(pare
     mainlabel = new FXLabel(mainframe, "Case Tags");
     taglist = new FXList(mainframe, this, ID_LISTSELECT, LIST_SINGLESELECT|LAYOUT_FILL_X|LAYOUT_FILL_Y);
     buttonframe = new FXHorizontalFrame(mainframe, LAYOUT_BOTTOM|LAYOUT_FILL_X);
-    newbutton = new FXButton(buttonframe, "New Tag", NULL, this, ID_NEWTAG);
-    editbutton = new FXButton(buttonframe, "Modify Tag", NULL, this, ID_EDITTAG);
-    rembutton = new FXButton(buttonframe, "Remove Tag", NULL, this, ID_REMTAG);
+    newicon = new FXPNGIcon(this->getApp(), bookmarknew);
+    newbutton = new FXButton(buttonframe, "New Tag", newicon, this, ID_NEWTAG);
+    editicon = new FXPNGIcon(this->getApp(), bookmark);
+    editbutton = new FXButton(buttonframe, "Modify Tag", editicon, this, ID_EDITTAG);
+    remicon = new FXPNGIcon(this->getApp(), bookmarkrem);
+    rembutton = new FXButton(buttonframe, "Remove Tag", remicon, this, ID_REMTAG);
     /*
     mainframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
     toolbar = new FXToolBar(mainframe, this, LAYOUT_TOP|LAYOUT_LEFT);

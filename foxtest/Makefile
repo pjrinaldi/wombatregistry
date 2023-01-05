@@ -1,6 +1,6 @@
 OBJECTS = icons.o wombatregistry.o managetags.o
 
-ICONS = resources/folder-open.png resources/help-contents.png resources/managetags.png resources/paperairplane2.png resources/reportpreview1.png resources/wombat_32.ico
+ICONS = resources/folder-open.png resources/help-contents.png resources/managetags.png resources/paperairplane2.png resources/reportpreview1.png resources/wombat_32.ico resources/bookmark.png resources/bookmark-new.png resources/bookmark-rem.png
 
 # Generate header file and source file containing declarations and data arrays
 icons: $(ICONS) icons.h

@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "icons.h"
+
 #include "/usr/local/include/fox-1.7/fx.h"
 
 class ManageTags : public FXDialogBox
