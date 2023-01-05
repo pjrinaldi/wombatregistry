@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <byteswap.h>
 #include "/usr/local/include/fox-1.7/fx.h"
+#include "libregf.h"
 #include "folder-open.h"
 
 class WombatRegistry : public FXMainWindow
@@ -44,15 +45,16 @@ class WombatRegistry : public FXMainWindow
             ID_LAST
         };
         WombatRegistry(FXApp* a);
-        long onMouseDown(FXObject*, FXSelector, void*);
+        //long onMouseDown(FXObject*, FXSelector, void*);
         long OpenHive(FXObject*, FXSelector, void*);
+        long KeySelected(FXObject*, FXSelector, void*);
         virtual void create();
 
 };
 
 FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
-    FXMAPFUNC(SEL_CHANGED, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
-    FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
+    FXMAPFUNC(SEL_CHANGED, WombatRegistry::ID_TREELIST, WombatRegistry::KeySelected),
+    //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_OPEN, WombatRegistry::OpenHive),
     //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_CANVAS, WombatRegistry::onMouseDown),
 };
@@ -74,11 +76,15 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     statusbar->getStatusLine()->setNormalText("Open a Hive File to Begin");
 
     //rootitem = treelist->getFirstItem();
-    rootitem = new FXTreeItem("Root Item");
+
+    //rootitem = new FXTreeItem("Root Item");
+
     //std::cout << "firstitem:" << rootitem;
     //FXTreeItem* mainitem = new FXTreeItem("Root Item");
     //treelist->setAnchorItem(rootitem);
-    treelist->appendItem(0, rootitem);
+
+    //treelist->appendItem(0, rootitem);
+
     //treelist->makeItemVisible(rootitem);
     //treelist->appendItem(0, mainitem);
     //treelist->appendItem(mainitem, new FXTreeItem("Test 2"));
@@ -154,34 +160,93 @@ void WombatRegistry::create()
     show();
 }
 
+/*
 long WombatRegistry::onMouseDown(FXObject*, FXSelector, void*)
 {
     std::cout << "mouse down pressed." << std::endl;
     printf("hello there.");
     return 1;
 }
+*/
+
+long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
+{
+    treelist->setCurrentItem(rootitem);
+    return 0;
+}
 
 long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
 {
-    FXString filename = FXFileDialog::getOpenFilename(this, "Open Hive", "~");
-    hivefilepath = filename.text();
-    prevhivepath = hivefilepath;
-    hives.push_back(std::filesystem::canonical(hivefilepath));
-    std::ifstream filebuffer(hivefilepath.c_str(), std::ios::in|std::ios::binary);
-    filebufptr = &filebuffer;
-    filebufptr->seekg(0);
-    char* registryheader = new char[4];
-    filebufptr->read(registryheader, 4);
-    std::string regheadstr(registryheader);
-    delete[] registryheader;
-    //else if(hfssigstr.find("H+") != std::string::npos) // HFS+
-    if(regheadstr.find("regf") != std::string::npos) // win nt reg file
+    if(prevhivepath.empty())
+        prevhivepath = getenv("HOME");
+    //if(prevhivepath.isEmpty())
+    //	prevhivepath = QDir::homePath();
+    FXString filename = FXFileDialog::getOpenFilename(this, "Open Hive", prevhivepath.c_str());
+    if(!filename.empty())
     {
-        std::cout << "it's a registry file, begin parsing..." << std::endl;
+        hivefilepath = filename.text();
+        prevhivepath = hivefilepath;
+        hives.push_back(std::filesystem::canonical(hivefilepath));
+        std::ifstream filebuffer(hivefilepath.c_str(), std::ios::in|std::ios::binary);
+        filebufptr = &filebuffer;
+        filebufptr->seekg(0);
+        char* registryheader = new char[4];
+        filebufptr->read(registryheader, 4);
+        std::string regheadstr(registryheader);
+        delete[] registryheader;
+        //else if(hfssigstr.find("H+") != std::string::npos) // HFS+
+        if(regheadstr.find("regf") != std::string::npos) // win nt reg file
+        {
+            //std::cout << "it's a registry file, begin parsing..." << std::endl;
+            filebuffer.close();
+            libregf_file_t* regfile = NULL;
+            libregf_error_t* regerr = NULL;
+            libregf_file_initialize(&regfile, &regerr);
+            libregf_file_open(regfile, hivefilepath.c_str(), LIBREGF_OPEN_READ, &regerr);
+            libregf_error_fprint(regerr, stderr);
+            libregf_key_t* rootkey = NULL;
+            libregf_file_get_root_key(regfile, &rootkey, &regerr);
+            libregf_error_fprint(regerr, stderr);
+            int rootsubkeycnt = 0;
+            libregf_key_get_number_of_sub_keys(rootkey, &rootsubkeycnt, &regerr);
+            libregf_error_fprint(regerr, stderr);
+            std::size_t rfound = hivefilepath.rfind("/");
+            std::string hivefilename = hivefilepath.substr(rfound+1);
+            FXString rootitemstring(std::string(hivefilename + " (" + hivefilepath + ")").c_str());
+            FXTreeItem* rootitem = new FXTreeItem(rootitemstring);
+            treelist->appendItem(0, rootitem);
+        }
+        else
+            std::cout << "check failed..." << std::endl;
     }
-    else
-        std::cout << "check failed..." << std::endl;
-    filebuffer.close();
+    /*
+        std::size_t lfound = fileinfovector.at(i).find("|");
+        filename = fileinfovector.at(i).substr(0, lfound);
+	std::size_t rfound = fileinfovector.at(i).rfind("|");
+        mntptstr = fileinfovector.at(i).substr(lfound+1, rfound - lfound-1);
+	devicestr = fileinfovector.at(i).substr(rfound+1);
+
+    QTreeWidgetItem* rootitem = new QTreeWidgetItem(ui->treewidget);
+    rootitem->setText(0, hivefilepath.split("/").last().toUpper() + " (" + hivefilepath + ")");
+    //rootitem->setText(0, hivefilepath.split("/").last().toUpper());
+    ui->treewidget->addTopLevelItem(rootitem);
+    PopulateChildKeys(rootkey, rootitem, regerr);
+    ui->treewidget->expandItem(rootitem);
+    libregf_key_free(&rootkey, &regerr);
+    libregf_file_close(regfile, &regerr);
+    libregf_file_free(&regfile, &regerr);
+    libregf_error_free(&regerr);
+     */ 
+    //rootitem = treelist->getFirstItem();
+
+    //rootitem = new FXTreeItem("Root Item");
+
+    //std::cout << "firstitem:" << rootitem;
+    //FXTreeItem* mainitem = new FXTreeItem("Root Item");
+    //treelist->setAnchorItem(rootitem);
+
+    //treelist->appendItem(0, rootitem);
+
     /*
         hivefile.setFileName(hivefilepath);
         if(!hivefile.isOpen())

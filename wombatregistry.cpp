@@ -606,7 +606,7 @@ void WombatRegistry::LoadRegistryFile(void)
     int rootsubkeycnt = 0;
     libregf_key_get_number_of_sub_keys(rootkey, &rootsubkeycnt, &regerr);
     libregf_error_fprint(regerr, stderr);
-        QTreeWidgetItem* rootitem = new QTreeWidgetItem(ui->treewidget);
+    QTreeWidgetItem* rootitem = new QTreeWidgetItem(ui->treewidget);
     rootitem->setText(0, hivefilepath.split("/").last().toUpper() + " (" + hivefilepath + ")");
     //rootitem->setText(0, hivefilepath.split("/").last().toUpper());
     ui->treewidget->addTopLevelItem(rootitem);
