@@ -8,8 +8,9 @@
 #include <byteswap.h>
 #include "/usr/local/include/fox-1.7/fx.h"
 #include "libregf.h"
-#include "folder-open.h"
-#include "managetags.h"
+#include "icons.h"
+//#include "folder-open.h"
+//#include "managetags.h"
 
 class WombatRegistry : public FXMainWindow
 {
@@ -28,6 +29,12 @@ class WombatRegistry : public FXMainWindow
         FXButton* openbutton;
 	FXIcon* managetagsicon;
 	FXButton* managetagsbutton;
+	FXIcon* previewicon;
+	FXButton* previewbutton;
+	FXIcon* publishicon;
+	FXButton* publishbutton;
+	FXIcon* abouticon;
+	FXButton* aboutbutton;
         FXStatusBar* statusbar;
         std::string prevhivepath;
         std::string hivefilepath;
@@ -47,6 +54,9 @@ class WombatRegistry : public FXMainWindow
             ID_OPEN = 100,
             ID_TREESELECT = 101,
 	    ID_MANAGETAGS = 102,
+	    ID_PREVIEW = 103,
+	    ID_PUBLISH = 104,
+	    ID_ABOUT = 105,
             ID_LAST
         };
         WombatRegistry(FXApp* a);
@@ -66,7 +76,7 @@ FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
 
 FXIMPLEMENT(WombatRegistry,FXMainWindow,WombatRegistryMap,ARRAYNUMBER(WombatRegistryMap))
 
-WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forensics", NULL, NULL, DECOR_ALL, 0, 0, 1024, 768)
+WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forensics", new FXICOIcon(a, wombat_32), new FXICOIcon(a, wombat_32), DECOR_ALL, 0, 0, 1024, 768)
 {
     mainframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
     toolbar = new FXToolBar(mainframe, this, LAYOUT_TOP|LAYOUT_LEFT);
@@ -80,6 +90,12 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     openbutton = new FXButton(toolbar, "", openicon, this, ID_OPEN, BUTTON_TOOLBAR);
     managetagsicon = new FXPNGIcon(this->getApp(), managetags);
     managetagsbutton = new FXButton(toolbar, "", managetagsicon, this, ID_MANAGETAGS, BUTTON_TOOLBAR);
+    previewicon = new FXPNGIcon(this->getApp(), reportpreview1);
+    previewbutton = new FXButton(toolbar, "", previewicon, this, ID_PREVIEW, BUTTON_TOOLBAR);
+    publishicon = new FXPNGIcon(this->getApp(), paperairplane2);
+    publishbutton = new FXButton(toolbar, "", publishicon, this, ID_PUBLISH, BUTTON_TOOLBAR);
+    abouticon = new FXPNGIcon(this->getApp(), helpcontents);
+    aboutbutton = new FXButton(toolbar, "", abouticon, this, ID_ABOUT, BUTTON_TOOLBAR);
     statusbar->getStatusLine()->setNormalText("Open a Hive File to Begin");
 
     //rootitem = treelist->getFirstItem();
