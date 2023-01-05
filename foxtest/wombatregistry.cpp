@@ -41,8 +41,8 @@ class WombatRegistry : public FXMainWindow
         enum
         {
             ID_TREELIST = 1,
-            ID_TREESELECT,
-            ID_OPEN,
+            ID_OPEN = 100,
+            ID_TREESELECT = 101,
             ID_LAST
         };
         WombatRegistry(FXApp* a);
@@ -73,7 +73,7 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     tablelist = new FXTable(hsplitter);
     plaintext = new FXText(hsplitter);
     openicon = new FXPNGIcon(this->getApp(), folderopen);
-    openbutton = new FXButton(toolbar, "Open", openicon, this, ID_OPEN, BUTTON_NORMAL);
+    openbutton = new FXButton(toolbar, "", openicon, this, ID_OPEN, BUTTON_TOOLBAR);
     statusbar->getStatusLine()->setNormalText("Open a Hive File to Begin");
 
     //rootitem = treelist->getFirstItem();
