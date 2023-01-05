@@ -29,8 +29,8 @@ class WombatRegistry : public FXMainWindow
         std::string hivefilepath;
         std::vector<std::filesystem::path> hives;
         std::ifstream* filebufptr;
-        //std::vector<std::string> hives;
 
+        //__builtin_bswapX
     protected:
         WombatRegistry() {}
 
@@ -49,57 +49,6 @@ class WombatRegistry : public FXMainWindow
         virtual void create();
 
 };
-
-/*
-class ScribbleWindow : public FXMainWindow
-{
-    FXDECLARE(ScribbleWindow)
-    private:
-    FXHorizontalFrame *contents;     // Content frame
-    FXVerticalFrame   *buttonFrame;  // Button frame
-    FXVerticalFrame   *canvasFrame;                                 // 
-    FXCanvas          *canvas;       // Canvas to draw into
-    int                mdflag;       // Mouse button down?
-    int                dirty;        // Canvas has been painted?
-    FXColor            drawColor;    // Color for the line
-
-    protected:
-        ScribbleWindow() {}
-
-        long onSomeCommand(FXObject* sender, FXSelector sel, void* ptr);
-
-    public:
-        long onPaint(FXObject*,FXSelector,void*);
-        long onMouseDown(FXObject*,FXSelector,void*);
-        long onMouseUp(FXObject*,FXSelector,void*);
-        long onMouseMove(FXObject*,FXSelector,void*);
-        long onCmdClear(FXObject*,FXSelector,void*);
-        long onUpdClear(FXObject*,FXSelector,void*);
-
-    public:
-    enum{
-      ID_CANVAS=FXMainWindow::ID_LAST,
-      ID_CLEAR,
-      ID_LAST
-    };
-
-    public:
-    ScribbleWindow(FXApp* a);
-    virtual void create();
-};
-
-FXDEFMAP(ScribbleWindow) ScribbleWindowMap[]={
-    //________Message_Type_____________________ID_______________Message_Handler_______
-    FXMAPFUNC(SEL_PAINT,            ScribbleWindow::ID_CANVAS,ScribbleWindow::onPaint),
-    FXMAPFUNC(SEL_LEFTBUTTONPRESS,  ScribbleWindow::ID_CANVAS,ScribbleWindow::onMouseDown),
-    FXMAPFUNC(SEL_LEFTBUTTONRELEASE,ScribbleWindow::ID_CANVAS,ScribbleWindow::onMouseUp),
-    FXMAPFUNC(SEL_MOTION,           ScribbleWindow::ID_CANVAS,ScribbleWindow::onMouseMove),
-    FXMAPFUNC(SEL_COMMAND,          ScribbleWindow::ID_CLEAR, ScribbleWindow::onCmdClear),
-    FXMAPFUNC(SEL_UPDATE,           ScribbleWindow::ID_CLEAR, ScribbleWindow::onUpdClear),
-    };
-
-FXIMPLEMENT(ScribbleWindow,FXMainWindow,ScribbleWindowMap,ARRAYNUMBER(ScribbleWindowMap))
-*/
 
 FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_CHANGED, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
@@ -122,6 +71,7 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     plaintext = new FXText(hsplitter);
     openicon = new FXPNGIcon(this->getApp(), folderopen);
     openbutton = new FXButton(toolbar, "Open", openicon, this, ID_OPEN, BUTTON_NORMAL);
+    statusbar->getStatusLine()->setNormalText("Open a Hive File to Begin");
 
     //rootitem = treelist->getFirstItem();
     rootitem = new FXTreeItem("Root Item");
