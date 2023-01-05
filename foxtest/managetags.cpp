@@ -2,7 +2,7 @@
 
 FXIMPLEMENT(ManageTags,FXDialogBox,ManageTagsMap,ARRAYNUMBER(ManageTagsMap))
 
-ManageTags::ManageTags(FXWindow* parent, const FXString& title):FXDialogBox(parent, title, DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE|DECOR_CLOSE, 0, 0, 0, 0, 0,0,0,0, 4, 4)
+ManageTags::ManageTags(FXWindow* parent, const FXString& title):FXDialogBox(parent, title, DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE|DECOR_CLOSE, 0, 0, 320, 260, 0,0,0,0, 4, 4)
 {
     /*
         FXVerticalFrame* mainframe;
@@ -54,4 +54,41 @@ ManageTags::ManageTags(FXWindow* parent, const FXString& title):FXDialogBox(pare
     //treelist->appendItem(0, mainitem);
     //treelist->appendItem(mainitem, new FXTreeItem("Test 2"));
     */
+}
+
+void ManageTags::SetTagList(std::vector<std::string>* tagslist)
+{
+    tags = tagslist;
+    /*
+    if(tags != NULL)
+        UpdateList();
+    */
+}
+
+long ManageTags::AddTag(FXObject*, FXSelector, void*)
+{
+    FXString tagstr = "";
+    bool isset = FXInputDialog::getString(tagstr, this, "Enter Tag Name", "New Tag");
+    if(isset)
+    {
+        FXListItem* tmpitem = new FXListItem(tagstr);
+        taglist->appendItem(tmpitem);
+        tags->push_back(tagstr.text());
+    }
+    return 1;
+}
+
+long ManageTags::ModifyTag(FXObject*, FXSelector, void*)
+{
+    return 1;
+}
+
+long ManageTags::RemoveTag(FXObject*, FXSelector, void*)
+{
+    return 1;
+}
+
+long ManageTags::ListSelection(FXObject*, FXSelector, void*)
+{
+    return 1;
 }

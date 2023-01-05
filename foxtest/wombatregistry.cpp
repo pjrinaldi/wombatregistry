@@ -38,6 +38,7 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     //treelist->appendItem(0, mainitem);
     //treelist->appendItem(mainitem, new FXTreeItem("Test 2"));
     hives.clear();
+    tags.clear();
 
 
 }
@@ -106,7 +107,7 @@ void ReturnUint32(uint32_t* tmp32, uint8_t* tmp8)
 void WombatRegistry::create()
 {
     FXMainWindow::create();
-    show();
+    show(PLACEMENT_SCREEN);
 }
 
 /*
@@ -127,7 +128,10 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 long WombatRegistry::OpenTagManager(FXObject*, FXSelector, void*)
 {
     ManageTags tagmanager(this, "Manage Tags");
-    tagmanager.execute(PLACEMENT_DEFAULT);
+    tagmanager.SetTagList(&tags);
+    //tagmanager.setX(getX()+80);
+    //tagmanager.setY(getY()+80);
+    tagmanager.execute(PLACEMENT_OWNER);
     return 1;
 }
 

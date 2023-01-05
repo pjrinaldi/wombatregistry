@@ -1,6 +1,10 @@
 #ifndef MANAGETAGS_H
 #define MANAGETAGS_H
 
+#include <stdio.h>
+#include <string>
+#include <vector>
+
 #include "/usr/local/include/fox-1.7/fx.h"
 
 class ManageTags : public FXDialogBox
@@ -19,6 +23,8 @@ class ManageTags : public FXDialogBox
         FXButton* editbutton;
         FXButton* rembutton;
 
+        std::vector<std::string>* tags = NULL;
+
     protected:
         ManageTags() {}
 
@@ -35,12 +41,21 @@ class ManageTags : public FXDialogBox
             ID_LAST
         };
         ManageTags(FXWindow* parent, const FXString& title);
+        void SetTagList(std::vector<std::string>* tagslist);
         //long OpenHive(FXObject*, FXSelector, void*);
         //long KeySelected(FXObject*, FXSelector, void*);
+        long AddTag(FXObject*, FXSelector, void*);
+        long ModifyTag(FXObject*, FXSelector, void*);
+        long RemoveTag(FXObject*, FXSelector, void*);
+        long ListSelection(FXObject*, FXSelector, void*);
 
 };
 
 FXDEFMAP(ManageTags) ManageTagsMap[]={
+    FXMAPFUNC(SEL_COMMAND, ManageTags::ID_NEWTAG, ManageTags::AddTag),
+    FXMAPFUNC(SEL_COMMAND, ManageTags::ID_EDITTAG, ManageTags::ModifyTag),
+    FXMAPFUNC(SEL_COMMAND, ManageTags::ID_REMTAG, ManageTags::RemoveTag),
+    FXMAPFUNC(SEL_CLICKED, ManageTags::ID_LISTSELECT, ManageTags::ListSelection),
     //FXMAPFUNC(SEL_CLICKED, WombatRegistry::ID_TREESELECT, WombatRegistry::KeySelected),
     //FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_OPEN, WombatRegistry::OpenHive),
     //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
