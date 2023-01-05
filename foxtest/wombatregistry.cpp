@@ -41,6 +41,7 @@ class WombatRegistry : public FXMainWindow
         enum
         {
             ID_TREELIST = 1,
+            ID_TREESELECT,
             ID_OPEN,
             ID_LAST
         };
@@ -53,7 +54,7 @@ class WombatRegistry : public FXMainWindow
 };
 
 FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
-    FXMAPFUNC(SEL_CHANGED, WombatRegistry::ID_TREELIST, WombatRegistry::KeySelected),
+    FXMAPFUNC(SEL_CLICKED, WombatRegistry::ID_TREESELECT, WombatRegistry::KeySelected),
     //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_OPEN, WombatRegistry::OpenHive),
     //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_CANVAS, WombatRegistry::onMouseDown),
@@ -67,7 +68,7 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     toolbar = new FXToolBar(mainframe, this, LAYOUT_TOP|LAYOUT_LEFT);
     vsplitter = new FXSplitter(mainframe, SPLITTER_NORMAL|LAYOUT_FILL);
     statusbar = new FXStatusBar(mainframe, LAYOUT_BOTTOM|LAYOUT_LEFT|LAYOUT_FILL_X);
-    treelist = new FXTreeList(vsplitter, this, ID_TREELIST, TREELIST_SHOWS_LINES|TREELIST_SINGLESELECT|TREELIST_ROOT_BOXES|TREELIST_SHOWS_BOXES);
+    treelist = new FXTreeList(vsplitter, this, ID_TREESELECT, TREELIST_SHOWS_LINES|TREELIST_SINGLESELECT|TREELIST_ROOT_BOXES|TREELIST_SHOWS_BOXES);
     hsplitter = new FXSplitter(vsplitter, SPLITTER_VERTICAL);
     tablelist = new FXTable(hsplitter);
     plaintext = new FXText(hsplitter);
@@ -172,7 +173,7 @@ long WombatRegistry::onMouseDown(FXObject*, FXSelector, void*)
 long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 {
     treelist->setCurrentItem(rootitem);
-    return 0;
+    return 1;
 }
 
 long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
@@ -213,7 +214,9 @@ long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
             std::size_t rfound = hivefilepath.rfind("/");
             std::string hivefilename = hivefilepath.substr(rfound+1);
             FXString rootitemstring(std::string(hivefilename + " (" + hivefilepath + ")").c_str());
-            FXTreeItem* rootitem = new FXTreeItem(rootitemstring);
+            //rootitem->setText(rootitemstring);
+            rootitem = new FXTreeItem(rootitemstring);
+            //treelist->setAnchorItem(rootitem);
             treelist->appendItem(0, rootitem);
         }
         else
