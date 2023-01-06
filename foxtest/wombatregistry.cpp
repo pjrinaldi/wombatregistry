@@ -9,9 +9,14 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     vsplitter = new FXSplitter(mainframe, SPLITTER_NORMAL|LAYOUT_FILL);
     statusbar = new FXStatusBar(mainframe, LAYOUT_BOTTOM|LAYOUT_LEFT|LAYOUT_FILL_X);
     treelist = new FXTreeList(vsplitter, this, ID_TREESELECT, TREELIST_SHOWS_LINES|TREELIST_SINGLESELECT|TREELIST_ROOT_BOXES|TREELIST_SHOWS_BOXES);
+    treelist->setWidth(this->getWidth() / 4);
     hsplitter = new FXSplitter(vsplitter, SPLITTER_VERTICAL);
     tablelist = new FXTable(hsplitter);
     plaintext = new FXText(hsplitter);
+    tablelist->setHeight(this->getHeight() / 3);
+    tablelist->setVisibleColumns(3);
+    tablelist->setEditable(false);
+    tablelist->setColumnText(0, "Tag");
     openicon = new FXPNGIcon(this->getApp(), folderopen);
     openbutton = new FXButton(toolbar, "", openicon, this, ID_OPEN, BUTTON_TOOLBAR);
     managetagsicon = new FXPNGIcon(this->getApp(), managetags);
