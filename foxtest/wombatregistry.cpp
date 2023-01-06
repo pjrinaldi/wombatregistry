@@ -55,6 +55,12 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
 
 
 /*
+    uint8_t* bs = new uint8_t[4];
+    uint32_t blocksize = 0;
+    ReadContent(rawcontent, bs, 4, 4);
+    ReturnUint32(&blocksize, bs);
+    delete[] bs;
+    blocksize = __builtin_bswap32(blocksize); 
 void ReadContent(std::ifstream* rawcontent, int8_t* tmpbuf, uint64_t offset, uint64_t size)
 {
     rawcontent->seekg(offset);
@@ -205,9 +211,7 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 	{
 	    curtagvalue += "(unnamed)";
 	    tablelist->setItemText(i, 1, "(unnamed)");
-	    FXString typestr = FXString::fromUInt(type, 16);
-	    //std::stringstream ss;
-	    //ss << std::hex << type;
+	    FXString typestr = FXString::value(type, 16);
 	    tablelist->setItemText(i, 2, typestr);
 	}
 	else
@@ -323,7 +327,6 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
 	FXString rootstring = "";
 	FXString hivefilepath = "";
 	GetRootString(curitem, &rootstring);
-	//std::cout << "root string:" << rootstring.text() << std::endl;
 	for(int i=0; i < hives.size(); i++)
 	{
 	    if(rootstring.contains(FXString(hives.at(i).string().c_str())))
@@ -345,20 +348,11 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
 	if(valuename.contains("(unnamed)"))
 	{
 	    valuedata += "Content\n-------\n\n";
-	    valuedata += "Hex:\t0x" + valuename + "\n";
-	    FXint myint = valuename.toInt(16);
-	    //valuedata += "Integer:\t" + QString::number(ui->tablewidget->selectedItems().at(1)->text().toInt(nullptr, 16)) + "\n";
-	}
-	/*
-	if(ui->tablewidget->selectedItems().at(1)->text().contains("(unnamed)"))
-	{
-	    valuedata += "Content\n-------\n\n";
-	    valuedata += "Hex:\t0x" + ui->tablewidget->selectedItems().at(1)->text() + "\n";
-	    valuedata += "Integer:\t" + QString::number(ui->tablewidget->selectedItems().at(1)->text().toInt(nullptr, 16)) + "\n";
+	    valuedata += "Hex:\t0x" + FXString::value(valuetype.toInt(16), 16) + "\n";
+	    valuedata += "Integer:\t" + FXString::value(valuetype.toInt()) + "\n";
 	}
 	else
 	{
-            QString valuetype = ui->tablewidget->selectedItems().at(2)->text();
             if(valuetype.contains("REG_SZ") || valuetype.contains("REG_EXPAND_SZ"))
             {
                 valuedata += "Content:\t";
@@ -366,7 +360,7 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                 libregf_value_get_value_utf8_string_size(curval, &strsize, &regerr);
                 uint8_t valstr[strsize];
                 libregf_value_get_value_utf8_string(curval, valstr, strsize, &regerr);
-                valuedata += QString::fromUtf8(reinterpret_cast<char*>(valstr));
+                valuedata += FXString(reinterpret_cast<char*>(valstr));
             }
             else if(valuetype.contains("REG_BINARY"))
             {
@@ -374,26 +368,74 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                 if(keypath.contains("UserAssist") && (keypath.contains("{750") || keypath.contains("{F4E") || keypath.contains("{5E6")))
                 {
                     valuedata += "ROT13 Decrypted Content:\t";
-                    valuedata += DecryptRot13(ui->tablewidget->selectedItems().at(1)->text()) + "\n";
+                    valuedata += DecryptRot13(valuename) + "\n";
                 }
-                else if(keypath.contains("SAM") && ui->tablewidget->selectedItems().at(1)->text().count() == 1 && ui->tablewidget->selectedItems().at(1)->text().startsWith("F"))
+                else if(keypath.contains("SAM") && valuename.count() == 1 && valuename.contains("F"))
                 {
                     size_t datasize = 0;
                     libregf_value_get_value_data_size(curval, &datasize, &regerr);
                     uint8_t data[datasize];
                     libregf_value_get_value_data(curval, data, datasize, &regerr);
-                    QByteArray farray = QByteArray::fromRawData((char*)data, datasize);
+                    //FXArray farray((uint8_t*)data, datasize);
+                    //QByteArray farray = QByteArray::fromRawData((char*)data, datasize);
                     valuedata += "Account Expiration:\t\t";
-                    if(farray.mid(32,1).toHex() == "ff")
+                    //if(farray.mid(32,1).toHex() == "ff")
+                    if(data[32] == 0xff)
                     {
                         valuedata += "No Expiration is Set\n";
                     }
                     else
-                        valuedata += ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(32, 8))) + " UTC\n";
-                    valuedata += "Last Logon Time:\t\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(8, 8))) + " UTC\n";
-                    valuedata += "Last Failed Login:\t\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(40, 8))) + " UTC\n";
-                    valuedata += "Last Time Password Changed:\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(24, 8))) + " UTC";
+                    {
+                        uint8_t* tmp8 = new uint8_t[8];
+                        tmp8[7] = data[32];
+                        tmp8[6] = data[33];
+                        tmp8[5] = data[34];
+                        tmp8[4] = data[35];
+                        tmp8[3] = data[36];
+                        tmp8[2] = data[37];
+                        tmp8[1] = data[38];
+                        tmp8[0] = data[39];
+                        uint64_t tmp64 = 0;
+                        tmp64 = (uint64_t)tmp8[0] | (uint64_t)tmp8[1] << 8 | (uint64_t)tmp8[2] << 16 | (uint64_t)tmp8[3] << 24 | (uint64_t)tmp8[4] << 32 | (uint64_t)tmp8[5] << 40 | (uint64_t)tmp8[6] << 48 | (uint64_t)tmp8[7] << 56;
+                        valuedata += ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                        //FXArray tarray((uint8_t*)data[32], 8);
+                        //valuedata += ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(32, 8))) + " UTC\n";
+                        //valuedata += ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(32, 8))) + " UTC\n";
+                    }
+                    uint8_t* tmp8 = new uint8_t[8];
+                    tmp8[0] = data[8];
+                    tmp8[1] = data[9];
+                    tmp8[2] = data[10];
+                    tmp8[3] = data[11];
+                    tmp8[4] = data[12];
+                    tmp8[5] = data[13];
+                    tmp8[6] = data[14];
+                    tmp8[7] = data[15];
+                    uint64_t tmp64 = 0;
+                    tmp64 = (uint64_t)tmp8[0] | (uint64_t)tmp8[1] << 8 | (uint64_t)tmp8[2] << 16 | (uint64_t)tmp8[3] << 24 | (uint64_t)tmp8[4] << 32 | (uint64_t)tmp8[5] << 40 | (uint64_t)tmp8[6] << 48 | (uint64_t)tmp8[7] << 56;
+                    valuedata += "Last Logon Time:\t\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                    tmp8[0] = data[40];
+                    tmp8[1] = data[41];
+                    tmp8[2] = data[42];
+                    tmp8[3] = data[43];
+                    tmp8[4] = data[44];
+                    tmp8[5] = data[45];
+                    tmp8[6] = data[46];
+                    tmp8[7] = data[47];
+                    tmp64 = (uint64_t)tmp8[0] | (uint64_t)tmp8[1] << 8 | (uint64_t)tmp8[2] << 16 | (uint64_t)tmp8[3] << 24 | (uint64_t)tmp8[4] << 32 | (uint64_t)tmp8[5] << 40 | (uint64_t)tmp8[6] << 48 | (uint64_t)tmp8[7] << 56;
+                    valuedata += "Last Failed Login:\t\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                    tmp8[0] = data[24];
+                    tmp8[1] = data[25];
+                    tmp8[2] = data[26];
+                    tmp8[3] = data[27];
+                    tmp8[4] = data[28];
+                    tmp8[5] = data[29];
+                    tmp8[6] = data[30];
+                    tmp8[7] = data[31];
+                    tmp64 = (uint64_t)tmp8[0] | (uint64_t)tmp8[1] << 8 | (uint64_t)tmp8[2] << 16 | (uint64_t)tmp8[3] << 24 | (uint64_t)tmp8[4] << 32 | (uint64_t)tmp8[5] << 40 | (uint64_t)tmp8[6] << 48 | (uint64_t)tmp8[7] << 56;
+                    valuedata += "Last Time Password Changed:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
                 }
+                /*
                 else if(ui->tablewidget->selectedItems().at(1)->text().startsWith("ShutdownTime"))
                 {
                     size_t datasize = 0;
@@ -433,9 +475,11 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                         }
                     }
                 }
+                */
             }
             else if(valuetype.contains("REG_DWORD"))
             {
+                /*
                 valuedata += "Content:\t";
                 uint32_t dwordvalue = 0;
                 libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
@@ -443,16 +487,20 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                     valuedata += ConvertUnixTimeToString(dwordvalue);
                 else
                     valuedata += QString::number(dwordvalue);
+                */
             }
             else if(valuetype.contains("REG_DWORD_BIG_ENDIAN"))
             {
+                /*
                 valuedata += "Content:\t";
                 uint32_t dwordvalue = 0;
                 libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
                 valuedata += QString::number(qFromBigEndian<uint32_t>(dwordvalue));
+                */
             }
             else if(valuetype.contains("REG_MULTI_SZ"))
             {
+                /*
                 valuedata += "Content\n";
                 valuedata += "-------\n";
                 libregf_multi_string_t* multistring = NULL;
@@ -468,15 +516,19 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                     valuedata += QString::fromUtf8(reinterpret_cast<char*>(valstr)) + "\n";
                 }
                 libregf_multi_string_free(&multistring, &regerr);
+                */
             }
             else if(valuetype.contains("REG_QWORD"))
             {
+                /*
                 valuedata += "Content:\t";
                 uint64_t qwordvalue = 0;
                 libregf_value_get_value_64bit(curval, &qwordvalue, &regerr);
                 valuedata += QString::number(qwordvalue);
+                */
             }
 	}
+        /*
         size_t datasize = 0;
         libregf_value_get_value_data_size(curval, &datasize, &regerr);
         uint8_t data[datasize];
@@ -520,8 +572,9 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                 valuedata += "\n";
             }
         }
-	ui->plaintext->setPlainText(valuedata);
 	*/
+        plaintext->setText(valuedata);
+	//ui->plaintext->setPlainText(valuedata);
         libregf_value_free(&curval, &regerr);
         libregf_key_free(&curkey, &regerr);
         libregf_file_close(regfile, &regerr);
@@ -529,6 +582,40 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
         libregf_error_free(&regerr);
     }
     return 1;
+}
+
+FXString WombatRegistry::DecryptRot13(FXString encstr)
+{
+    FXString decstr = "";
+    int i = 0;
+    int strlength = 0;
+    strlength = encstr.count();
+    decstr = encstr;
+    for(i = 0; i < strlength; i++)
+    {
+        decstr[i] = Rot13Char(decstr.at(i));
+    }
+    return decstr;
+}
+
+FXchar WombatRegistry::Rot13Char(FXchar curchar)
+{
+    FXchar rot13char;
+    if('0' <= curchar && curchar <= '4')
+        rot13char = FXchar(curchar + 5);
+    else if('5' <= curchar && curchar <= '9')
+        rot13char = FXchar(curchar - 5);
+    else if('A' <= curchar && curchar <= 'M')
+        rot13char = FXchar(curchar + 13);
+    else if('N' <= curchar && curchar <= 'Z')
+        rot13char = FXchar(curchar - 13);
+    else if('a' <= curchar && curchar <= 'm')
+        rot13char = FXchar(curchar + 13);
+    else if('n' <= curchar && curchar <= 'z')
+        rot13char = FXchar(curchar - 13);
+    else
+        rot13char = curchar;
+    return rot13char;
 }
 
 long WombatRegistry::OpenTagManager(FXObject*, FXSelector, void*)
