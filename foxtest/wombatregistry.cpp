@@ -139,8 +139,6 @@ long WombatRegistry::OpenTagManager(FXObject*, FXSelector, void*)
 {
     ManageTags tagmanager(this, "Manage Tags");
     tagmanager.SetTagList(&tags);
-    //tagmanager.setX(getX()+80);
-    //tagmanager.setY(getY()+80);
     tagmanager.execute(PLACEMENT_OWNER);
     return 1;
 }
@@ -156,8 +154,6 @@ long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
 {
     if(prevhivepath.empty())
         prevhivepath = getenv("HOME");
-    //if(prevhivepath.isEmpty())
-    //	prevhivepath = QDir::homePath();
     FXString filename = FXFileDialog::getOpenFilename(this, "Open Hive", prevhivepath.c_str());
     if(!filename.empty())
     {
@@ -171,7 +167,6 @@ long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
         filebufptr->read(registryheader, 4);
         std::string regheadstr(registryheader);
         delete[] registryheader;
-        //else if(hfssigstr.find("H+") != std::string::npos) // HFS+
         if(regheadstr.find("regf") != std::string::npos) // win nt reg file
         {
             //std::cout << "it's a registry file, begin parsing..." << std::endl;
@@ -190,60 +185,51 @@ long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
             std::size_t rfound = hivefilepath.rfind("/");
             std::string hivefilename = hivefilepath.substr(rfound+1);
             FXString rootitemstring(std::string(hivefilename + " (" + hivefilepath + ")").c_str());
-            //rootitem->setText(rootitemstring);
             rootitem = new FXTreeItem(rootitemstring);
-            //treelist->setAnchorItem(rootitem);
             treelist->appendItem(0, rootitem);
+	    PopulateChildKeys(rootkey, rootitem, regerr);
+	    libregf_key_free(&rootkey, &regerr);
+	    libregf_file_close(regfile, &regerr);
+	    libregf_file_free(&regfile, &regerr);
+	    libregf_error_free(&regerr);
         }
         else
             std::cout << "check failed..." << std::endl;
     }
-    /*
-        std::size_t lfound = fileinfovector.at(i).find("|");
-        filename = fileinfovector.at(i).substr(0, lfound);
-	std::size_t rfound = fileinfovector.at(i).rfind("|");
-        mntptstr = fileinfovector.at(i).substr(lfound+1, rfound - lfound-1);
-	devicestr = fileinfovector.at(i).substr(rfound+1);
-
-    QTreeWidgetItem* rootitem = new QTreeWidgetItem(ui->treewidget);
-    rootitem->setText(0, hivefilepath.split("/").last().toUpper() + " (" + hivefilepath + ")");
-    //rootitem->setText(0, hivefilepath.split("/").last().toUpper());
-    ui->treewidget->addTopLevelItem(rootitem);
-    PopulateChildKeys(rootkey, rootitem, regerr);
-    ui->treewidget->expandItem(rootitem);
-    libregf_key_free(&rootkey, &regerr);
-    libregf_file_close(regfile, &regerr);
-    libregf_file_free(&regfile, &regerr);
-    libregf_error_free(&regerr);
-     */ 
-    //rootitem = treelist->getFirstItem();
-
-    //rootitem = new FXTreeItem("Root Item");
-
-    //std::cout << "firstitem:" << rootitem;
-    //FXTreeItem* mainitem = new FXTreeItem("Root Item");
-    //treelist->setAnchorItem(rootitem);
-
-    //treelist->appendItem(0, rootitem);
-
-    /*
-        hivefile.setFileName(hivefilepath);
-        if(!hivefile.isOpen())
-            hivefile.open(QIODevice::ReadOnly);
-        if(hivefile.isOpen())
-        {
-            hivefile.seek(0);
-            uint32_t hiveheader = qFromBigEndian<uint32_t>(hivefile.read(4));
-            if(hiveheader == 0x72656766) // valid "regf" header
-            {
-                LoadRegistryFile();
-                StatusUpdate("Hive: " + openhivedialog.selectedFiles().first() + " successfully opened.");
-            }
-	    hivefile.close();
-        }
-     */ 
-    //std::cout << "file name selected:" << filename.text() << std::endl;
     return 1;
+}
+
+void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curitem, libregf_error_t* regerr)
+{
+    int subkeycount = 0;
+    libregf_key_get_number_of_sub_keys(curkey, &subkeycount, &regerr);
+    if(subkeycount > 0)
+    {
+	for(int i=0; i < subkeycount; i++)
+	{
+	    libregf_key_t* cursubkey = NULL;
+	    libregf_key_get_sub_key(curkey, i, &cursubkey, &regerr);
+	    size_t namesize = 0;
+	    libregf_key_get_utf8_name_size(cursubkey, &namesize, &regerr);
+	    uint8_t name[namesize];
+	    libregf_key_get_utf8_name(cursubkey, name, namesize, &regerr);
+            FXString itemstring((reinterpret_cast<char*>(name)));
+            //rootitem = new FXTreeItem(rootitemstring);
+            //treelist->appendItem(0, rootitem);
+	    FXTreeItem* subitem = new FXTreeItem(itemstring);
+	    //QTreeWidgetItem* subitem = new QTreeWidgetItem(curitem);
+	    //subitem->setText(0, QString::fromUtf8(reinterpret_cast<char*>(name)));
+	    //curitem->addChild(subitem);
+	    treelist->appendItem(curitem, subitem);
+	    int subsubkeycount = 0;
+	    libregf_key_get_number_of_sub_keys(cursubkey, &subsubkeycount, &regerr);
+	    if(subsubkeycount > 0)
+	    {
+		PopulateChildKeys(cursubkey, subitem, regerr);
+	    }
+	    libregf_key_free(&cursubkey, &regerr);
+	}
+    }
 }
 
 /*
