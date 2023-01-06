@@ -13,6 +13,7 @@
 #include "libregf.h"
 #include "icons.h"
 #include "managetags.h"
+#include "aboutbox.h"
 
 class WombatRegistry : public FXMainWindow
 {
@@ -60,11 +61,13 @@ class WombatRegistry : public FXMainWindow
 	    ID_PREVIEW = 103,
 	    ID_PUBLISH = 104,
 	    ID_ABOUT = 105,
+	    ID_TABLESELECT = 106,
             ID_LAST
         };
         WombatRegistry(FXApp* a);
         long OpenHive(FXObject*, FXSelector, void*);
         long OpenTagManager(FXObject*, FXSelector, void*);
+	long OpenAboutBox(FXObject*, FXSelector, void*);
         long KeySelected(FXObject*, FXSelector, void*);
         virtual void create();
 
@@ -74,6 +77,7 @@ FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_CLICKED, WombatRegistry::ID_TREESELECT, WombatRegistry::KeySelected),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_OPEN, WombatRegistry::OpenHive),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_MANAGETAGS, WombatRegistry::OpenTagManager),
+    FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_ABOUT, WombatRegistry::OpenAboutBox),
     //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
     //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_CANVAS, WombatRegistry::onMouseDown),
 };

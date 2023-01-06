@@ -11,12 +11,17 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     treelist = new FXTreeList(vsplitter, this, ID_TREESELECT, TREELIST_SHOWS_LINES|TREELIST_SINGLESELECT|TREELIST_ROOT_BOXES|TREELIST_SHOWS_BOXES);
     treelist->setWidth(this->getWidth() / 4);
     hsplitter = new FXSplitter(vsplitter, SPLITTER_VERTICAL);
-    tablelist = new FXTable(hsplitter);
+    tablelist = new FXTable(hsplitter, this, ID_TABLESELECT, LAYOUT_FILL_X, LAYOUT_FILL_Y);
     plaintext = new FXText(hsplitter);
     tablelist->setHeight(this->getHeight() / 3);
-    tablelist->setVisibleColumns(3);
+    //tablelist->setVisibleColumns(3);
     tablelist->setEditable(false);
+    tablelist->setTableSize(4, 3);
     tablelist->setColumnText(0, "Tag");
+    tablelist->setColumnText(1, "Value Name");
+    tablelist->setColumnText(2, "Value Type");
+    tablelist->setColumnHeaderHeight(tablelist->getColumnHeaderHeight() + 5);
+    //tablelist->fitColumnsToContents(1, 1);
     openicon = new FXPNGIcon(this->getApp(), folderopen);
     openbutton = new FXButton(toolbar, "", openicon, this, ID_OPEN, BUTTON_TOOLBAR);
     managetagsicon = new FXPNGIcon(this->getApp(), managetags);
@@ -137,6 +142,13 @@ long WombatRegistry::OpenTagManager(FXObject*, FXSelector, void*)
     //tagmanager.setX(getX()+80);
     //tagmanager.setY(getY()+80);
     tagmanager.execute(PLACEMENT_OWNER);
+    return 1;
+}
+
+long  WombatRegistry::OpenAboutBox(FXObject*, FXSelector, void*)
+{
+    AboutBox aboutbox(this, "About Wombat Registry Forensics");
+    aboutbox.execute(PLACEMENT_OWNER);
     return 1;
 }
 

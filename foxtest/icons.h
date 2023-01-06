@@ -1,4 +1,4 @@
-/*********** Generated on 2023/01/06 01:24:35 by reswrap version 6.0.0 *********/
+/*********** Generated on 2023/01/06 11:43:29 by reswrap version 6.0.0 *********/
 
 /* Created by reswrap from file resources/folder-open.png */
 extern const unsigned char folderopen[];
@@ -26,4 +26,7 @@ extern const unsigned char bookmarknew[];
 
 /* Created by reswrap from file resources/bookmark-rem.png */
 extern const unsigned char bookmarkrem[];
+
+/* Created by reswrap from file resources/aboutwombat.png */
+extern const unsigned char aboutwombat[];
 
