@@ -57,15 +57,22 @@ ManageTags::ManageTags(FXWindow* parent, const FXString& title):FXDialogBox(pare
     //treelist->appendItem(0, mainitem);
     //treelist->appendItem(mainitem, new FXTreeItem("Test 2"));
     */
+    rembutton->disable();
+    editbutton->disable();
 }
 
 void ManageTags::SetTagList(std::vector<std::string>* tagslist)
 {
     tags = tagslist;
-    /*
     if(tags != NULL)
         UpdateList();
-    */
+}
+
+void ManageTags::UpdateList()
+{
+    taglist->clearItems();
+    for(int i=0; i < tags->size(); i++)
+        taglist->appendItem(new FXListItem(FXString(tags->at(i).c_str())));
 }
 
 long ManageTags::AddTag(FXObject*, FXSelector, void*)
@@ -74,15 +81,36 @@ long ManageTags::AddTag(FXObject*, FXSelector, void*)
     bool isset = FXInputDialog::getString(tagstr, this, "Enter Tag Name", "New Tag");
     if(isset)
     {
-        FXListItem* tmpitem = new FXListItem(tagstr);
-        taglist->appendItem(tmpitem);
         tags->push_back(tagstr.text());
+        UpdateList();
     }
     return 1;
 }
 
 long ManageTags::ModifyTag(FXObject*, FXSelector, void*)
 {
+    FXint curitem = taglist->getCurrentItem();
+    std::string curtext = tags->at(curitem);
+    FXString modtagname = "";
+    bool isset = FXInputDialog::getString(modtagname, this, "Modify Tag Name", "Modify Tag");
+    if(isset)
+    {
+        taglist->getItem(curitem)->setText(modtagname);
+        taglist->update();
+        tags->at(curitem) = modtagname.text();
+    }
+    /*
+    QString tmpstr = "";
+    QString modtagname = "";
+    modtagdialog->setTextValue(selectedtag);
+    if(modtagdialog->exec())
+        modtagname = modtagdialog->textValue();
+    if(!modtagname.isEmpty())
+    {
+	ui->listWidget->currentItem()->setText(modtagname);
+	tags->replace(tagindex, modtagname);
+    }
+    */
     return 1;
 }
 
@@ -93,5 +121,7 @@ long ManageTags::RemoveTag(FXObject*, FXSelector, void*)
 
 long ManageTags::ListSelection(FXObject*, FXSelector, void*)
 {
+    rembutton->enable();
+    editbutton->enable();
     return 1;
 }

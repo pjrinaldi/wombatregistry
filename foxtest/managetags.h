@@ -1,6 +1,7 @@
 #ifndef MANAGETAGS_H
 #define MANAGETAGS_H
 
+#include <iostream>
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -44,6 +45,7 @@ class ManageTags : public FXDialogBox
         };
         ManageTags(FXWindow* parent, const FXString& title);
         void SetTagList(std::vector<std::string>* tagslist);
+        void UpdateList();
         //long OpenHive(FXObject*, FXSelector, void*);
         //long KeySelected(FXObject*, FXSelector, void*);
         long AddTag(FXObject*, FXSelector, void*);
