@@ -70,6 +70,11 @@ class WombatRegistry : public FXMainWindow
 	long OpenAboutBox(FXObject*, FXSelector, void*);
         long KeySelected(FXObject*, FXSelector, void*);
 	void PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curitem, libregf_error_t* regerr);
+	void StatusUpdate(FXString tmptext)
+	{
+	    statusbar->getStatusLine()->setNormalText(tmptext);
+	    //statusbar->setText(tmptext);
+	};
         virtual void create();
 
 };

@@ -131,7 +131,32 @@ long WombatRegistry::onMouseDown(FXObject*, FXSelector, void*)
 
 long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 {
-    treelist->setCurrentItem(rootitem);
+    FXTreeItem* curitem = treelist->getCurrentItem();
+    bool toplevel = false;
+    std::vector<FXString> pathitems;
+    pathitems.clear();
+    pathitems.push_back(curitem->getText());
+    FXTreeItem* parent;
+    FXTreeItem* child;
+    child = curitem;
+    while(toplevel == false)
+    {
+	parent = child->getParent();
+	if(parent == NULL)
+	    toplevel = true;
+	else
+	{
+	    pathitems.push_back(parent->getText());
+	    child = parent;
+	}
+    }
+    FXString keypath = "";
+    for(int i=pathitems.size() - 2; i > -1; i--)
+    {
+	keypath += "\\" + pathitems.at(i);
+    }
+    //std::cout << "key path: " << keypath.text() << std::endl;
+    StatusUpdate(keypath);
     return 1;
 }
 
