@@ -205,9 +205,10 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 	{
 	    curtagvalue += "(unnamed)";
 	    tablelist->setItemText(i, 1, "(unnamed)");
-	    std::stringstream ss;
-	    ss << std::hex << type;
-	    tablelist->setItemText(i, 2, "0x" + FXString(ss.str().c_str()));
+	    FXString typestr = FXString::fromUInt(type, 16);
+	    //std::stringstream ss;
+	    //ss << std::hex << type;
+	    tablelist->setItemText(i, 2, typestr);
 	}
 	else
 	{
@@ -286,33 +287,69 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 
     return 1;
 }
+
+void WombatRegistry::GetRootString(FXTreeItem* curitem, FXString* rootstring)
+{
+    if(curitem->getParent() == NULL)
+	*rootstring = curitem->getText();
+    else
+        GetRootString(curitem->getParent(), rootstring);
+}
+
+FXString WombatRegistry::ConvertWindowsTimeToUnixTimeUTC(uint64_t input)
+{
+    uint64_t temp;
+    temp = input / TICKS_PER_SECOND; //convert from 100ns intervals to seconds;
+    temp = temp - EPOCH_DIFFERENCE;  //subtract number of seconds between epochs
+    time_t crtimet = (time_t)temp;
+    struct tm* dt;
+    dt = gmtime(&crtimet);
+    char timestr[30];
+    strftime(timestr, sizeof(timestr), "%m/%d/%Y %I:%M:%S %p", dt);
+
+    return timestr;
+}
+
+
 long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
 {
     if(tablelist->getCurrentRow() > -1)
     {
 	tablelist->selectRow(tablelist->getCurrentRow());
-	//std::cout << "current row:" << tablelist->getCurrentRow() << std::endl;
-    }
-    /*
-    if(ui->tablewidget->selectedItems().count() > 0)
-    {
-	QTreeWidgetItem* curitem = ui->treewidget->selectedItems().first();
-	int rootindex = GetRootIndex(curitem);
-	hivefilepath = hives.at(rootindex);
-	int valueindex = ui->tablewidget->selectedItems().at(1)->row();
-	QString keypath = statuslabel->text();
+	int valueindex = tablelist->getCurrentRow();
+	FXString valuename = tablelist->getItem(tablelist->getCurrentRow(), 1)->getText();
+	FXString valuetype = tablelist->getItem(tablelist->getCurrentRow(), 2)->getText();
+	FXTreeItem* curitem = treelist->getCurrentItem();
+	FXString rootstring = "";
+	FXString hivefilepath = "";
+	GetRootString(curitem, &rootstring);
+	//std::cout << "root string:" << rootstring.text() << std::endl;
+	for(int i=0; i < hives.size(); i++)
+	{
+	    if(rootstring.contains(FXString(hives.at(i).string().c_str())))
+		hivefilepath = FXString(hives.at(i).string().c_str());
+	}
+	FXString keypath = statusbar->getStatusLine()->getNormalText();
 	libregf_file_t* regfile = NULL;
 	libregf_error_t* regerr = NULL;
 	libregf_file_initialize(&regfile, &regerr);
-	libregf_file_open(regfile, hivefilepath.toStdString().c_str(), LIBREGF_OPEN_READ, &regerr);
+	libregf_file_open(regfile, hivefilepath.text(), LIBREGF_OPEN_READ, &regerr);
 	libregf_key_t* curkey = NULL;
-	libregf_file_get_key_by_utf8_path(regfile, (uint8_t*)(keypath.toUtf8().data()), keypath.toUtf8().size(), &curkey, &regerr);
+	libregf_file_get_key_by_utf8_path(regfile, (uint8_t*)(keypath.text()), keypath.count(), &curkey, &regerr);
 	libregf_value_t* curval = NULL;
 	libregf_key_get_value(curkey, valueindex, &curval, &regerr);
         uint64_t lastwritetime = 0;
         libregf_key_get_last_written_time(curkey, &lastwritetime, &regerr);
-        QString valuedata = "Last Written Time:\t" + ConvertWindowsTimeToUnixTimeUTC(lastwritetime) + " UTC\n\n";
-	valuedata += "Name:\t" + ui->tablewidget->selectedItems().at(1)->text() + "\n\n";
+        FXString valuedata = "Last Written Time:\t" + ConvertWindowsTimeToUnixTimeUTC(lastwritetime) + " UTC\n\n";
+	valuedata += "Name:\t" + valuename + "\n\n";
+	if(valuename.contains("(unnamed)"))
+	{
+	    valuedata += "Content\n-------\n\n";
+	    valuedata += "Hex:\t0x" + valuename + "\n";
+	    FXint myint = valuename.toInt(16);
+	    //valuedata += "Integer:\t" + QString::number(ui->tablewidget->selectedItems().at(1)->text().toInt(nullptr, 16)) + "\n";
+	}
+	/*
 	if(ui->tablewidget->selectedItems().at(1)->text().contains("(unnamed)"))
 	{
 	    valuedata += "Content\n-------\n\n";
@@ -484,14 +521,13 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
             }
         }
 	ui->plaintext->setPlainText(valuedata);
-
+	*/
         libregf_value_free(&curval, &regerr);
         libregf_key_free(&curkey, &regerr);
         libregf_file_close(regfile, &regerr);
         libregf_file_free(&regfile, &regerr);
         libregf_error_free(&regerr);
     }
-    */
     return 1;
 }
 

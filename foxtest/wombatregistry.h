@@ -9,11 +9,16 @@
 #include <string.h>
 #include <filesystem>
 #include <byteswap.h>
+#include <time.h>
 #include "/usr/local/include/fox-1.7/fx.h"
 #include "libregf.h"
 #include "icons.h"
 #include "managetags.h"
 #include "aboutbox.h"
+
+#define TICKS_PER_SECOND 10000000
+#define EPOCH_DIFFERENCE 11644473600LL
+#define NSEC_BTWN_1904_1970	(uint32_t) 2082844800U
 
 class WombatRegistry : public FXMainWindow
 {
@@ -49,8 +54,6 @@ class WombatRegistry : public FXMainWindow
     protected:
         WombatRegistry() {}
 
-        //long onSomeCommand(FXObject* sender, FXSelector sel, void* ptr);
-
     public:
         enum
         {
@@ -71,6 +74,8 @@ class WombatRegistry : public FXMainWindow
         long KeySelected(FXObject*, FXSelector, void*);
 	long ValueSelected(FXObject*, FXSelector, void*);
 	void PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curitem, libregf_error_t* regerr);
+	void GetRootString(FXTreeItem* curitem, FXString* rootstring);
+	FXString ConvertWindowsTimeToUnixTimeUTC(uint64_t input);
 	void StatusUpdate(FXString tmptext)
 	{
 	    statusbar->getStatusLine()->setNormalText(tmptext);
@@ -85,8 +90,6 @@ FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_MANAGETAGS, WombatRegistry::OpenTagManager),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_ABOUT, WombatRegistry::OpenAboutBox),
     FXMAPFUNC(SEL_CLICKED, WombatRegistry::ID_TABLESELECT, WombatRegistry::ValueSelected),
-    //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
-    //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_CANVAS, WombatRegistry::onMouseDown),
 };
 
 #endif // WOMBATREGISTRY_H
