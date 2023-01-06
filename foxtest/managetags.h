@@ -46,8 +46,6 @@ class ManageTags : public FXDialogBox
         ManageTags(FXWindow* parent, const FXString& title);
         void SetTagList(std::vector<std::string>* tagslist);
         void UpdateList();
-        //long OpenHive(FXObject*, FXSelector, void*);
-        //long KeySelected(FXObject*, FXSelector, void*);
         long AddTag(FXObject*, FXSelector, void*);
         long ModifyTag(FXObject*, FXSelector, void*);
         long RemoveTag(FXObject*, FXSelector, void*);
@@ -60,10 +58,6 @@ FXDEFMAP(ManageTags) ManageTagsMap[]={
     FXMAPFUNC(SEL_COMMAND, ManageTags::ID_EDITTAG, ManageTags::ModifyTag),
     FXMAPFUNC(SEL_COMMAND, ManageTags::ID_REMTAG, ManageTags::RemoveTag),
     FXMAPFUNC(SEL_CLICKED, ManageTags::ID_LISTSELECT, ManageTags::ListSelection),
-    //FXMAPFUNC(SEL_CLICKED, WombatRegistry::ID_TREESELECT, WombatRegistry::KeySelected),
-    //FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_OPEN, WombatRegistry::OpenHive),
-    //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
-    //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_CANVAS, WombatRegistry::onMouseDown),
 };
 
 #endif // MANAGETAGS_H
