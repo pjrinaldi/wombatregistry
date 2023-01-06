@@ -69,11 +69,11 @@ class WombatRegistry : public FXMainWindow
         long OpenTagManager(FXObject*, FXSelector, void*);
 	long OpenAboutBox(FXObject*, FXSelector, void*);
         long KeySelected(FXObject*, FXSelector, void*);
+	long ValueSelected(FXObject*, FXSelector, void*);
 	void PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curitem, libregf_error_t* regerr);
 	void StatusUpdate(FXString tmptext)
 	{
 	    statusbar->getStatusLine()->setNormalText(tmptext);
-	    //statusbar->setText(tmptext);
 	};
         virtual void create();
 
@@ -84,6 +84,7 @@ FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_OPEN, WombatRegistry::OpenHive),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_MANAGETAGS, WombatRegistry::OpenTagManager),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_ABOUT, WombatRegistry::OpenAboutBox),
+    FXMAPFUNC(SEL_CLICKED, WombatRegistry::ID_TABLESELECT, WombatRegistry::ValueSelected),
     //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_TREELIST, WombatRegistry::onMouseDown),
     //FXMAPFUNC(SEL_LEFTBUTTONPRESS, WombatRegistry::ID_CANVAS, WombatRegistry::onMouseDown),
 };
