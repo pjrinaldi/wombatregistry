@@ -376,8 +376,6 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                     libregf_value_get_value_data_size(curval, &datasize, &regerr);
                     uint8_t data[datasize];
                     libregf_value_get_value_data(curval, data, datasize, &regerr);
-                    //FXArray farray((uint8_t*)data, datasize);
-                    //QByteArray farray = QByteArray::fromRawData((char*)data, datasize);
                     valuedata += "Account Expiration:\t\t";
                     //if(farray.mid(32,1).toHex() == "ff")
                     if(data[32] == 0xff)
@@ -398,9 +396,6 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                         uint64_t tmp64 = 0;
                         tmp64 = (uint64_t)tmp8[0] | (uint64_t)tmp8[1] << 8 | (uint64_t)tmp8[2] << 16 | (uint64_t)tmp8[3] << 24 | (uint64_t)tmp8[4] << 32 | (uint64_t)tmp8[5] << 40 | (uint64_t)tmp8[6] << 48 | (uint64_t)tmp8[7] << 56;
                         valuedata += ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
-                        //FXArray tarray((uint8_t*)data[32], 8);
-                        //valuedata += ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(32, 8))) + " UTC\n";
-                        //valuedata += ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(farray.mid(32, 8))) + " UTC\n";
                     }
                     uint8_t* tmp8 = new uint8_t[8];
                     tmp8[0] = data[8];
