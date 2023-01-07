@@ -88,12 +88,31 @@ long WombatRegistry::TagMenu(FXObject*, FXSelector, void* ptr)
 
 long WombatRegistry::CreateNewTag(FXObject*, FXSelector, void*)
 {
-    std::cout << "create new tag here." << std::endl;
+    FXString tagstr = "";
+    bool isset = FXInputDialog::getString(tagstr, this, "Enter Tag Name", "New Tag");
+    if(isset)
+    {
+        tags.push_back(tagstr.text());
+        tablelist->setItemText(tablelist->getCurrentRow(), 0, tagstr);
+        //UpdateList();
+    }
+    /*
+    ui->tablewidget->selectedItems().first()->setText(tagname);
+    QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
+    for(int i=0; i < taggeditems.count(); i++)
+    {
+        if(taggeditems.at(i).contains(idkeyvalue))
+            taggeditems.removeAt(i);
+    }
+    taggeditems.append(tagname + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
+
+     */ 
     return 1;
 }
 
 long WombatRegistry::RemoveTag(FXObject*, FXSelector, void*)
 {
+    tablelist->setItemText(tablelist->getCurrentRow(), 0, "");
     /*
     ui->tablewidget->selectedItems().first()->setText("");
     QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
@@ -654,7 +673,9 @@ void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curite
 
 long WombatRegistry::SetTag(FXObject* sender, FXSelector, void*)
 {
-    std::cout << ((FXMenuCommand*)sender)->getText().text() << std::endl;
+    FXString tagstr = ((FXMenuCommand*)sender)->getText();
+    tablelist->setItemText(tablelist->getCurrentRow(), 0, tagstr);
+    //std::cout << ((FXMenuCommand*)sender)->getText().text() << std::endl;
     /*
     QAction* tagaction = qobject_cast<QAction*>(sender());
     QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
