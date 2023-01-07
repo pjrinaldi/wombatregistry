@@ -504,9 +504,25 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
         libregf_value_get_value_data_size(curval, &datasize, &regerr);
         uint8_t data[datasize];
         libregf_value_get_value_data(curval, data, datasize, &regerr);
+        valuedata += "\n\nBinary Content\n--------------\n\n";
+        //std::cout << "data size:" << datasize << std::endl;
+        if(datasize < 16)
+        {
+            std::stringstream ss;
+            ss << std::hex <<  std::setfill('0');
+            for(int i=0; i < datasize; i++)
+                ss << std::setw(2) << ((uint)data[i]) << " ";
+            valuedata += FXString(ss.str().c_str()).upper();
+            /*
+            for(int i=0; i < datasize; i++)
+            {
+                valuedata += FXchar(data[i]);
+            }
+            */
+            valuedata += "\n";
+        }
         /*
         QByteArray dataarray = QByteArray::fromRawData((char*)data, datasize);
-        valuedata += "\n\nBinary Content\n--------------\n\n";
         if(datasize < 16)
         {
             valuedata += QString::number(0, 16).rightJustified(8, '0') + "\t";

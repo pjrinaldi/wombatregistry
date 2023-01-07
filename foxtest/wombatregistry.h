@@ -2,6 +2,7 @@
 #define WOMBATREGISTRY_H
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <stdio.h>
 #include <unistd.h>
