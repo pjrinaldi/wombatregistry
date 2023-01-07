@@ -409,16 +409,43 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                     valuedata += "Shutdown Time:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
 
                 }
-                /*
-                else if(ui->tablewidget->selectedItems().at(1)->text().startsWith("ShutdownTime"))
+                else if(valuename.contains("MRUListEx"))
                 {
                     size_t datasize = 0;
                     libregf_value_get_value_data_size(curval, &datasize, &regerr);
                     uint8_t data[datasize];
                     libregf_value_get_value_data(curval, data, datasize, &regerr);
-                    QByteArray valarray = QByteArray::fromRawData((char*)data, datasize);
-                    valuedata += "Shutdown Time:\t" + ConvertWindowsTimeToUnixTimeUTC(qFromLittleEndian<uint64_t>(valarray)) + " UTC";
+                    valuedata += "Order:\t[";
+                    for(int i=0; i < sizeof(data) / 4; i++)
+                    {
+                        uint32_t tmp32 = (uint32_t)data[i*4] | (uint32_t)data[i*4 + 1] << 8 | (uint32_t)data[i*4 + 2] << 16 | (uint32_t)data[i*4 + 3] << 24;
+                        if(tmp32 < 0xFFFFFFFF)
+                            valuedata += FXString::value(tmp32);
+                        if(i < ((sizeof(data) / 4) - 2))
+                            valuedata += ", ";
+                    }
+                    valuedata += "]\n";
                 }
+                else if(keypath.contains("RecentDocs"))
+                {
+                    if(!valuename.contains("MRUListEx"))
+                    {
+                        size_t datasize = 0;
+                        libregf_value_get_value_data_size(curval, &datasize, &regerr);
+                        uint8_t data[datasize];
+                        libregf_value_get_value_data(curval, data, datasize, &regerr);
+                        valuedata += "Name:\t";
+                        for(int i=0; i < sizeof(data) / 2; i++)
+                        {
+                            uint16_t tmp16 = (uint16_t)data[i*2] | (uint16_t)data[i*2 + 1] << 8;
+                            FXwchar tmpwc = FX::wc(&tmp16);
+                            if(tmp16 == 0x0000)
+                                break;
+                            valuedata += tmpwc;
+                        }
+                    }
+                }
+                /*
                 else if(keypath.contains("RecentDocs"))
                 {
                     size_t datasize = 0;
@@ -426,19 +453,6 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                     uint8_t data[datasize];
                     libregf_value_get_value_data(curval, data, datasize, &regerr);
                     QByteArray valarray = QByteArray::fromRawData((char*)data, datasize);
-                    if(ui->tablewidget->selectedItems().at(1)->text().startsWith("MRUListEx"))
-                    {
-                        valuedata += "Order:\t[";
-                        for(int j=0; j < valarray.count() / 4; j++)
-                        {
-                            if(qFromLittleEndian<uint32_t>(valarray.mid(j*4, 4)) < 0xFFFF)
-                                valuedata += QString::number(qFromLittleEndian<uint32_t>(valarray.mid(j*4, 4)));
-                            if(j < ((valarray.count() / 4) - 2))
-                                valuedata += ", ";
-                        }
-                        valuedata += "]";
-                    }
-                    else
                     {
                         valuedata += "Name:\t";
                         for(int j=0; j < valarray.count(); j++)
