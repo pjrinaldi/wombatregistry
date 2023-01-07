@@ -61,6 +61,22 @@ void WombatRegistry::create()
     show(PLACEMENT_SCREEN);
 }
 
+long WombatRegistry::TagMenu(FXObject*, FXSelector, void* ptr)
+{
+    FXEvent* event = (FXEvent*)ptr;
+    if(!event->moved)
+    {
+        FXMenuPane tagmenu(this, POPUP_SHRINKWRAP);
+        new FXMenuCommand(&tagmenu, "Create New Tag", new FXPNGIcon(this->getApp(), bookmarknew));
+        //new FXMenuCommand(&popupmenu,tr("Cut"),getApp()->cuticon,editor,FXText::ID_CUT_SEL);
+        tagmenu.forceRefresh();
+        tagmenu.create();
+        tagmenu.popup(nullptr, event->root_x, event->root_y);
+        getApp()->runModalWhileShown(&tagmenu);
+    }
+    return 1;
+}
+
 long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 {
     FXTreeItem* curitem = treelist->getCurrentItem();
@@ -516,6 +532,7 @@ long WombatRegistry::OpenTagManager(FXObject*, FXSelector, void*)
     ManageTags tagmanager(this, "Manage Tags");
     tagmanager.SetTagList(&tags);
     tagmanager.execute(PLACEMENT_OWNER);
+    //UpdateTagsMenu();
     return 1;
 }
 
@@ -601,6 +618,52 @@ void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curite
 	    libregf_key_free(&cursubkey, &regerr);
 	}
     }
+}
+
+void WombatRegistry::UpdateTagsMenu()
+{
+    //FXMenuButton* newbutton = new FXMenuButton(tagmenu, "Create New Tag");
+    /*
+    tagmenu->clear();
+    newtagaction = new QAction("New Tag", tagmenu);
+    newtagaction->setIcon(QIcon(":/bar/newtag"));
+    connect(newtagaction, SIGNAL(triggered()), this, SLOT(CreateNewTag()));
+    tagmenu->addAction(newtagaction);
+    tagmenu->addSeparator();
+    for(int i=0; i < tags.count(); i++)
+    {
+	QAction* tmpaction = new QAction(tags.at(i), tagmenu);
+	tmpaction->setIcon(QIcon(":/bar/tag"));
+	tmpaction->setData(QVariant("t" + QString::number(i)));
+	connect(tmpaction, SIGNAL(triggered()), this, SLOT(SetTag()));
+	tagmenu->addAction(tmpaction);
+    }
+    tagmenu->addSeparator();
+    remtagaction = new QAction("Remove Tag", tagmenu);
+    remtagaction->setIcon(QIcon(":/bar/removetag"));
+    connect(remtagaction, SIGNAL(triggered()), this, SLOT(RemoveTag()));
+    tagmenu->addAction(remtagaction);
+    */
+}
+
+long WombatRegistry::SetTag(FXObject* sender, FXSelector, void*)
+{
+    /*
+    QAction* tagaction = qobject_cast<QAction*>(sender());
+    QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
+    if(!ui->tablewidget->selectedItems().first()->text().isEmpty())
+    {
+        for(int i=0; i < taggeditems.count(); i++)
+        {
+            if(taggeditems.at(i).contains(idkeyvalue))
+                taggeditems.removeAt(i);
+        }
+    }
+    taggeditems.append(tagaction->iconText() + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
+
+    ui->tablewidget->selectedItems().first()->setText(tagaction->iconText());
+    */
+    return 1;
 }
 
 int main(int argc, char* argv[])
