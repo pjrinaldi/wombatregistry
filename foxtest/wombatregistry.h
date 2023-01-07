@@ -69,6 +69,7 @@ class WombatRegistry : public FXMainWindow
 	    ID_TABLESELECT = 106,
             ID_TAGMENU = 107,
             ID_NEWTAG = 108,
+            ID_SETTAG = 109,
             ID_LAST
         };
         WombatRegistry(FXApp* a);
@@ -102,6 +103,7 @@ FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_SELECTED, WombatRegistry::ID_TABLESELECT, WombatRegistry::ValueSelected),
     FXMAPFUNC(SEL_RIGHTBUTTONRELEASE, WombatRegistry::ID_TABLESELECT, WombatRegistry::TagMenu),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_NEWTAG, WombatRegistry::CreateNewTag),
+    FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_SETTAG, WombatRegistry::SetTag),
 };
 
 #endif // WOMBATREGISTRY_H

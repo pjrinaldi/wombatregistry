@@ -15,8 +15,8 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     plainfont = new FXFont(a, "monospace");
     plaintext = new FXText(hsplitter);
     plaintext->setFont(plainfont);
+    plaintext->setEditable(false);
     tablelist->setHeight(this->getHeight() / 3);
-    //tablelist->setVisibleColumns(3);
     tablelist->setEditable(false);
     tablelist->setTableSize(4, 3);
     tablelist->setColumnText(0, "Tag");
@@ -71,6 +71,10 @@ long WombatRegistry::TagMenu(FXObject*, FXSelector, void* ptr)
             FXMenuPane tagmenu(this, POPUP_SHRINKWRAP);
             new FXMenuCommand(&tagmenu, "Create New Tag", new FXPNGIcon(this->getApp(), bookmarknew), this, ID_NEWTAG);
             new FXMenuSeparator(&tagmenu);
+            for(int i=0; i < tags.size(); i++)
+            {
+                new FXMenuCommand(&tagmenu, FXString(tags.at(i).c_str()), new FXPNGIcon(this->getApp(), bookmark), this, ID_SETTAG);
+            }
             //new FXMenuCommand(&popupmenu,tr("Cut"),getApp()->cuticon,editor (object for action),FXText::ID_CUT_SEL (id));
             tagmenu.forceRefresh();
             tagmenu.create();
@@ -655,6 +659,7 @@ void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curite
 
 long WombatRegistry::SetTag(FXObject* sender, FXSelector, void*)
 {
+    std::cout << ((FXMenuCommand*)sender)->getText().text() << std::endl;
     /*
     QAction* tagaction = qobject_cast<QAction*>(sender());
     QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
