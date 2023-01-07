@@ -304,6 +304,17 @@ void WombatRegistry::GetRootString(FXTreeItem* curitem, FXString* rootstring)
         GetRootString(curitem->getParent(), rootstring);
 }
 
+FXString WombatRegistry::ConvertUnixTimeToString(uint32_t input)
+{
+    time_t crtimet = (time_t)input;
+    struct tm* dt;
+    dt = gmtime(&crtimet);
+    char timestr[30];
+    strftime(timestr, sizeof(timestr), "%m/%d/%Y %I:%M:%S %p", dt);
+
+    return timestr;
+}
+
 FXString WombatRegistry::ConvertWindowsTimeToUnixTimeUTC(uint64_t input)
 {
     uint64_t temp;
@@ -445,50 +456,26 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                         }
                     }
                 }
-                /*
-                else if(keypath.contains("RecentDocs"))
-                {
-                    size_t datasize = 0;
-                    libregf_value_get_value_data_size(curval, &datasize, &regerr);
-                    uint8_t data[datasize];
-                    libregf_value_get_value_data(curval, data, datasize, &regerr);
-                    QByteArray valarray = QByteArray::fromRawData((char*)data, datasize);
-                    {
-                        valuedata += "Name:\t";
-                        for(int j=0; j < valarray.count(); j++)
-                        {
-                            valuedata += QString(QChar(qFromLittleEndian<uint16_t>(valarray.mid(j*2, 2))));
-                            if(qFromLittleEndian<uint16_t>(valarray.mid(j*2, 2)) == 0x0000)
-                                break;
-                        }
-                    }
-                }
-                */
             }
             else if(valuetype.contains("REG_DWORD"))
             {
-                /*
                 valuedata += "Content:\t";
                 uint32_t dwordvalue = 0;
                 libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
-                if(ui->tablewidget->selectedItems().at(1)->text().toLower().contains("date"))
+                if(valuename.lower().contains("date"))
                     valuedata += ConvertUnixTimeToString(dwordvalue);
                 else
-                    valuedata += QString::number(dwordvalue);
-                */
+                    valuedata += FXString::value(dwordvalue);
             }
             else if(valuetype.contains("REG_DWORD_BIG_ENDIAN"))
             {
-                /*
                 valuedata += "Content:\t";
                 uint32_t dwordvalue = 0;
                 libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
-                valuedata += QString::number(qFromBigEndian<uint32_t>(dwordvalue));
-                */
+                valuedata += FXString::value(dwordvalue);
             }
             else if(valuetype.contains("REG_MULTI_SZ"))
             {
-                /*
                 valuedata += "Content\n";
                 valuedata += "-------\n";
                 libregf_multi_string_t* multistring = NULL;
@@ -501,26 +488,23 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                     libregf_multi_string_get_utf8_string_size(multistring, i, &strsize, &regerr);
                     uint8_t valstr[strsize];
                     libregf_multi_string_get_utf8_string(multistring, i, valstr, strsize, &regerr);
-                    valuedata += QString::fromUtf8(reinterpret_cast<char*>(valstr)) + "\n";
+                    valuedata += FXString(reinterpret_cast<char*>(valstr));
                 }
                 libregf_multi_string_free(&multistring, &regerr);
-                */
             }
             else if(valuetype.contains("REG_QWORD"))
             {
-                /*
                 valuedata += "Content:\t";
                 uint64_t qwordvalue = 0;
                 libregf_value_get_value_64bit(curval, &qwordvalue, &regerr);
-                valuedata += QString::number(qwordvalue);
-                */
+                valuedata += FXString::value(qwordvalue);
             }
 	}
-        /*
         size_t datasize = 0;
         libregf_value_get_value_data_size(curval, &datasize, &regerr);
         uint8_t data[datasize];
         libregf_value_get_value_data(curval, data, datasize, &regerr);
+        /*
         QByteArray dataarray = QByteArray::fromRawData((char*)data, datasize);
         valuedata += "\n\nBinary Content\n--------------\n\n";
         if(datasize < 16)
@@ -562,7 +546,6 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
         }
 	*/
         plaintext->setText(valuedata);
-	//ui->plaintext->setPlainText(valuedata);
         libregf_value_free(&curval, &regerr);
         libregf_key_free(&curkey, &regerr);
         libregf_file_close(regfile, &regerr);
