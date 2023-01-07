@@ -68,6 +68,7 @@ class WombatRegistry : public FXMainWindow
 	    ID_ABOUT = 105,
 	    ID_TABLESELECT = 106,
             ID_TAGMENU = 107,
+            ID_NEWTAG = 108,
             ID_LAST
         };
         WombatRegistry(FXApp* a);
@@ -77,10 +78,10 @@ class WombatRegistry : public FXMainWindow
         long KeySelected(FXObject*, FXSelector, void*);
 	long ValueSelected(FXObject*, FXSelector, void*);
         long TagMenu(FXObject*, FXSelector, void*);
+        long SetTag(FXObject* sender, FXSelector, void*);
+        long CreateNewTag(FXObject*, FXSelector, void*);
 	void PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curitem, libregf_error_t* regerr);
 	void GetRootString(FXTreeItem* curitem, FXString* rootstring);
-        void UpdateTagsMenu();
-        long SetTag(FXObject* sender, FXSelector, void*);
 	FXString ConvertWindowsTimeToUnixTimeUTC(uint64_t input);
         FXString ConvertUnixTimeToString(uint32_t input);
         FXString DecryptRot13(FXString encstr);
@@ -100,6 +101,7 @@ FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_ABOUT, WombatRegistry::OpenAboutBox),
     FXMAPFUNC(SEL_SELECTED, WombatRegistry::ID_TABLESELECT, WombatRegistry::ValueSelected),
     FXMAPFUNC(SEL_RIGHTBUTTONRELEASE, WombatRegistry::ID_TABLESELECT, WombatRegistry::TagMenu),
+    FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_NEWTAG, WombatRegistry::CreateNewTag),
 };
 
 #endif // WOMBATREGISTRY_H

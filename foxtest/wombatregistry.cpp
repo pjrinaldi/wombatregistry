@@ -64,16 +64,46 @@ void WombatRegistry::create()
 long WombatRegistry::TagMenu(FXObject*, FXSelector, void* ptr)
 {
     FXEvent* event = (FXEvent*)ptr;
-    if(!event->moved)
+    if(tablelist->getCurrentRow() > -1 && !tablelist->getItemText(tablelist->getCurrentRow(), 1).empty())
     {
-        FXMenuPane tagmenu(this, POPUP_SHRINKWRAP);
-        new FXMenuCommand(&tagmenu, "Create New Tag", new FXPNGIcon(this->getApp(), bookmarknew));
-        //new FXMenuCommand(&popupmenu,tr("Cut"),getApp()->cuticon,editor,FXText::ID_CUT_SEL);
-        tagmenu.forceRefresh();
-        tagmenu.create();
-        tagmenu.popup(nullptr, event->root_x, event->root_y);
-        getApp()->runModalWhileShown(&tagmenu);
+        if(!event->moved)
+        {
+            FXMenuPane tagmenu(this, POPUP_SHRINKWRAP);
+            new FXMenuCommand(&tagmenu, "Create New Tag", new FXPNGIcon(this->getApp(), bookmarknew), this, ID_NEWTAG);
+            new FXMenuSeparator(&tagmenu);
+            //new FXMenuCommand(&popupmenu,tr("Cut"),getApp()->cuticon,editor (object for action),FXText::ID_CUT_SEL (id));
+            tagmenu.forceRefresh();
+            tagmenu.create();
+            tagmenu.popup(nullptr, event->root_x, event->root_y);
+            getApp()->runModalWhileShown(&tagmenu);
+        }
     }
+    return 1;
+}
+/*
+    newtagaction = new QAction("New Tag", tagmenu);
+    newtagaction->setIcon(QIcon(":/bar/newtag"));
+    connect(newtagaction, SIGNAL(triggered()), this, SLOT(CreateNewTag()));
+    tagmenu->addAction(newtagaction);
+    tagmenu->addSeparator();
+    for(int i=0; i < tags.count(); i++)
+    {
+	QAction* tmpaction = new QAction(tags.at(i), tagmenu);
+	tmpaction->setIcon(QIcon(":/bar/tag"));
+	tmpaction->setData(QVariant("t" + QString::number(i)));
+	connect(tmpaction, SIGNAL(triggered()), this, SLOT(SetTag()));
+	tagmenu->addAction(tmpaction);
+    }
+    tagmenu->addSeparator();
+    remtagaction = new QAction("Remove Tag", tagmenu);
+    remtagaction->setIcon(QIcon(":/bar/removetag"));
+    connect(remtagaction, SIGNAL(triggered()), this, SLOT(RemoveTag()));
+    tagmenu->addAction(remtagaction);
+ */ 
+
+long WombatRegistry::CreateNewTag(FXObject*, FXSelector, void*)
+{
+    std::cout << "create new tag here." << std::endl;
     return 1;
 }
 
@@ -276,219 +306,222 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
     {
 	tablelist->selectRow(tablelist->getCurrentRow());
 	int valueindex = tablelist->getCurrentRow();
-	FXString valuename = tablelist->getItem(tablelist->getCurrentRow(), 1)->getText();
-	FXString valuetype = tablelist->getItem(tablelist->getCurrentRow(), 2)->getText();
-	FXTreeItem* curitem = treelist->getCurrentItem();
-	FXString rootstring = "";
-	FXString hivefilepath = "";
-	GetRootString(curitem, &rootstring);
-	for(int i=0; i < hives.size(); i++)
-	{
-	    if(rootstring.contains(FXString(hives.at(i).string().c_str())))
-		hivefilepath = FXString(hives.at(i).string().c_str());
-	}
-	FXString keypath = statusbar->getStatusLine()->getNormalText();
-	libregf_file_t* regfile = NULL;
-	libregf_error_t* regerr = NULL;
-	libregf_file_initialize(&regfile, &regerr);
-	libregf_file_open(regfile, hivefilepath.text(), LIBREGF_OPEN_READ, &regerr);
-	libregf_key_t* curkey = NULL;
-	libregf_file_get_key_by_utf8_path(regfile, (uint8_t*)(keypath.text()), keypath.count(), &curkey, &regerr);
-	libregf_value_t* curval = NULL;
-	libregf_key_get_value(curkey, valueindex, &curval, &regerr);
-        uint64_t lastwritetime = 0;
-        libregf_key_get_last_written_time(curkey, &lastwritetime, &regerr);
-        FXString valuedata = "Last Written Time:\t" + ConvertWindowsTimeToUnixTimeUTC(lastwritetime) + " UTC\n\n";
-	valuedata += "Name:\t" + valuename + "\n\n";
-	if(valuename.contains("(unnamed)"))
-	{
-	    valuedata += "Content\n-------\n\n";
-	    valuedata += "Hex:\t0x" + FXString::value(valuetype.toInt(16), 16) + "\n";
-	    valuedata += "Integer:\t" + FXString::value(valuetype.toInt()) + "\n";
-	}
-	else
-	{
-            if(valuetype.contains("REG_SZ") || valuetype.contains("REG_EXPAND_SZ"))
+        if(!tablelist->getItemText(tablelist->getCurrentRow(), 1).empty())
+        {
+            FXString valuename = tablelist->getItemText(tablelist->getCurrentRow(), 1);
+            FXString valuetype = tablelist->getItemText(tablelist->getCurrentRow(), 2);
+            FXTreeItem* curitem = treelist->getCurrentItem();
+            FXString rootstring = "";
+            FXString hivefilepath = "";
+            GetRootString(curitem, &rootstring);
+            for(int i=0; i < hives.size(); i++)
             {
-                valuedata += "Content:\t";
-                size_t strsize = 0;
-                libregf_value_get_value_utf8_string_size(curval, &strsize, &regerr);
-                uint8_t valstr[strsize];
-                libregf_value_get_value_utf8_string(curval, valstr, strsize, &regerr);
-                valuedata += FXString(reinterpret_cast<char*>(valstr));
+                if(rootstring.contains(FXString(hives.at(i).string().c_str())))
+                    hivefilepath = FXString(hives.at(i).string().c_str());
             }
-            else if(valuetype.contains("REG_BINARY"))
+            FXString keypath = statusbar->getStatusLine()->getNormalText();
+            libregf_file_t* regfile = NULL;
+            libregf_error_t* regerr = NULL;
+            libregf_file_initialize(&regfile, &regerr);
+            libregf_file_open(regfile, hivefilepath.text(), LIBREGF_OPEN_READ, &regerr);
+            libregf_key_t* curkey = NULL;
+            libregf_file_get_key_by_utf8_path(regfile, (uint8_t*)(keypath.text()), keypath.count(), &curkey, &regerr);
+            libregf_value_t* curval = NULL;
+            libregf_key_get_value(curkey, valueindex, &curval, &regerr);
+            uint64_t lastwritetime = 0;
+            libregf_key_get_last_written_time(curkey, &lastwritetime, &regerr);
+            FXString valuedata = "Last Written Time:\t" + ConvertWindowsTimeToUnixTimeUTC(lastwritetime) + " UTC\n\n";
+            valuedata += "Name:\t" + valuename + "\n\n";
+            if(valuename.contains("(unnamed)"))
             {
                 valuedata += "Content\n-------\n\n";
-                if(keypath.contains("UserAssist") && (keypath.contains("{750") || keypath.contains("{F4E") || keypath.contains("{5E6")))
+                valuedata += "Hex:\t0x" + FXString::value(valuetype.toInt(16), 16) + "\n";
+                valuedata += "Integer:\t" + FXString::value(valuetype.toInt()) + "\n";
+            }
+            else
+            {
+                if(valuetype.contains("REG_SZ") || valuetype.contains("REG_EXPAND_SZ"))
                 {
-                    valuedata += "ROT13 Decrypted Content:\t";
-                    valuedata += DecryptRot13(valuename) + "\n";
+                    valuedata += "Content:\t";
+                    size_t strsize = 0;
+                    libregf_value_get_value_utf8_string_size(curval, &strsize, &regerr);
+                    uint8_t valstr[strsize];
+                    libregf_value_get_value_utf8_string(curval, valstr, strsize, &regerr);
+                    valuedata += FXString(reinterpret_cast<char*>(valstr));
                 }
-                else if(keypath.contains("SAM") && valuename.count() == 1 && valuename.contains("F"))
+                else if(valuetype.contains("REG_BINARY"))
                 {
-                    uint64_t tmp64 = 0;
-                    size_t datasize = 0;
-                    libregf_value_get_value_data_size(curval, &datasize, &regerr);
-                    uint8_t data[datasize];
-                    libregf_value_get_value_data(curval, data, datasize, &regerr);
-                    valuedata += "Account Expiration:\t\t";
-                    if(data[32] == 0xff)
+                    valuedata += "Content\n-------\n\n";
+                    if(keypath.contains("UserAssist") && (keypath.contains("{750") || keypath.contains("{F4E") || keypath.contains("{5E6")))
                     {
-                        valuedata += "No Expiration is Set\n";
+                        valuedata += "ROT13 Decrypted Content:\t";
+                        valuedata += DecryptRot13(valuename) + "\n";
                     }
-                    else
+                    else if(keypath.contains("SAM") && valuename.count() == 1 && valuename.contains("F"))
                     {
-                        tmp64 = (uint64_t)data[32] | (uint64_t)data[33] << 8 | (uint64_t)data[34] << 16 | (uint64_t)data[35] << 24 | (uint64_t)data[36] << 32 | (uint64_t)data[37] << 40 | (uint64_t)data[38] << 48 | (uint64_t)data[39] << 56;
-                        valuedata += ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                        uint64_t tmp64 = 0;
+                        size_t datasize = 0;
+                        libregf_value_get_value_data_size(curval, &datasize, &regerr);
+                        uint8_t data[datasize];
+                        libregf_value_get_value_data(curval, data, datasize, &regerr);
+                        valuedata += "Account Expiration:\t\t";
+                        if(data[32] == 0xff)
+                        {
+                            valuedata += "No Expiration is Set\n";
+                        }
+                        else
+                        {
+                            tmp64 = (uint64_t)data[32] | (uint64_t)data[33] << 8 | (uint64_t)data[34] << 16 | (uint64_t)data[35] << 24 | (uint64_t)data[36] << 32 | (uint64_t)data[37] << 40 | (uint64_t)data[38] << 48 | (uint64_t)data[39] << 56;
+                            valuedata += ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                        }
+                        tmp64 = (uint64_t)data[8] | (uint64_t)data[9] << 8 | (uint64_t)data[10] << 16 | (uint64_t)data[11] << 24 | (uint64_t)data[12] << 32 | (uint64_t)data[13] << 40 | (uint64_t)data[14] << 48 | (uint64_t)data[15] << 56;
+                        valuedata += "Last Logon Time:\t\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                        tmp64 = (uint64_t)data[40] | (uint64_t)data[41] << 8 | (uint64_t)data[42] << 16 | (uint64_t)data[43] << 24 | (uint64_t)data[44] << 32 | (uint64_t)data[45] << 40 | (uint64_t)data[46] << 48 | (uint64_t)data[47] << 56;
+                        valuedata += "Last Failed Login:\t\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                        tmp64 = (uint64_t)data[24] | (uint64_t)data[25] << 8 | (uint64_t)data[26] << 16 | (uint64_t)data[27] << 24 | (uint64_t)data[28] << 32 | (uint64_t)data[29] << 40 | (uint64_t)data[30] << 48 | (uint64_t)data[31] << 56;
+                        valuedata += "Last Time Password Changed:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
                     }
-                    tmp64 = (uint64_t)data[8] | (uint64_t)data[9] << 8 | (uint64_t)data[10] << 16 | (uint64_t)data[11] << 24 | (uint64_t)data[12] << 32 | (uint64_t)data[13] << 40 | (uint64_t)data[14] << 48 | (uint64_t)data[15] << 56;
-                    valuedata += "Last Logon Time:\t\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
-                    tmp64 = (uint64_t)data[40] | (uint64_t)data[41] << 8 | (uint64_t)data[42] << 16 | (uint64_t)data[43] << 24 | (uint64_t)data[44] << 32 | (uint64_t)data[45] << 40 | (uint64_t)data[46] << 48 | (uint64_t)data[47] << 56;
-                    valuedata += "Last Failed Login:\t\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
-                    tmp64 = (uint64_t)data[24] | (uint64_t)data[25] << 8 | (uint64_t)data[26] << 16 | (uint64_t)data[27] << 24 | (uint64_t)data[28] << 32 | (uint64_t)data[29] << 40 | (uint64_t)data[30] << 48 | (uint64_t)data[31] << 56;
-                    valuedata += "Last Time Password Changed:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
-                }
-                else if(valuename.contains("ShutdownTime"))
-                {
-                    size_t datasize = 0;
-                    libregf_value_get_value_data_size(curval, &datasize, &regerr);
-                    uint8_t data[datasize];
-                    libregf_value_get_value_data(curval, data, datasize, &regerr);
-                    uint64_t tmp64 = (uint64_t)data[0] | (uint64_t)data[1] << 8 | (uint64_t)data[2] << 16 | (uint64_t)data[3] << 24 | (uint64_t)data[4] << 32 | (uint64_t)data[5] << 40 | (uint64_t)data[6] << 48 | (uint64_t)data[7] << 56;
-                    valuedata += "Shutdown Time:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
-
-                }
-                else if(valuename.contains("MRUListEx"))
-                {
-                    size_t datasize = 0;
-                    libregf_value_get_value_data_size(curval, &datasize, &regerr);
-                    uint8_t data[datasize];
-                    libregf_value_get_value_data(curval, data, datasize, &regerr);
-                    valuedata += "Order:\t[";
-                    for(int i=0; i < sizeof(data) / 4; i++)
-                    {
-                        uint32_t tmp32 = (uint32_t)data[i*4] | (uint32_t)data[i*4 + 1] << 8 | (uint32_t)data[i*4 + 2] << 16 | (uint32_t)data[i*4 + 3] << 24;
-                        if(tmp32 < 0xFFFFFFFF)
-                            valuedata += FXString::value(tmp32);
-                        if(i < ((sizeof(data) / 4) - 2))
-                            valuedata += ", ";
-                    }
-                    valuedata += "]\n";
-                }
-                else if(keypath.contains("RecentDocs"))
-                {
-                    if(!valuename.contains("MRUListEx"))
+                    else if(valuename.contains("ShutdownTime"))
                     {
                         size_t datasize = 0;
                         libregf_value_get_value_data_size(curval, &datasize, &regerr);
                         uint8_t data[datasize];
                         libregf_value_get_value_data(curval, data, datasize, &regerr);
-                        valuedata += "Name:\t";
-                        for(int i=0; i < sizeof(data) / 2; i++)
+                        uint64_t tmp64 = (uint64_t)data[0] | (uint64_t)data[1] << 8 | (uint64_t)data[2] << 16 | (uint64_t)data[3] << 24 | (uint64_t)data[4] << 32 | (uint64_t)data[5] << 40 | (uint64_t)data[6] << 48 | (uint64_t)data[7] << 56;
+                        valuedata += "Shutdown Time:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+
+                    }
+                    else if(valuename.contains("MRUListEx"))
+                    {
+                        size_t datasize = 0;
+                        libregf_value_get_value_data_size(curval, &datasize, &regerr);
+                        uint8_t data[datasize];
+                        libregf_value_get_value_data(curval, data, datasize, &regerr);
+                        valuedata += "Order:\t[";
+                        for(int i=0; i < sizeof(data) / 4; i++)
                         {
-                            uint16_t tmp16 = (uint16_t)data[i*2] | (uint16_t)data[i*2 + 1] << 8;
-                            FXwchar tmpwc = FX::wc(&tmp16);
-                            if(tmp16 == 0x0000)
-                                break;
-                            valuedata += tmpwc;
+                            uint32_t tmp32 = (uint32_t)data[i*4] | (uint32_t)data[i*4 + 1] << 8 | (uint32_t)data[i*4 + 2] << 16 | (uint32_t)data[i*4 + 3] << 24;
+                            if(tmp32 < 0xFFFFFFFF)
+                                valuedata += FXString::value(tmp32);
+                            if(i < ((sizeof(data) / 4) - 2))
+                                valuedata += ", ";
+                        }
+                        valuedata += "]\n";
+                    }
+                    else if(keypath.contains("RecentDocs"))
+                    {
+                        if(!valuename.contains("MRUListEx"))
+                        {
+                            size_t datasize = 0;
+                            libregf_value_get_value_data_size(curval, &datasize, &regerr);
+                            uint8_t data[datasize];
+                            libregf_value_get_value_data(curval, data, datasize, &regerr);
+                            valuedata += "Name:\t";
+                            for(int i=0; i < sizeof(data) / 2; i++)
+                            {
+                                uint16_t tmp16 = (uint16_t)data[i*2] | (uint16_t)data[i*2 + 1] << 8;
+                                FXwchar tmpwc = FX::wc(&tmp16);
+                                if(tmp16 == 0x0000)
+                                    break;
+                                valuedata += tmpwc;
+                            }
                         }
                     }
                 }
-            }
-            else if(valuetype.contains("REG_DWORD"))
-            {
-                valuedata += "Content:\t";
-                uint32_t dwordvalue = 0;
-                libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
-                if(valuename.lower().contains("date"))
-                    valuedata += ConvertUnixTimeToString(dwordvalue);
-                else
+                else if(valuetype.contains("REG_DWORD"))
+                {
+                    valuedata += "Content:\t";
+                    uint32_t dwordvalue = 0;
+                    libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
+                    if(valuename.lower().contains("date"))
+                        valuedata += ConvertUnixTimeToString(dwordvalue);
+                    else
+                        valuedata += FXString::value(dwordvalue);
+                }
+                else if(valuetype.contains("REG_DWORD_BIG_ENDIAN"))
+                {
+                    valuedata += "Content:\t";
+                    uint32_t dwordvalue = 0;
+                    libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
                     valuedata += FXString::value(dwordvalue);
-            }
-            else if(valuetype.contains("REG_DWORD_BIG_ENDIAN"))
-            {
-                valuedata += "Content:\t";
-                uint32_t dwordvalue = 0;
-                libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
-                valuedata += FXString::value(dwordvalue);
-            }
-            else if(valuetype.contains("REG_MULTI_SZ"))
-            {
-                valuedata += "Content\n";
-                valuedata += "-------\n";
-                libregf_multi_string_t* multistring = NULL;
-                libregf_value_get_value_multi_string(curval, &multistring, &regerr);
-                int strcnt = 0;
-                libregf_multi_string_get_number_of_strings(multistring, &strcnt, &regerr);
-                for(int i=0; i < strcnt; i++)
-                {
-                    size_t strsize = 0;
-                    libregf_multi_string_get_utf8_string_size(multistring, i, &strsize, &regerr);
-                    uint8_t valstr[strsize];
-                    libregf_multi_string_get_utf8_string(multistring, i, valstr, strsize, &regerr);
-                    valuedata += FXString(reinterpret_cast<char*>(valstr));
                 }
-                libregf_multi_string_free(&multistring, &regerr);
+                else if(valuetype.contains("REG_MULTI_SZ"))
+                {
+                    valuedata += "Content\n";
+                    valuedata += "-------\n";
+                    libregf_multi_string_t* multistring = NULL;
+                    libregf_value_get_value_multi_string(curval, &multistring, &regerr);
+                    int strcnt = 0;
+                    libregf_multi_string_get_number_of_strings(multistring, &strcnt, &regerr);
+                    for(int i=0; i < strcnt; i++)
+                    {
+                        size_t strsize = 0;
+                        libregf_multi_string_get_utf8_string_size(multistring, i, &strsize, &regerr);
+                        uint8_t valstr[strsize];
+                        libregf_multi_string_get_utf8_string(multistring, i, valstr, strsize, &regerr);
+                        valuedata += FXString(reinterpret_cast<char*>(valstr));
+                    }
+                    libregf_multi_string_free(&multistring, &regerr);
+                }
+                else if(valuetype.contains("REG_QWORD"))
+                {
+                    valuedata += "Content:\t";
+                    uint64_t qwordvalue = 0;
+                    libregf_value_get_value_64bit(curval, &qwordvalue, &regerr);
+                    valuedata += FXString::value(qwordvalue);
+                }
             }
-            else if(valuetype.contains("REG_QWORD"))
+            size_t datasize = 0;
+            libregf_value_get_value_data_size(curval, &datasize, &regerr);
+            uint8_t data[datasize];
+            libregf_value_get_value_data(curval, data, datasize, &regerr);
+            valuedata += "\n\nBinary Content\n--------------\n\n";
+            if(datasize < 16)
             {
-                valuedata += "Content:\t";
-                uint64_t qwordvalue = 0;
-                libregf_value_get_value_64bit(curval, &qwordvalue, &regerr);
-                valuedata += FXString::value(qwordvalue);
-            }
-	}
-        size_t datasize = 0;
-        libregf_value_get_value_data_size(curval, &datasize, &regerr);
-        uint8_t data[datasize];
-        libregf_value_get_value_data(curval, data, datasize, &regerr);
-        valuedata += "\n\nBinary Content\n--------------\n\n";
-        if(datasize < 16)
-        {
-            valuedata += "0000\t";
-            std::stringstream ss;
-            ss << std::hex <<  std::setfill('0');
-            for(int i=0; i < datasize; i++)
-                ss << std::setw(2) << ((uint)data[i]) << " ";
-            valuedata += FXString(ss.str().c_str()).upper();
-            for(int i=0; i < datasize; i++)
-            {
-                if(isprint(data[i]))
-                    valuedata += FXchar(reinterpret_cast<unsigned char>(data[i]));
-                else
-                    valuedata += ".";
-            }
-            valuedata += "\n";
-        }
-        else
-        {
-            int linecount = datasize / 16;
-            for(int i=0; i < linecount; i++)
-            {
+                valuedata += "0000\t";
                 std::stringstream ss;
-                ss << std::hex << std::setfill('0') << std::setw(8) << i * 16 << "\t";
-                for(int j=0; j < 16; j++)
-                {
-                    ss << std::setw(2) << ((uint)data[j+i*16]) << " ";
-                }
+                ss << std::hex <<  std::setfill('0');
+                for(int i=0; i < datasize; i++)
+                    ss << std::setw(2) << ((uint)data[i]) << " ";
                 valuedata += FXString(ss.str().c_str()).upper();
-                for(int j=0; j < 16; j++)
+                for(int i=0; i < datasize; i++)
                 {
-                    if(isprint(data[j+i*16]))
-                        valuedata += FXchar(reinterpret_cast<unsigned char>(data[j+i*16]));
+                    if(isprint(data[i]))
+                        valuedata += FXchar(reinterpret_cast<unsigned char>(data[i]));
                     else
                         valuedata += ".";
                 }
                 valuedata += "\n";
             }
+            else
+            {
+                int linecount = datasize / 16;
+                for(int i=0; i < linecount; i++)
+                {
+                    std::stringstream ss;
+                    ss << std::hex << std::setfill('0') << std::setw(8) << i * 16 << "\t";
+                    for(int j=0; j < 16; j++)
+                    {
+                        ss << std::setw(2) << ((uint)data[j+i*16]) << " ";
+                    }
+                    valuedata += FXString(ss.str().c_str()).upper();
+                    for(int j=0; j < 16; j++)
+                    {
+                        if(isprint(data[j+i*16]))
+                            valuedata += FXchar(reinterpret_cast<unsigned char>(data[j+i*16]));
+                        else
+                            valuedata += ".";
+                    }
+                    valuedata += "\n";
+                }
+            }
+            plaintext->setText(valuedata);
+            libregf_value_free(&curval, &regerr);
+            libregf_key_free(&curkey, &regerr);
+            libregf_file_close(regfile, &regerr);
+            libregf_file_free(&regfile, &regerr);
+            libregf_error_free(&regerr);
         }
-        plaintext->setText(valuedata);
-        libregf_value_free(&curval, &regerr);
-        libregf_key_free(&curkey, &regerr);
-        libregf_file_close(regfile, &regerr);
-        libregf_file_free(&regfile, &regerr);
-        libregf_error_free(&regerr);
     }
     return 1;
 }
@@ -532,7 +565,6 @@ long WombatRegistry::OpenTagManager(FXObject*, FXSelector, void*)
     ManageTags tagmanager(this, "Manage Tags");
     tagmanager.SetTagList(&tags);
     tagmanager.execute(PLACEMENT_OWNER);
-    //UpdateTagsMenu();
     return 1;
 }
 
@@ -620,31 +652,6 @@ void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curite
     }
 }
 
-void WombatRegistry::UpdateTagsMenu()
-{
-    //FXMenuButton* newbutton = new FXMenuButton(tagmenu, "Create New Tag");
-    /*
-    tagmenu->clear();
-    newtagaction = new QAction("New Tag", tagmenu);
-    newtagaction->setIcon(QIcon(":/bar/newtag"));
-    connect(newtagaction, SIGNAL(triggered()), this, SLOT(CreateNewTag()));
-    tagmenu->addAction(newtagaction);
-    tagmenu->addSeparator();
-    for(int i=0; i < tags.count(); i++)
-    {
-	QAction* tmpaction = new QAction(tags.at(i), tagmenu);
-	tmpaction->setIcon(QIcon(":/bar/tag"));
-	tmpaction->setData(QVariant("t" + QString::number(i)));
-	connect(tmpaction, SIGNAL(triggered()), this, SLOT(SetTag()));
-	tagmenu->addAction(tmpaction);
-    }
-    tagmenu->addSeparator();
-    remtagaction = new QAction("Remove Tag", tagmenu);
-    remtagaction->setIcon(QIcon(":/bar/removetag"));
-    connect(remtagaction, SIGNAL(triggered()), this, SLOT(RemoveTag()));
-    tagmenu->addAction(remtagaction);
-    */
-}
 
 long WombatRegistry::SetTag(FXObject* sender, FXSelector, void*)
 {
