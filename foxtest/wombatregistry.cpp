@@ -94,7 +94,6 @@ long WombatRegistry::CreateNewTag(FXObject*, FXSelector, void*)
     {
         tags.push_back(tagstr.text());
         tablelist->setItemText(tablelist->getCurrentRow(), 0, tagstr);
-        //UpdateList();
     }
     /*
     ui->tablewidget->selectedItems().first()->setText(tagname);
@@ -105,7 +104,6 @@ long WombatRegistry::CreateNewTag(FXObject*, FXSelector, void*)
             taggeditems.removeAt(i);
     }
     taggeditems.append(tagname + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
-
      */ 
     return 1;
 }
