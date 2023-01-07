@@ -11,8 +11,10 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     treelist = new FXTreeList(vsplitter, this, ID_TREESELECT, TREELIST_SHOWS_LINES|TREELIST_SINGLESELECT|TREELIST_ROOT_BOXES|TREELIST_SHOWS_BOXES);
     treelist->setWidth(this->getWidth() / 4);
     hsplitter = new FXSplitter(vsplitter, SPLITTER_VERTICAL);
-    tablelist = new FXTable(hsplitter, this, ID_TABLESELECT, LAYOUT_FILL_X, LAYOUT_FILL_Y);
+    tablelist = new FXTable(hsplitter, this, ID_TABLESELECT, TABLE_COL_SIZABLE|LAYOUT_FILL_X, LAYOUT_FILL_Y);
+    plainfont = new FXFont(a, "monospace");
     plaintext = new FXText(hsplitter);
+    plaintext->setFont(plainfont);
     tablelist->setHeight(this->getHeight() / 3);
     //tablelist->setVisibleColumns(3);
     tablelist->setEditable(false);
@@ -288,6 +290,8 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
     libregf_file_close(regfile, &regerr);
     libregf_file_free(&regfile, &regerr);
     libregf_error_free(&regerr);
+    //tablelist->selectRow(0);
+    //tablelist->setCurrentItem(0, 0);
 
     return 1;
 }
@@ -372,6 +376,7 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                 }
                 else if(keypath.contains("SAM") && valuename.count() == 1 && valuename.contains("F"))
                 {
+                    uint64_t tmp64 = 0;
                     size_t datasize = 0;
                     libregf_value_get_value_data_size(curval, &datasize, &regerr);
                     uint8_t data[datasize];
@@ -384,51 +389,25 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                     }
                     else
                     {
-                        uint8_t* tmp8 = new uint8_t[8];
-                        tmp8[7] = data[32];
-                        tmp8[6] = data[33];
-                        tmp8[5] = data[34];
-                        tmp8[4] = data[35];
-                        tmp8[3] = data[36];
-                        tmp8[2] = data[37];
-                        tmp8[1] = data[38];
-                        tmp8[0] = data[39];
-                        uint64_t tmp64 = 0;
-                        tmp64 = (uint64_t)tmp8[0] | (uint64_t)tmp8[1] << 8 | (uint64_t)tmp8[2] << 16 | (uint64_t)tmp8[3] << 24 | (uint64_t)tmp8[4] << 32 | (uint64_t)tmp8[5] << 40 | (uint64_t)tmp8[6] << 48 | (uint64_t)tmp8[7] << 56;
+                        tmp64 = (uint64_t)data[32] | (uint64_t)data[33] << 8 | (uint64_t)data[34] << 16 | (uint64_t)data[35] << 24 | (uint64_t)data[36] << 32 | (uint64_t)data[37] << 40 | (uint64_t)data[38] << 48 | (uint64_t)data[39] << 56;
                         valuedata += ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
                     }
-                    uint8_t* tmp8 = new uint8_t[8];
-                    tmp8[0] = data[8];
-                    tmp8[1] = data[9];
-                    tmp8[2] = data[10];
-                    tmp8[3] = data[11];
-                    tmp8[4] = data[12];
-                    tmp8[5] = data[13];
-                    tmp8[6] = data[14];
-                    tmp8[7] = data[15];
-                    uint64_t tmp64 = 0;
-                    tmp64 = (uint64_t)tmp8[0] | (uint64_t)tmp8[1] << 8 | (uint64_t)tmp8[2] << 16 | (uint64_t)tmp8[3] << 24 | (uint64_t)tmp8[4] << 32 | (uint64_t)tmp8[5] << 40 | (uint64_t)tmp8[6] << 48 | (uint64_t)tmp8[7] << 56;
+                    tmp64 = (uint64_t)data[8] | (uint64_t)data[9] << 8 | (uint64_t)data[10] << 16 | (uint64_t)data[11] << 24 | (uint64_t)data[12] << 32 | (uint64_t)data[13] << 40 | (uint64_t)data[14] << 48 | (uint64_t)data[15] << 56;
                     valuedata += "Last Logon Time:\t\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
-                    tmp8[0] = data[40];
-                    tmp8[1] = data[41];
-                    tmp8[2] = data[42];
-                    tmp8[3] = data[43];
-                    tmp8[4] = data[44];
-                    tmp8[5] = data[45];
-                    tmp8[6] = data[46];
-                    tmp8[7] = data[47];
-                    tmp64 = (uint64_t)tmp8[0] | (uint64_t)tmp8[1] << 8 | (uint64_t)tmp8[2] << 16 | (uint64_t)tmp8[3] << 24 | (uint64_t)tmp8[4] << 32 | (uint64_t)tmp8[5] << 40 | (uint64_t)tmp8[6] << 48 | (uint64_t)tmp8[7] << 56;
+                    tmp64 = (uint64_t)data[40] | (uint64_t)data[41] << 8 | (uint64_t)data[42] << 16 | (uint64_t)data[43] << 24 | (uint64_t)data[44] << 32 | (uint64_t)data[45] << 40 | (uint64_t)data[46] << 48 | (uint64_t)data[47] << 56;
                     valuedata += "Last Failed Login:\t\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
-                    tmp8[0] = data[24];
-                    tmp8[1] = data[25];
-                    tmp8[2] = data[26];
-                    tmp8[3] = data[27];
-                    tmp8[4] = data[28];
-                    tmp8[5] = data[29];
-                    tmp8[6] = data[30];
-                    tmp8[7] = data[31];
-                    tmp64 = (uint64_t)tmp8[0] | (uint64_t)tmp8[1] << 8 | (uint64_t)tmp8[2] << 16 | (uint64_t)tmp8[3] << 24 | (uint64_t)tmp8[4] << 32 | (uint64_t)tmp8[5] << 40 | (uint64_t)tmp8[6] << 48 | (uint64_t)tmp8[7] << 56;
+                    tmp64 = (uint64_t)data[24] | (uint64_t)data[25] << 8 | (uint64_t)data[26] << 16 | (uint64_t)data[27] << 24 | (uint64_t)data[28] << 32 | (uint64_t)data[29] << 40 | (uint64_t)data[30] << 48 | (uint64_t)data[31] << 56;
                     valuedata += "Last Time Password Changed:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                }
+                else if(valuename.contains("ShutdownTime"))
+                {
+                    size_t datasize = 0;
+                    libregf_value_get_value_data_size(curval, &datasize, &regerr);
+                    uint8_t data[datasize];
+                    libregf_value_get_value_data(curval, data, datasize, &regerr);
+                    uint64_t tmp64 = (uint64_t)data[0] | (uint64_t)data[1] << 8 | (uint64_t)data[2] << 16 | (uint64_t)data[3] << 24 | (uint64_t)data[4] << 32 | (uint64_t)data[5] << 40 | (uint64_t)data[6] << 48 | (uint64_t)data[7] << 56;
+                    valuedata += "Shutdown Time:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+
                 }
                 /*
                 else if(ui->tablewidget->selectedItems().at(1)->text().startsWith("ShutdownTime"))

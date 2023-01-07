@@ -44,6 +44,7 @@ class WombatRegistry : public FXMainWindow
 	FXIcon* abouticon;
 	FXButton* aboutbutton;
         FXStatusBar* statusbar;
+        FXFont* plainfont;
         std::string prevhivepath;
         std::string hivefilepath;
         std::vector<std::filesystem::path> hives;
@@ -91,7 +92,7 @@ FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_OPEN, WombatRegistry::OpenHive),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_MANAGETAGS, WombatRegistry::OpenTagManager),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_ABOUT, WombatRegistry::OpenAboutBox),
-    FXMAPFUNC(SEL_CLICKED, WombatRegistry::ID_TABLESELECT, WombatRegistry::ValueSelected),
+    FXMAPFUNC(SEL_SELECTED, WombatRegistry::ID_TABLESELECT, WombatRegistry::ValueSelected),
 };
 
 #endif // WOMBATREGISTRY_H
