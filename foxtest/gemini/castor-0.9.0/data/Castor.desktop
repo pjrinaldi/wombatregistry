@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Castor
+GenericName=Castor
+Comment=Browse the plain-text Internet.
+Categories=Network;GTK
+Icon=org.typed-hole.castor
+Exec=castor %u
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/gemini;x-scheme-handler/gopher;x-scheme-handler/finger;
