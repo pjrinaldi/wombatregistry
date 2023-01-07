@@ -52,7 +52,6 @@ class WombatRegistry : public FXMainWindow
         std::vector<std::string> tags;
         std::ifstream* filebufptr;
 
-        //__builtin_bswapX
     protected:
         WombatRegistry() {}
 

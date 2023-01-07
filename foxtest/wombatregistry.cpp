@@ -55,87 +55,11 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
 
 }
 
-
-/*
-    uint8_t* bs = new uint8_t[4];
-    uint32_t blocksize = 0;
-    ReadContent(rawcontent, bs, 4, 4);
-    ReturnUint32(&blocksize, bs);
-    delete[] bs;
-    blocksize = __builtin_bswap32(blocksize); 
-void ReadContent(std::ifstream* rawcontent, int8_t* tmpbuf, uint64_t offset, uint64_t size)
-{
-    rawcontent->seekg(offset);
-    rawcontent->read((char*)tmpbuf, size);
-}
-
-void ReturnUint32(uint32_t* tmp32, uint8_t* tmp8)
-{
-    *tmp32 = (uint32_t)tmp8[0] | (uint32_t)tmp8[1] << 8 | (uint32_t)tmp8[2] << 16 | (uint32_t)tmp8[3] << 24;
-}
- */
-
-
-
-/*
-// Construct a ScribbleWindow
-  ScribbleWindow::ScribbleWindow(FXApp *a):FXMainWindow(a,"ScribbleApplication",NULL,NULL,DECOR_ALL,0,0,800,600){
-
-  contents=new FXHorizontalFrame(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0,0,0,0,0);
-
-  // LEFT pane to contain the canvas
-  canvasFrame=new FXVerticalFrame(contents,
-                                  FRAME_SUNKEN|LAYOUT_FILL_X|LAYOUT_FILL_Y|LAYOUT_TOP|LAYOUT_LEFT,0,0,0,0,10,10,10,10);
-
-  // Label above the canvas
-  new FXLabel(canvasFrame,"CanvasFrame",NULL,JUSTIFY_CENTER_X|LAYOUT_FILL_X);
-
-  // Horizontal divider line
-  new FXHorizontalSeparator(canvasFrame,SEPARATOR_GROOVE|LAYOUT_FILL_X);
-
-  // Drawing canvas
-  canvas=new FXCanvas(canvasFrame,this,ID_CANVAS,
-                      FRAME_SUNKEN|FRAME_THICK|LAYOUT_FILL_X|LAYOUT_FILL_Y|LAYOUT_TOP|LAYOUT_LEFT);
-
-  // RIGHT pane for the buttons
-  buttonFrame=new FXVerticalFrame(contents,
-                                  FRAME_SUNKEN|LAYOUT_FILL_Y|LAYOUT_TOP|LAYOUT_LEFT,0,0,0,0,10,10,10,10);
-
-  // Label above the buttons
-  new FXLabel(buttonFrame,"ButtonFrame",NULL,JUSTIFY_CENTER_X|LAYOUT_FILL_X);
-
-  // Horizontal divider line
-  new FXHorizontalSeparator(buttonFrame,SEPARATOR_RIDGE|LAYOUT_FILL_X);
-
-  // Button to clear
-  new FXButton(buttonFrame,"&Clear",NULL,this,ID_CLEAR,
-               FRAME_THICK|FRAME_RAISED|LAYOUT_FILL_X|LAYOUT_TOP|LAYOUT_LEFT,0,0,0,0,10,10,5,5);
-
-  // Exit button
-  new FXButton(buttonFrame,"&Exit",NULL,getApp(),FXApp::ID_QUIT,
-               FRAME_THICK|FRAME_RAISED|LAYOUT_FILL_X|LAYOUT_TOP|LAYOUT_LEFT,0,0,0,0,10,10,5,5);
-
-  // Initialize private variables
-  drawColor=FXRGB(255,0,0);
-  mdflag=0;
-  dirty=0;
-  }
-*/
-
 void WombatRegistry::create()
 {
     FXMainWindow::create();
     show(PLACEMENT_SCREEN);
 }
-
-/*
-long WombatRegistry::onMouseDown(FXObject*, FXSelector, void*)
-{
-    std::cout << "mouse down pressed." << std::endl;
-    printf("hello there.");
-    return 1;
-}
-*/
 
 long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 {
@@ -393,7 +317,6 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                     uint8_t data[datasize];
                     libregf_value_get_value_data(curval, data, datasize, &regerr);
                     valuedata += "Account Expiration:\t\t";
-                    //if(farray.mid(32,1).toHex() == "ff")
                     if(data[32] == 0xff)
                     {
                         valuedata += "No Expiration is Set\n";
@@ -505,62 +428,45 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
         uint8_t data[datasize];
         libregf_value_get_value_data(curval, data, datasize, &regerr);
         valuedata += "\n\nBinary Content\n--------------\n\n";
-        //std::cout << "data size:" << datasize << std::endl;
         if(datasize < 16)
         {
+            valuedata += "0000\t";
             std::stringstream ss;
             ss << std::hex <<  std::setfill('0');
             for(int i=0; i < datasize; i++)
                 ss << std::setw(2) << ((uint)data[i]) << " ";
             valuedata += FXString(ss.str().c_str()).upper();
-            /*
             for(int i=0; i < datasize; i++)
             {
-                valuedata += FXchar(data[i]);
-            }
-            */
-            valuedata += "\n";
-        }
-        /*
-        QByteArray dataarray = QByteArray::fromRawData((char*)data, datasize);
-        if(datasize < 16)
-        {
-            valuedata += QString::number(0, 16).rightJustified(8, '0') + "\t";
-            for(int i=0; i < datasize; i++)
-                valuedata += QString("%1").arg(data[i], 2, 16, QChar('0')).toUpper() + " ";
-            for(int i=0; i < datasize; i++)
-            {
-                if(!QChar(dataarray.at(i)).isPrint())
-                    valuedata += ".";
+                if(isprint(data[i]))
+                    valuedata += FXchar(reinterpret_cast<unsigned char>(data[i]));
                 else
-                    valuedata += QString("%1").arg(dataarray.at(i));
+                    valuedata += ".";
             }
             valuedata += "\n";
         }
         else
         {
             int linecount = datasize / 16;
-            //int remainder = datasize % 16;
             for(int i=0; i < linecount; i++)
             {
-                valuedata += QString::number(i * 16, 16).rightJustified(8, '0') + "\t";
+                std::stringstream ss;
+                ss << std::hex << std::setfill('0') << std::setw(8) << i * 16 << "\t";
                 for(int j=0; j < 16; j++)
                 {
-                    valuedata += QString("%1").arg(data[j+i*16], 2, 16, QChar('0')).toUpper() + " ";
+                    ss << std::setw(2) << ((uint)data[j+i*16]) << " ";
                 }
+                valuedata += FXString(ss.str().c_str()).upper();
                 for(int j=0; j < 16; j++)
                 {
-                    if(!QChar(dataarray.at(j+i*16)).isPrint())
-                    {
-                        valuedata += ".";
-                    }
+                    if(isprint(data[j+i*16]))
+                        valuedata += FXchar(reinterpret_cast<unsigned char>(data[j+i*16]));
                     else
-                        valuedata += QString("%1").arg(dataarray.at(j+i*16));
+                        valuedata += ".";
                 }
                 valuedata += "\n";
             }
         }
-	*/
         plaintext->setText(valuedata);
         libregf_value_free(&curval, &regerr);
         libregf_key_free(&curkey, &regerr);
@@ -639,7 +545,6 @@ long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
         delete[] registryheader;
         if(regheadstr.find("regf") != std::string::npos) // win nt reg file
         {
-            //std::cout << "it's a registry file, begin parsing..." << std::endl;
             filebuffer.close();
             libregf_file_t* regfile = NULL;
             libregf_error_t* regerr = NULL;
@@ -697,109 +602,6 @@ void WombatRegistry::PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curite
 	}
     }
 }
-
-/*
-// Create and initialize
-  void ScribbleWindow::create(){
-    // Create the windows
-    FXMainWindow::create();
-    // Make the main window appear
-    show();
-    }
-
-// Mouse button was pressed somewhere
-   long ScribbleWindow::onMouseDown(FXObject*,FXSelector,void*){
-
-     // While the mouse is down, we'll draw lines
-     mdflag=1;
-     return 1;
-     }
-
-   // The mouse has moved, draw a line
-   long ScribbleWindow::onMouseMove(FXObject*, FXSelector,void* ptr){
-     FXEvent *ev=(FXEvent*)ptr;
-     if(mdflag){
-
-       // Get DC for the canvas
-       FXDCWindow dc(canvas);
-
-       // Set foreground color
-       dc.setForeground(drawColor);
-
-       // Draw line
-       dc.drawLine(ev->last_x, ev->last_y,ev->win_x, ev->win_y);
-
-       // We have drawn something, sonow the canvas is dirty
-       dirty=1;
-       }
-     return 1;
-     }
-
-   // The mouse button was released again
-   long ScribbleWindow::onMouseUp(FXObject*,FXSelector,void*ptr){
-     FXEvent *ev=(FXEvent*) ptr;
-     if(mdflag){
-       FXDCWindow dc(canvas);
-       dc.setForeground(drawColor);
-       dc.drawLine(ev->last_x, ev->last_y,ev->win_x, ev->win_y);
-
-       // We have drawn something, sonow the canvas is dirty
-       dirty=1;
-
-       // Mouse no longer down
-       mdflag=0;
-       }
-     return 1;
-     }
-
-   // Paint the canvas
-   long ScribbleWindow::onPaint(FXObject*,FXSelector,void*ptr){
-     FXEvent *ev=(FXEvent*)ptr;
-     FXDCWindow dc(canvas,ev);
-     dc.setForeground(canvas->getBackColor());
-     dc.fillRectangle(ev->rect.x,ev->rect.y,ev->rect.w,ev->rect.h);
-     return 1;
-     }
-
-// Handle the clear message
-  long ScribbleWindow::onCmdClear(FXObject*,FXSelector,void*){
-    FXDCWindow dc(canvas);
-    dc.setForeground(canvas->getBackColor());
-    dc.fillRectangle(0,0,canvas->getWidth(),canvas->getHeight());
-    dirty=0;
-    return 1;
-    }
-
-
-  // Update the clear button
-  long ScribbleWindow::onUpdClear(FXObject* sender,FXSelector,void*){
-    if(dirty)
-      sender->handle(this,FXSEL(SEL_COMMAND,ID_ENABLE),NULL);
-    else
-      sender->handle(this,FXSEL(SEL_COMMAND,ID_DISABLE),NULL);
-    return 1;
-    }
-
-// Here we begin
-  int main(int argc,char *argv[]){
-
-    // Make application
-    FXApp* application=new FXApp("Scribble","Test");
-
-    // Start app
-    application->init(argc,argv);
-    // Scribble window
-    new ScribbleWindow(application);
-
-    // Create the application's windows
-    application->create();
-
-    // Run the application
-    application->run();
-
-    return 0;
-    }
-*/
 
 int main(int argc, char* argv[])
 {
