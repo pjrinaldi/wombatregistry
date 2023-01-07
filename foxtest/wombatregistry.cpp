@@ -75,7 +75,8 @@ long WombatRegistry::TagMenu(FXObject*, FXSelector, void* ptr)
             {
                 new FXMenuCommand(&tagmenu, FXString(tags.at(i).c_str()), new FXPNGIcon(this->getApp(), bookmark), this, ID_SETTAG);
             }
-            //new FXMenuCommand(&popupmenu,tr("Cut"),getApp()->cuticon,editor (object for action),FXText::ID_CUT_SEL (id));
+            new FXMenuSeparator(&tagmenu);
+            new FXMenuCommand(&tagmenu, "Remove Tag", new FXPNGIcon(this->getApp(), bookmarkrem), this, ID_REMTAG);
             tagmenu.forceRefresh();
             tagmenu.create();
             tagmenu.popup(nullptr, event->root_x, event->root_y);
@@ -84,30 +85,24 @@ long WombatRegistry::TagMenu(FXObject*, FXSelector, void* ptr)
     }
     return 1;
 }
-/*
-    newtagaction = new QAction("New Tag", tagmenu);
-    newtagaction->setIcon(QIcon(":/bar/newtag"));
-    connect(newtagaction, SIGNAL(triggered()), this, SLOT(CreateNewTag()));
-    tagmenu->addAction(newtagaction);
-    tagmenu->addSeparator();
-    for(int i=0; i < tags.count(); i++)
-    {
-	QAction* tmpaction = new QAction(tags.at(i), tagmenu);
-	tmpaction->setIcon(QIcon(":/bar/tag"));
-	tmpaction->setData(QVariant("t" + QString::number(i)));
-	connect(tmpaction, SIGNAL(triggered()), this, SLOT(SetTag()));
-	tagmenu->addAction(tmpaction);
-    }
-    tagmenu->addSeparator();
-    remtagaction = new QAction("Remove Tag", tagmenu);
-    remtagaction->setIcon(QIcon(":/bar/removetag"));
-    connect(remtagaction, SIGNAL(triggered()), this, SLOT(RemoveTag()));
-    tagmenu->addAction(remtagaction);
- */ 
 
 long WombatRegistry::CreateNewTag(FXObject*, FXSelector, void*)
 {
     std::cout << "create new tag here." << std::endl;
+    return 1;
+}
+
+long WombatRegistry::RemoveTag(FXObject*, FXSelector, void*)
+{
+    /*
+    ui->tablewidget->selectedItems().first()->setText("");
+    QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
+    for(int i=0; i < taggeditems.count(); i++)
+    {
+        if(taggeditems.at(i).contains(idkeyvalue))
+            taggeditems.removeAt(i);
+    }
+    */
     return 1;
 }
 
