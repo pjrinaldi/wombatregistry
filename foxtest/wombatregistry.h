@@ -16,6 +16,7 @@
 #include "icons.h"
 #include "managetags.h"
 #include "aboutbox.h"
+#include "viewer.h"
 
 #define TICKS_PER_SECOND 10000000
 #define EPOCH_DIFFERENCE 11644473600LL
@@ -46,7 +47,9 @@ class WombatRegistry : public FXMainWindow
 	FXButton* aboutbutton;
         FXStatusBar* statusbar;
         FXFont* plainfont;
-        //FXMenuPane* tagmenu;
+        FXFont* header1;
+        FXFont* header2;
+        FXFont* header3;
         std::string prevhivepath;
         std::string hivefilepath;
         std::vector<std::filesystem::path> hives;
@@ -83,6 +86,7 @@ class WombatRegistry : public FXMainWindow
         long SetTag(FXObject* sender, FXSelector, void*);
         long CreateNewTag(FXObject*, FXSelector, void*);
         long RemoveTag(FXObject*, FXSelector, void*);
+        long PreviewReport(FXObject*, FXSelector, void*);
 	void PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curitem, libregf_error_t* regerr);
 	void GetRootString(FXTreeItem* curitem, FXString* rootstring);
 	FXString ConvertWindowsTimeToUnixTimeUTC(uint64_t input);
@@ -107,6 +111,7 @@ FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_NEWTAG, WombatRegistry::CreateNewTag),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_SETTAG, WombatRegistry::SetTag),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_REMTAG, WombatRegistry::RemoveTag),
+    FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_PREVIEW, WombatRegistry::PreviewReport),
 };
 
 #endif // WOMBATREGISTRY_H

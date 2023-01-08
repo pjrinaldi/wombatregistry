@@ -13,6 +13,7 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     hsplitter = new FXSplitter(vsplitter, SPLITTER_VERTICAL);
     tablelist = new FXTable(hsplitter, this, ID_TABLESELECT, TABLE_COL_SIZABLE|LAYOUT_FILL_X, LAYOUT_FILL_Y);
     plainfont = new FXFont(a, "monospace");
+    header1 = new FXFont(a, "Roman", 18, FXFont::Bold);
     plaintext = new FXText(hsplitter);
     plaintext->setFont(plainfont);
     plaintext->setEditable(false);
@@ -588,6 +589,13 @@ long  WombatRegistry::OpenAboutBox(FXObject*, FXSelector, void*)
 {
     AboutBox aboutbox(this, "About Wombat Registry Forensics");
     aboutbox.execute(PLACEMENT_OWNER);
+    return 1;
+}
+
+long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
+{
+    Viewer viewer(this, "Report Preview");
+    viewer.execute(PLACEMENT_OWNER);
     return 1;
 }
 
