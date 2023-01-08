@@ -13,10 +13,6 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     hsplitter = new FXSplitter(vsplitter, SPLITTER_VERTICAL);
     tablelist = new FXTable(hsplitter, this, ID_TABLESELECT, TABLE_COL_SIZABLE|LAYOUT_FILL_X, LAYOUT_FILL_Y);
     plainfont = new FXFont(a, "monospace");
-    header1 = new FXFont(a, "Roman", 18, FXFont::Bold);
-    header2 = new FXFont(a, "Roman", 16, FXFont::Bold);
-    header3 = new FXFont(a, "Roman", 14, FXFont::Bold);
-    regular = new FXFont(a, "Roman", 12);
     plaintext = new FXText(hsplitter);
     plaintext->setFont(plainfont);
     plaintext->setEditable(false);
@@ -39,7 +35,9 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     abouticon = new FXPNGIcon(this->getApp(), helpcontents);
     aboutbutton = new FXButton(toolbar, "", abouticon, this, ID_ABOUT, BUTTON_TOOLBAR);
     statusbar->getStatusLine()->setNormalText("Open a Hive File to Begin");
+    viewer = new Viewer(this, "Preview Report");
 
+    viewer->AppendHeader1("Wombat Registry Report");
     //rootitem = treelist->getFirstItem();
 
     //rootitem = new FXTreeItem("Root Item");
@@ -55,8 +53,6 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     //treelist->appendItem(mainitem, new FXTreeItem("Test 2"));
     hives.clear();
     tags.clear();
-
-
 }
 
 void WombatRegistry::create()
@@ -597,9 +593,20 @@ long  WombatRegistry::OpenAboutBox(FXObject*, FXSelector, void*)
 
 long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
 {
-    Viewer viewer(this, "Preview Report");
-    viewer.execute(PLACEMENT_OWNER);
+    GeneratePreview();
+    viewer->execute(PLACEMENT_OWNER);
     return 1;
+}
+
+void WombatRegistry::GeneratePreview()
+{
+    viewer->ClearText();
+    viewer->AppendHeader1("Wombat Registry Report\n");
+    viewer->AppendHeader3("Contents\n");
+    for(int i=0; i < tags.size(); i++)
+    {
+        viewer->AppendRegular(FXString(tags.at(i).c_str()));
+    }
 }
 
 long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)

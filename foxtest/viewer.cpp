@@ -2,16 +2,22 @@
 
 FXIMPLEMENT(Viewer,FXDialogBox,NULL, 0)
 
-Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, title, DECOR_TITLE|DECOR_BORDER|DECOR_CLOSE, 0, 0, 400, 600, 0,0,0,0, 0, 0)
+Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, title, DECOR_TITLE|DECOR_RESIZE|DECOR_BORDER|DECOR_CLOSE, 0, 0, 400, 300, 0,0,0,0, 0, 0)
 {
+    header1 = new FXFont(this->getApp(), "Roman", 18, FXFont::Bold);
+    header2 = new FXFont(this->getApp(), "Roman", 16, FXFont::Bold);
+    header3 = new FXFont(this->getApp(), "Roman", 14, FXFont::Bold);
+    regular = new FXFont(this->getApp(), "Roman", 12);
     mainframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
-    maintext = new FXText(mainframe, NULL, 0, TEXT_READONLY|TEXT_WORDWRAP);
-    maintext->setVisibleRows(80);
-    maintext->setVisibleColumns(80);
+    vsplitter = new FXSplitter(mainframe, SPLITTER_NORMAL|LAYOUT_FILL);
+    maintext = new FXText(vsplitter, NULL, 0, TEXT_READONLY|TEXT_WORDWRAP|VSCROLLER_ALWAYS);
+    //maintext->setVisibleRows(16);
+    //maintext->setVisibleColumns(55);
     /*
     mainimage = new FXPNGImage(this->getApp(), aboutwombat);
     imgframe = new FXImageFrame(mainframe, mainimage, FRAME_NONE);
     */
+    /*
     FXString abouttext = "\n\nAbout Wombat Registry v0.4\n\n";
     abouttext += "License: GPLv2\n";
     abouttext += "Copyright: 2022-2023 Pasquale J. Rinaldi, Jr.\n";
@@ -25,6 +31,7 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     abouttext += "If I have forgotten to mention any library or anyone,\n";
     abouttext += " let me know and I will update this content accordingly.";
     maintext->setText(abouttext);
+    */
     /*
     mainlabel = new FXLabel(mainframe, abouttext, NULL, JUSTIFY_LEFT);
     this->setBackColor(FX::colorFromName("white"));
@@ -44,6 +51,36 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     rembutton->disable();
     editbutton->disable();
     */
+}
+
+void Viewer::AppendHeader1(FXString h1text)
+{
+    maintext->setFont(header1);
+    maintext->appendText(h1text);
+
+}
+
+void Viewer::AppendHeader2(FXString h2text)
+{
+    maintext->setFont(header2);
+    maintext->appendText(h2text);
+}
+
+void Viewer::AppendHeader3(FXString h3text)
+{
+    maintext->setFont(header3);
+    maintext->appendText(h3text);
+}
+
+void Viewer::AppendRegular(FXString regtext)
+{
+    maintext->setFont(regular);
+    maintext->appendText(regtext);
+}
+
+void Viewer::ClearText()
+{
+    maintext->clearText();
 }
 
 /*

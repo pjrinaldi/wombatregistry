@@ -47,10 +47,7 @@ class WombatRegistry : public FXMainWindow
 	FXButton* aboutbutton;
         FXStatusBar* statusbar;
         FXFont* plainfont;
-        FXFont* header1;
-        FXFont* header2;
-        FXFont* header3;
-        FXFont* regular;
+        Viewer* viewer;
         std::string prevhivepath;
         std::string hivefilepath;
         std::vector<std::filesystem::path> hives;
@@ -94,6 +91,7 @@ class WombatRegistry : public FXMainWindow
         FXString ConvertUnixTimeToString(uint32_t input);
         FXString DecryptRot13(FXString encstr);
         FXchar Rot13Char(FXchar curchar);
+        void GeneratePreview();
 	void StatusUpdate(FXString tmptext)
 	{
 	    statusbar->getStatusLine()->setNormalText(tmptext);

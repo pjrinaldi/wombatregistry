@@ -15,8 +15,13 @@ class Viewer : public FXDialogBox
     FXDECLARE(Viewer)
 
     private:
+        FXSplitter* vsplitter;
         FXVerticalFrame* mainframe;
         FXText* maintext;
+        FXFont* header1;
+        FXFont* header2;
+        FXFont* header3;
+        FXFont* regular;
         /*
 	FXPNGImage* mainimage;
 	FXImageFrame* imgframe;
@@ -37,9 +42,8 @@ class Viewer : public FXDialogBox
     protected:
         Viewer() {}
 
-        long onSomeCommand(FXObject* sender, FXSelector sel, void* ptr);
-
     public:
+        /*
         enum
         {
             ID_TREELIST = 1,
@@ -49,7 +53,13 @@ class Viewer : public FXDialogBox
             ID_REMTAG = 103,
             ID_LAST
         };
+        */
         Viewer(FXWindow* parent, const FXString& title);
+        void AppendHeader1(FXString h1text);
+        void AppendHeader2(FXString h2text);
+        void AppendHeader3(FXString h3text);
+        void AppendRegular(FXString regtext);
+        void ClearText();
 	/*
         void SetTagList(std::vector<std::string>* tagslist);
         void UpdateList();
