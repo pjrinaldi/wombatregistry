@@ -37,7 +37,7 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     statusbar->getStatusLine()->setNormalText("Open a Hive File to Begin");
     viewer = new Viewer(this, "Preview Report");
 
-    viewer->AppendHeader1("Wombat Registry Report");
+    //viewer->AppendHeader1("Wombat Registry Report");
     //rootitem = treelist->getFirstItem();
 
     //rootitem = new FXTreeItem("Root Item");
@@ -593,13 +593,14 @@ long  WombatRegistry::OpenAboutBox(FXObject*, FXSelector, void*)
 
 long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
 {
-    GeneratePreview();
+    //GeneratePreview();
     viewer->execute(PLACEMENT_OWNER);
     return 1;
 }
 
 void WombatRegistry::GeneratePreview()
 {
+    /*
     viewer->ClearText();
     viewer->AppendHeader1("Wombat Registry Report\n");
     viewer->AppendHeader3("Contents\n");
@@ -607,6 +608,7 @@ void WombatRegistry::GeneratePreview()
     {
         viewer->AppendRegular(FXString(tags.at(i).c_str()));
     }
+    */
 }
 
 long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)

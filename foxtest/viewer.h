@@ -17,7 +17,8 @@ class Viewer : public FXDialogBox
     private:
         FXSplitter* vsplitter;
         FXVerticalFrame* mainframe;
-        FXText* maintext;
+        FXCanvas* canvas;
+        //FXText* maintext;
         FXFont* header1;
         FXFont* header2;
         FXFont* header3;
@@ -55,10 +56,12 @@ class Viewer : public FXDialogBox
         };
         */
         Viewer(FXWindow* parent, const FXString& title);
+        /*
         void AppendHeader1(FXString h1text);
         void AppendHeader2(FXString h2text);
         void AppendHeader3(FXString h3text);
         void AppendRegular(FXString regtext);
+        */
         void ClearText();
 	/*
         void SetTagList(std::vector<std::string>* tagslist);

@@ -10,7 +10,8 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     regular = new FXFont(this->getApp(), "Roman", 12);
     mainframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
     vsplitter = new FXSplitter(mainframe, SPLITTER_NORMAL|LAYOUT_FILL);
-    maintext = new FXText(vsplitter, NULL, 0, TEXT_READONLY|TEXT_WORDWRAP|VSCROLLER_ALWAYS);
+    canvas = new FXCanvas(vsplitter, this, LAYOUT_FILL_X|LAYOUT_FILL_Y|LAYOUT_FILL_ROW|LAYOUT_FILL_COLUMN);
+    //maintext = new FXText(vsplitter, NULL, 0, TEXT_READONLY|TEXT_WORDWRAP|VSCROLLER_ALWAYS);
     //maintext->setVisibleRows(16);
     //maintext->setVisibleColumns(55);
     /*
@@ -53,17 +54,19 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     */
 }
 
+/*
 void Viewer::AppendHeader1(FXString h1text)
 {
     maintext->setFont(header1);
-    maintext->appendText(h1text);
-
+    maintext->insertTextBlock(0, 0, 0, h1text);
+    //maintext->appendText(h1text);
 }
 
 void Viewer::AppendHeader2(FXString h2text)
 {
     maintext->setFont(header2);
-    maintext->appendText(h2text);
+    maintext->insertTextBlock(0, 40, 0, h2text);
+    //maintext->appendText(h2text);
 }
 
 void Viewer::AppendHeader3(FXString h3text)
@@ -75,12 +78,14 @@ void Viewer::AppendHeader3(FXString h3text)
 void Viewer::AppendRegular(FXString regtext)
 {
     maintext->setFont(regular);
-    maintext->appendText(regtext);
+    maintext->insertTextBlock(0, 80, 0, regtext);
+    //maintext->appendText(regtext);
 }
+*/
 
 void Viewer::ClearText()
 {
-    maintext->clearText();
+    //maintext->clearText();
 }
 // IT APPEARS YOU CAN ONLY PUT ONE FONT AT A TIME WHICH CHANGES ALL THE TEXT, SO THE ONLY WAY TO BUILD A DYNAMIC REPORT IS
 // EITHER GL OR DRAW CANVAS OR SOMETHING THE CONTENT OR ADD LABEL FOR EACH SECTION TO THE PREVIEW WINDOW...
