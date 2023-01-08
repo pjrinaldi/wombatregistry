@@ -16,10 +16,12 @@ class Viewer : public FXDialogBox
 
     private:
         FXVerticalFrame* mainframe;
-        FXText* viewtext;
-	//FXPNGImage* mainimage;
-	//FXImageFrame* imgframe;
-        //FXLabel* mainlabel;
+        FXText* maintext;
+        /*
+	FXPNGImage* mainimage;
+	FXImageFrame* imgframe;
+        FXLabel* mainlabel;
+        */
 	/*
         FXList* taglist;
         FXIcon* newicon;
@@ -35,7 +37,7 @@ class Viewer : public FXDialogBox
     protected:
         Viewer() {}
 
-        //long onSomeCommand(FXObject* sender, FXSelector sel, void* ptr);
+        long onSomeCommand(FXObject* sender, FXSelector sel, void* ptr);
 
     public:
         enum

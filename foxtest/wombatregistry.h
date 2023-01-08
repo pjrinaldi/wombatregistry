@@ -50,6 +50,7 @@ class WombatRegistry : public FXMainWindow
         FXFont* header1;
         FXFont* header2;
         FXFont* header3;
+        FXFont* regular;
         std::string prevhivepath;
         std::string hivefilepath;
         std::vector<std::filesystem::path> hives;

@@ -14,6 +14,9 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     tablelist = new FXTable(hsplitter, this, ID_TABLESELECT, TABLE_COL_SIZABLE|LAYOUT_FILL_X, LAYOUT_FILL_Y);
     plainfont = new FXFont(a, "monospace");
     header1 = new FXFont(a, "Roman", 18, FXFont::Bold);
+    header2 = new FXFont(a, "Roman", 16, FXFont::Bold);
+    header3 = new FXFont(a, "Roman", 14, FXFont::Bold);
+    regular = new FXFont(a, "Roman", 12);
     plaintext = new FXText(hsplitter);
     plaintext->setFont(plainfont);
     plaintext->setEditable(false);
@@ -594,7 +597,7 @@ long  WombatRegistry::OpenAboutBox(FXObject*, FXSelector, void*)
 
 long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
 {
-    Viewer viewer(this, "Report Preview");
+    Viewer viewer(this, "Preview Report");
     viewer.execute(PLACEMENT_OWNER);
     return 1;
 }
