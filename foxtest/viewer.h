@@ -15,7 +15,11 @@ class Viewer : public FXDialogBox
     FXDECLARE(Viewer)
 
     private:
+        FXScrollBar* vbar;
+        FXScrollBar* hbar;
+        //FXScrollArea* sarea;
         FXVerticalFrame* vframe;
+        //FXVerticalFrame* vframe2;
         FXFont* header1;
         FXFont* header2;
         FXFont* header3;
@@ -28,9 +32,15 @@ class Viewer : public FXDialogBox
         Viewer() {}
 
     public:
+        enum
+        {
+            ID_SCROLLV,
+            ID_SCROLLH,
+            ID_LAST
+        };
         Viewer(FXWindow* parent, const FXString& title);
         void GenerateContents(std::vector<std::string> tags);
-        void GenerateTaggedItems(std::vector<std::string>taggeditems);
+        void GenerateTaggedItems(std::vector<std::string> tags, FXArray<FXString> taggedlist);
 };
 
 #endif // VIEWER_H

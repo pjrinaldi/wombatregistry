@@ -51,6 +51,7 @@ class WombatRegistry : public FXMainWindow
         std::string hivefilepath;
         std::vector<std::filesystem::path> hives;
         std::vector<std::string> tags;
+        FXArray<FXString> taggedlist;
         std::ifstream* filebufptr;
 
     protected:

@@ -50,6 +50,7 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     //treelist->appendItem(mainitem, new FXTreeItem("Test 2"));
     hives.clear();
     tags.clear();
+    taggedlist.clear();
 }
 
 void WombatRegistry::create()
@@ -92,31 +93,25 @@ long WombatRegistry::CreateNewTag(FXObject*, FXSelector, void*)
         tags.push_back(tagstr.text());
         tablelist->setItemText(tablelist->getCurrentRow(), 0, tagstr);
     }
-    /*
-    ui->tablewidget->selectedItems().first()->setText(tagname);
-    QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
-    for(int i=0; i < taggeditems.count(); i++)
+    FXString idkeyvalue = statusbar->getStatusLine()->getText() + "\\" + tablelist->getItemText(tablelist->getCurrentRow(), 1);
+    for(int i=0; i < taggedlist.no(); i++)
     {
-        if(taggeditems.at(i).contains(idkeyvalue))
-            taggeditems.removeAt(i);
+        if(taggedlist.at(i).contains(idkeyvalue))
+            taggedlist.erase(i);
     }
-    taggeditems.append(tagname + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
-     */ 
+    taggedlist.append(tagstr + "|" + idkeyvalue + "|" + plaintext->getText());
     return 1;
 }
 
 long WombatRegistry::RemoveTag(FXObject*, FXSelector, void*)
 {
     tablelist->setItemText(tablelist->getCurrentRow(), 0, "");
-    /*
-    ui->tablewidget->selectedItems().first()->setText("");
-    QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
-    for(int i=0; i < taggeditems.count(); i++)
+    FXString idkeyvalue = statusbar->getStatusLine()->getText() + "\\" + tablelist->getItemText(tablelist->getCurrentRow(), 1);
+    for(int i=0; i < taggedlist.no(); i++)
     {
-        if(taggeditems.at(i).contains(idkeyvalue))
-            taggeditems.removeAt(i);
+        if(taggedlist.at(i).contains(idkeyvalue))
+            taggedlist.erase(i);
     }
-    */
     return 1;
 }
 
@@ -162,6 +157,7 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
     tablelist->setColumnText(0, "Tag");
     tablelist->setColumnText(1, "Value Name");
     tablelist->setColumnText(2, "Value Type");
+    FXString tagstr = "";
     if(valuecount == 0) // no values, so create empty key
     {
 	tablelist->setTableSize(1, 3);
@@ -171,15 +167,15 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 	FXString curtagvalue = keypath + "\\" + "(empty)";
 	tablelist->setItemText(0, 1, "(empty)");
 	tablelist->setItemText(0, 2, "0x00");
-	/*
-	for(int j=0; j < taggeditems.size(); j++)
-	{
-	    if(taggeditems.at(j).contains(curtagvalue))
-		tagstr = taggeditems.at(j)
-	}
-	tablelist->setItemText(0, 0, tagstr);
-	tablelist->fitColumnsToContents(0, 3);
-	*/
+        for(int j=0; j < taggedlist.no(); j++)
+        {
+            if(taggedlist.at(j).contains(curtagvalue))
+            {
+                std::size_t found = taggedlist.at(j).find("|");
+                tagstr = taggedlist.at(j).left(found);
+            }
+        }
+        tablelist->setItemText(0, 0, tagstr);
     }
     for(int i=0; i < valuecount; i++)
     {
@@ -256,17 +252,15 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
             }
 	    tablelist->setItemText(i, 2, valuetypestr);
 	}
-	/*
-	QString tagstr = "";
-        for(int j=0; j < taggeditems.count(); j++)
+        for(int j=0; j < taggedlist.no(); j++)
         {
-            if(taggeditems.at(j).contains(curtagvalue))
-                tagstr = taggeditems.at(j).split("|", Qt::SkipEmptyParts).first();
+            if(taggedlist.at(j).contains(curtagvalue))
+            {
+                std::size_t found = taggedlist.at(j).find("|");
+                tagstr = taggedlist.at(j).left(found);
+            }
         }
-	ui->tablewidget->setItem(i, 0, new QTableWidgetItem(tagstr));
-        ui->tablewidget->resizeColumnToContents(0);
-        ui->tablewidget->setCurrentCell(0, 0);
-	*/
+        tablelist->setItemText(i, 0, tagstr); 
 	libregf_value_free(&curval, &regerr);
     }
     libregf_key_free(&curkey, &regerr);
@@ -592,6 +586,7 @@ long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
 {
     Viewer viewer(this, "Report Preview");
     viewer.GenerateContents(tags);
+    viewer.GenerateTaggedItems(tags, taggedlist);
     viewer.execute(PLACEMENT_OWNER);
 
     return 1;
@@ -679,22 +674,14 @@ long WombatRegistry::SetTag(FXObject* sender, FXSelector, void*)
 {
     FXString tagstr = ((FXMenuCommand*)sender)->getText();
     tablelist->setItemText(tablelist->getCurrentRow(), 0, tagstr);
-    //std::cout << ((FXMenuCommand*)sender)->getText().text() << std::endl;
-    /*
-    QAction* tagaction = qobject_cast<QAction*>(sender());
-    QString idkeyvalue = statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text();
-    if(!ui->tablewidget->selectedItems().first()->text().isEmpty())
+    FXString idkeyvalue = statusbar->getStatusLine()->getText() + "\\" + tablelist->getItemText(tablelist->getCurrentRow(), 1);
+    for(int i=0; i < taggedlist.no(); i++)
     {
-        for(int i=0; i < taggeditems.count(); i++)
-        {
-            if(taggeditems.at(i).contains(idkeyvalue))
-                taggeditems.removeAt(i);
-        }
+        if(taggedlist.at(i).contains(idkeyvalue))
+            taggedlist.erase(i);
     }
-    taggeditems.append(tagaction->iconText() + "|" + statuslabel->text() + "\\" + ui->tablewidget->selectedItems().at(1)->text() + "|" + ui->plaintext->toPlainText());
+    taggedlist.append(tagstr + "|" + idkeyvalue + "|" + plaintext->getText());
 
-    ui->tablewidget->selectedItems().first()->setText(tagaction->iconText());
-    */
     return 1;
 }
 
