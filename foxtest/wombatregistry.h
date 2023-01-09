@@ -90,7 +90,6 @@ class WombatRegistry : public FXMainWindow
         FXString ConvertUnixTimeToString(uint32_t input);
         FXString DecryptRot13(FXString encstr);
         FXchar Rot13Char(FXchar curchar);
-        void GeneratePreview();
 	void StatusUpdate(FXString tmptext)
 	{
 	    statusbar->getStatusLine()->setNormalText(tmptext);

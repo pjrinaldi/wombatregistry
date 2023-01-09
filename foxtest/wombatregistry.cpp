@@ -35,9 +35,6 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     abouticon = new FXPNGIcon(this->getApp(), helpcontents);
     aboutbutton = new FXButton(toolbar, "", abouticon, this, ID_ABOUT, BUTTON_TOOLBAR);
     statusbar->getStatusLine()->setNormalText("Open a Hive File to Begin");
-    //viewer = new Viewer(this, "Preview Report");
-
-    //viewer->AppendHeader1("Wombat Registry Report");
     //rootitem = treelist->getFirstItem();
 
     //rootitem = new FXTreeItem("Root Item");
@@ -597,28 +594,7 @@ long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
     viewer.GenerateContents(tags);
     viewer.execute(PLACEMENT_OWNER);
 
-    //CViewer viewer(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 400, 300);
-    //viewer.create();
-    //viewer.show();
-    //viewer.create();
-    //viewer.ClearText();
-    //GeneratePreview();
-    //Viewer viewer(this, "Report Preview");
-    //viewer.execute(PLACEMENT_OWNER);
     return 1;
-}
-
-void WombatRegistry::GeneratePreview()
-{
-    /*
-    viewer->ClearText();
-    viewer->AppendHeader1("Wombat Registry Report\n");
-    viewer->AppendHeader3("Contents\n");
-    for(int i=0; i < tags.size(); i++)
-    {
-        viewer->AppendRegular(FXString(tags.at(i).c_str()));
-    }
-    */
 }
 
 long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
