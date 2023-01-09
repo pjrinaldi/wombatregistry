@@ -8,9 +8,17 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     header2 = new FXFont(this->getApp(), "Roman", 16, FXFont::Bold);
     header3 = new FXFont(this->getApp(), "Roman", 14, FXFont::Bold);
     regular = new FXFont(this->getApp(), "Roman", 12);
-    mainframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
-    vsplitter = new FXSplitter(mainframe, SPLITTER_NORMAL|LAYOUT_FILL);
-    canvas = new FXCanvas(vsplitter, this, LAYOUT_FILL_X|LAYOUT_FILL_Y|LAYOUT_FILL_ROW|LAYOUT_FILL_COLUMN);
+    vframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 10, 10, 10, 10);
+    this->setBackColor(FX::colorFromName("white"));
+    vframe->setBackColor(FX::colorFromName("white"));
+    hlabel = new FXLabel(vframe, "Wombat Registry Report");
+    hlabel->setFont(header1);
+    hlabel->setBackColor(FX::colorFromName("white"));
+    clabel = new FXLabel(vframe, "Contents");
+    clabel->setFont(header3);
+    clabel->setBackColor(FX::colorFromName("white"));
+    //vsplitter = new FXSplitter(mainframe, SPLITTER_NORMAL|LAYOUT_FILL);
+    //canvas = new FXCanvas(mainframe, this, ID_CANVAS, FRAME_SUNKEN|FRAME_THICK|LAYOUT_FILL_X|LAYOUT_FILL_Y|LAYOUT_FILL_ROW|LAYOUT_FILL_COLUMN, 0, 0, 400, 300);
     //maintext = new FXText(vsplitter, NULL, 0, TEXT_READONLY|TEXT_WORDWRAP|VSCROLLER_ALWAYS);
     //maintext->setVisibleRows(16);
     //maintext->setVisibleColumns(55);
@@ -54,6 +62,15 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     */
 }
 
+void AppendTitle()
+{
+    //hlabel->setFont(header1);
+}
+
+void AppendContents()
+{
+    //clabel->setFont(header2);
+}
 /*
 void Viewer::AppendHeader1(FXString h1text)
 {
@@ -85,6 +102,10 @@ void Viewer::AppendRegular(FXString regtext)
 
 void Viewer::ClearText()
 {
+    //canvas->grab();
+    //FXDCWindow dc(canvas);
+    //dc.drawLine(0, 0, 10, 10);
+    //canvas->ungrab();
     //maintext->clearText();
 }
 // IT APPEARS YOU CAN ONLY PUT ONE FONT AT A TIME WHICH CHANGES ALL THE TEXT, SO THE ONLY WAY TO BUILD A DYNAMIC REPORT IS

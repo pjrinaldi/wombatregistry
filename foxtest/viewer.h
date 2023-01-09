@@ -15,14 +15,16 @@ class Viewer : public FXDialogBox
     FXDECLARE(Viewer)
 
     private:
-        FXSplitter* vsplitter;
-        FXVerticalFrame* mainframe;
-        FXCanvas* canvas;
+        //FXSplitter* vsplitter;
+        FXVerticalFrame* vframe;
+        //FXCanvas* canvas;
         //FXText* maintext;
         FXFont* header1;
         FXFont* header2;
         FXFont* header3;
         FXFont* regular;
+        FXLabel* clabel;
+        FXLabel* hlabel;
         /*
 	FXPNGImage* mainimage;
 	FXImageFrame* imgframe;
@@ -44,18 +46,21 @@ class Viewer : public FXDialogBox
         Viewer() {}
 
     public:
-        /*
         enum
         {
+            ID_CANVAS = 100,
+            /*
             ID_TREELIST = 1,
             ID_LISTSELECT = 100,
             ID_NEWTAG = 101,
             ID_EDITTAG = 102,
             ID_REMTAG = 103,
+            */
             ID_LAST
         };
-        */
         Viewer(FXWindow* parent, const FXString& title);
+        void AppendTitle();
+        void AppendContents();
         /*
         void AppendHeader1(FXString h1text);
         void AppendHeader2(FXString h2text);

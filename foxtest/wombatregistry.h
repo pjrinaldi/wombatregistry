@@ -47,7 +47,6 @@ class WombatRegistry : public FXMainWindow
 	FXButton* aboutbutton;
         FXStatusBar* statusbar;
         FXFont* plainfont;
-        Viewer* viewer;
         std::string prevhivepath;
         std::string hivefilepath;
         std::vector<std::filesystem::path> hives;
