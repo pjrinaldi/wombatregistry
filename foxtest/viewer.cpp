@@ -8,6 +8,7 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     header2 = new FXFont(this->getApp(), "Roman", 16, FXFont::Bold);
     header3 = new FXFont(this->getApp(), "Roman", 14, FXFont::Bold);
     regular = new FXFont(this->getApp(), "Roman", 12);
+    monospace = new FXFont(this->getApp(), "monospace");
     vframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 10, 10, 10, 10);
     this->setBackColor(FX::colorFromName("white"));
     vframe->setBackColor(FX::colorFromName("white"));
@@ -62,15 +63,39 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     */
 }
 
-void AppendTitle()
+void Viewer::GenerateContents(std::vector<std::string> tags)
 {
-    //hlabel->setFont(header1);
+    for(int i=0; i < tags.size(); i++)
+    {
+        FXLabel* tmplabel = new FXLabel(vframe, tags.at(i).c_str());
+        tmplabel->setBackColor(FX::colorFromName("white"));
+    }
 }
 
-void AppendContents()
+void Viewer::GenerateTaggedItems(std::vector<std::string>taggeditems)
 {
-    //clabel->setFont(header2);
+    /*  
+    curcontent += "<h2>Tagged Items</h2>";
+    for(int i=0; i < tags.count(); i++)
+    {
+        curcontent += "<div id='t" + QString::number(i) + "'><h3>" + tags.at(i) + "</h3><br/><table>";
+        for(int j=0; j < taggeditems.count(); j++)
+        {
+            if(taggeditems.at(j).split("|", Qt::SkipEmptyParts).at(0) == tags.at(i))
+            {
+                curcontent += "<tr><td style='" + ReturnCssString(11) + "'>" + taggeditems.at(j).split("|").at(1);
+                curcontent += "<div><pre>";
+                curcontent += taggeditems.at(j).split("|").at(2).toUtf8();
+                curcontent += "</pre></div></td></tr>";
+            }
+        }
+        curcontent += "</table></div><br/>\n";
+    }
+    reportstring = prehtml + curcontent + psthtml;
+
+     */ 
 }
+
 /*
 void Viewer::AppendHeader1(FXString h1text)
 {
@@ -100,6 +125,7 @@ void Viewer::AppendRegular(FXString regtext)
 }
 */
 
+/*
 void Viewer::ClearText()
 {
     //canvas->grab();
@@ -108,6 +134,7 @@ void Viewer::ClearText()
     //canvas->ungrab();
     //maintext->clearText();
 }
+*/
 // IT APPEARS YOU CAN ONLY PUT ONE FONT AT A TIME WHICH CHANGES ALL THE TEXT, SO THE ONLY WAY TO BUILD A DYNAMIC REPORT IS
 // EITHER GL OR DRAW CANVAS OR SOMETHING THE CONTENT OR ADD LABEL FOR EACH SECTION TO THE PREVIEW WINDOW...
 

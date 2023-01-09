@@ -23,6 +23,7 @@ class Viewer : public FXDialogBox
         FXFont* header2;
         FXFont* header3;
         FXFont* regular;
+        FXFont* monospace;
         FXLabel* clabel;
         FXLabel* hlabel;
         /*
@@ -67,7 +68,9 @@ class Viewer : public FXDialogBox
         void AppendHeader3(FXString h3text);
         void AppendRegular(FXString regtext);
         */
-        void ClearText();
+        void GenerateContents(std::vector<std::string> tags);
+        void GenerateTaggedItems(std::vector<std::string>taggeditems);
+        //void ClearText();
 	/*
         void SetTagList(std::vector<std::string>* tagslist);
         void UpdateList();
