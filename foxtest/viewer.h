@@ -15,6 +15,8 @@ class Viewer : public FXDialogBox
     FXDECLARE(Viewer)
 
     private:
+        // need to use FXDC and call onpaint where the dc is used...
+        // build the image elsewhere and then push it in the on paint...y
         FXScrollBar* vbar;
         FXScrollBar* hbar;
         //FXScrollArea* sarea;
