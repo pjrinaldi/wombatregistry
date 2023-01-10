@@ -585,8 +585,9 @@ long  WombatRegistry::OpenAboutBox(FXObject*, FXSelector, void*)
 long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
 {
     Viewer viewer(this, "Report Preview");
-    viewer.GenerateContents(tags);
-    viewer.GenerateTaggedItems(tags, taggedlist);
+    //viewer.PaintPreview();
+    //viewer.GenerateContents(tags);
+    //viewer.GenerateTaggedItems(tags, taggedlist);
     viewer.execute(PLACEMENT_OWNER);
 
     return 1;
