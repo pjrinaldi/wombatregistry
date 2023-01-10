@@ -46,18 +46,34 @@ void Viewer::GenerateTaggedItems(std::vector<std::string> tags, FXArray<FXString
         curtaghdr->setFont(header3);
         for(int j=0; j < taggedlist.no(); j++)
         {
-            std::cout << "tagged item:" << taggedlist.at(j).text() << std::endl;
+            //std::cout << "tagged item:" << taggedlist.at(j).text() << std::endl;
             std::size_t found = taggedlist.at(j).find("|");
             std::size_t rfound = taggedlist.at(j).rfind("|");
-            FXString itemhdr = taggedlist.at(j).mid(found+1, rfound);
-            FXString itemcon = taggedlist.at(j).left(rfound+1);
-            FXLabel* tagitemlabel = new FXLabel(vframe, itemhdr);
-            vframe->setWidth(tagitemlabel->getWidth());
-            tagitemlabel->setFont(regular);
-            tagitemlabel->setBackColor(FX::colorFromName("white"));
-            FXLabel* tagitemcontent = new FXLabel(vframe, itemcon);
-            tagitemcontent->setFont(monospace);
-            tagitemcontent->setBackColor(FX::colorFromName("white"));
+            std::cout << "found: " << found << " rfound: " << rfound << std::endl;
+            FXString itemtag = taggedlist.at(j).mid(0, found);
+            FXString itemhdr = taggedlist.at(j).mid(found+1, rfound - found - 1);
+            FXString itemcon = taggedlist.at(j).mid(rfound+1, taggedlist.at(j).length() - rfound);
+            if(itemtag == tags.at(i).c_str())
+            {
+                std::cout << "taggedlist length:" << taggedlist.at(j).length() << std::endl;
+                std::cout << "itemtag:" << itemtag.text() << std::endl;
+                std::cout << "itemhdr:" << itemhdr.text() << std::endl;
+                std::cout << "itemcon:" << itemcon.text() << std::endl;
+                FXLabel* tagitemlabel = new FXLabel(vframe, itemhdr);
+                vframe->setWidth(tagitemlabel->getWidth());
+                tagitemlabel->setFont(regular);
+                tagitemlabel->setBackColor(FX::colorFromName("white"));
+    //plaintext = new FXText(hsplitter);
+    //plaintext->setFont(plainfont);
+    //plaintext->setEditable(false);
+                FXSplitter* hsplitter = new FXSplitter(vframe, SPLITTER_VERTICAL);
+                FXText* itemcontent = new FXText(hsplitter);
+                itemcontent->setFont(monospace);
+                itemcontent->setEditable(false);
+                //FXLabel* tagitemcontent = new FXLabel(vframe, itemcon);
+                //tagitemcontent->setFont(monospace);
+                //tagitemcontent->setBackColor(FX::colorFromName("white"));
+            }
         }
     }
     /*  
