@@ -258,9 +258,9 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
             {
                 std::size_t found = taggedlist.at(j).find("|");
                 tagstr = taggedlist.at(j).left(found);
+                tablelist->setItemText(i, 0, tagstr); 
             }
         }
-        tablelist->setItemText(i, 0, tagstr); 
 	libregf_value_free(&curval, &regerr);
     }
     libregf_key_free(&curkey, &regerr);
@@ -585,9 +585,6 @@ long  WombatRegistry::OpenAboutBox(FXObject*, FXSelector, void*)
 long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
 {
     Viewer viewer(this, "Report Preview");
-    //viewer.PaintPreview();
-    //viewer.GenerateContents(tags);
-    //viewer.GenerateTaggedItems(tags, taggedlist);
     viewer.execute(PLACEMENT_OWNER);
 
     return 1;
