@@ -8,6 +8,13 @@
 
 #include "icons.h"
 
+#include "hpdf.h"
+
+#include "/usr/include/poppler/cpp/poppler-document.h"
+#include "/usr/include/poppler/cpp/poppler-page.h"
+#include "/usr/include/poppler/cpp/poppler-page-renderer.h"
+#include "/usr/include/poppler/cpp/poppler-image.h"
+
 #include "/usr/local/include/fox-1.7/fx.h"
 
 class Viewer : public FXDialogBox
@@ -17,8 +24,9 @@ class Viewer : public FXDialogBox
     private:
         // need to use FXDC and call onpaint where the dc is used...
         // build the image elsewhere and then push it in the on paint...y
-        FXImage* report;
+        //FXImage* report;
         FXVerticalFrame* vframe;
+        FXImageView* imgview;
         /*
         FXScrollBar* vbar;
         FXScrollBar* hbar;
@@ -26,11 +34,25 @@ class Viewer : public FXDialogBox
         FXVerticalFrame* vframe;
         //FXVerticalFrame* vframe2;
         */
+        /*
         FXFont* header1;
         FXFont* header2;
         FXFont* header3;
         FXFont* regular;
         FXFont* monospace;
+        */
+        HPDF_Doc pdf;
+        HPDF_Page page;
+        HPDF_Font defaultfont;
+        HPDF_REAL tw;
+        HPDF_REAL height;
+        HPDF_REAL width;
+        HPDF_UINT i;
+
+        poppler::document* pdfdoc;
+        poppler::page* pdfpage;
+        poppler::image pdfimage;
+        poppler::page_renderer pdfrender;
         /*
         FXLabel* clabel;
         FXLabel* hlabel;
@@ -40,21 +62,9 @@ class Viewer : public FXDialogBox
         Viewer() {}
 
     public:
-        enum
-        {
-            ID_CANVAS,
-            //ID_SCROLLV,
-            //ID_SCROLLH,
-            ID_LAST
-        };
-        long PaintPreview(FXObject*, FXSelector, void*);
         Viewer(FXWindow* parent, const FXString& title);
         void GenerateContents(std::vector<std::string> tags);
         void GenerateTaggedItems(std::vector<std::string> tags, FXArray<FXString> taggedlist);
-};
-
-FXDEFMAP(Viewer) ViewerMap[]={
-    FXMAPFUNC(SEL_PAINT, Viewer::ID_CANVAS, Viewer::PaintPreview),
 };
 
 #endif // VIEWER_H

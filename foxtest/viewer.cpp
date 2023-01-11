@@ -1,18 +1,20 @@
 #include "viewer.h"
 
-FXIMPLEMENT(Viewer,FXDialogBox, ViewerMap, ARRAYNUMBER(ViewerMap))
+FXIMPLEMENT(Viewer,FXDialogBox, NULL, 0)
 
 Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, title, DECOR_TITLE|DECOR_RESIZE|DECOR_BORDER|DECOR_CLOSE, 0, 0, 400, 300, 0,0,0,0, 0, 0)
 {
-    header1 = this->getApp()->getNormalFont();
-    //header1 = new FXFont(this->getApp(), "Roman", 18, FXFont::Bold);
+    /*
+    header1 = new FXFont(this->getApp(), "Roman", 18, FXFont::Bold);
     header2 = new FXFont(this->getApp(), "Roman", 14, FXFont::Bold);
     header3 = new FXFont(this->getApp(), "Roman", 12, FXFont::Bold);
     regular = new FXFont(this->getApp(), "Roman", 10);
     monospace = new FXFont(this->getApp(), "monospace");
+    */
     vframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
-    report = new FXImage(this->getApp(), nullptr, IMAGE_DITHER|IMAGE_SHMI|IMAGE_SHMP, 800, 600);
-    report->create();
+    imgview = new FXImageView(vframe, NULL, NULL, 0, LAYOUT_FILL_X|LAYOUT_FILL_Y);
+    //report = new FXImage(this->getApp(), nullptr, IMAGE_DITHER|IMAGE_SHMI|IMAGE_SHMP, 800, 600);
+    //report->create();
     //report->detach();
     //canvas = new FXCanvas(vframe, this, ID_CANVAS, LAYOUT_FILL_X|LAYOUT_FILL_Y|LAYOUT_FILL_ROW|LAYOUT_FILL_COLUMN);
     /*
@@ -30,29 +32,46 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     clabel->setFont(header2);
     clabel->setBackColor(FX::colorFromName("white"));
     */
-}
+    // GENERATE PDF
+    pdf = HPDF_New(NULL, NULL);
+    page = HPDF_AddPage(pdf);
+    height = HPDF_Page_GetHeight(page);
+    width = HPDF_Page_GetWidth(page);
+    defaultfont = HPDF_GetFont(pdf, "Helvetica", NULL);
+    HPDF_Page_SetFontAndSize(page, defaultfont, 24);
+    tw = HPDF_Page_TextWidth(page, "Wombat Registry Report");
+    HPDF_Page_BeginText(page);
+    HPDF_Page_MoveTextPos(page, (width - tw) / 2, height - 50);
+    HPDF_Page_ShowText(page, "Wombat Registry Report");
+    HPDF_Page_EndText(page);
 
-//const FillStyle backstyle={
-//    nullptr, FXRGB(255, 255, 255), FXRGBA(0, 0, 0, 0), FXRGB(255, 255, 255), FXRG(0, 0, 255), STIPPLE_NONE, FILLSTYLE_SOLID
-//};
+    HPDF_Page_BeginText(page);
+    HPDF_Page_MoveTextPos(page, 60, height - 80);
+    HPDF_Page_SetFontAndSize(page, defaultfont, 16);
+    HPDF_Page_ShowText(page, "Contents");
+    HPDF_Page_EndText(page);
 
-long Viewer::PaintPreview(FXObject*, FXSelector, void* ptr)
-{
-    std::cout << "paint started..." << std::endl;
-    FXDCWindow dc(this, (FXEvent*)ptr);
-    dc.setFont(header1);
-    dc.drawImageText(10, 10, "Wombat Registry Report");
-    /*
-    dc.setFont(header3);
-    dc.drawText(10, 50, "Contents");
-    */
-    //dc.setBackColor(FX::colorFromName("white"));
-    //dc.setBackground(backstyle);
-    //dc.drawRectangle(dc, backstyle, dc.getClipX(), dc.getClipY(), dc.getClipWidth(), dc.getClipHeight());
-    dc.drawImage(report, 0, 0);
-    report->render();
+    HPDF_SaveToFile(pdf, "tmp.pdf");
+    HPDF_Free(pdf);
 
-    return 1;
+    // RENDER PDF TO AN IMAGE
+    pdfdoc = poppler::document::load_from_file("tmp.pdf");
+    pdfpage = pdfdoc->create_page(0);
+    pdfrender.set_render_hint(poppler::page_renderer::antialiasing, true);
+    pdfrender.set_render_hint(poppler::page_renderer::text_antialiasing, true);
+    pdfimage = pdfrender.render_page(pdfpage, 72.0, 72.0, -1, -1, -1, -1, poppler::rotate_0);
+    pdfimage.save("tmp.png", "PNG");
+    // Load Image
+    FXImage* img = new FXPNGImage(this->getApp(), NULL, IMAGE_KEEP|IMAGE_SHMI|IMAGE_SHMP);
+    FXFileStream stream;
+    this->getApp()->beginWaitCursor();
+    stream.open("tmp.png", FXStreamLoad);
+    img->loadPixels(stream);
+    stream.close();
+    img->create();
+    imgview->setImage(img);
+    this->getApp()->endWaitCursor();
+    
 }
 
 void Viewer::GenerateContents(std::vector<std::string> tags)
