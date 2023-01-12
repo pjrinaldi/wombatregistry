@@ -577,10 +577,17 @@ long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
     return 1;
 }
 
+long WombatRegistry::PublishReport(FXObject*, FXSelector, void*)
+{
+    FXString startpath = FXString(getenv("HOME")) + "/";
+    FXString filename = FXFileDialog::getSaveFilename(this, "Publish Report", startpath, "Text Files (*.txt)\nHTML Files (*.htm,*.html)");
+    return 1;
+}
+
 long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
 {
     if(prevhivepath.empty())
-        prevhivepath = getenv("HOME");
+        prevhivepath = getenv("HOME") + std::string("/");
     FXString filename = FXFileDialog::getOpenFilename(this, "Open Hive", prevhivepath.c_str());
     if(!filename.empty())
     {

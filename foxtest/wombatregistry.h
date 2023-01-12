@@ -85,6 +85,7 @@ class WombatRegistry : public FXMainWindow
         long CreateNewTag(FXObject*, FXSelector, void*);
         long RemoveTag(FXObject*, FXSelector, void*);
         long PreviewReport(FXObject*, FXSelector, void*);
+        long PublishReport(FXObject*, FXSelector, void*);
 	void PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curitem, libregf_error_t* regerr);
 	void GetRootString(FXTreeItem* curitem, FXString* rootstring);
 	FXString ConvertWindowsTimeToUnixTimeUTC(uint64_t input);
@@ -110,6 +111,7 @@ FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_SETTAG, WombatRegistry::SetTag),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_REMTAG, WombatRegistry::RemoveTag),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_PREVIEW, WombatRegistry::PreviewReport),
+    FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_PUBLISH, WombatRegistry::PublishReport),
 };
 
 #endif // WOMBATREGISTRY_H
