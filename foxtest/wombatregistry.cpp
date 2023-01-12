@@ -580,7 +580,7 @@ long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
 long WombatRegistry::PublishReport(FXObject*, FXSelector, void*)
 {
     FXString startpath = FXString(getenv("HOME")) + "/";
-    FXString filename = FXFileDialog::getSaveFilename(this, "Publish Report", startpath, "Text Files (*.txt)\nHTML Files (*.htm,*.html)");
+    FXString filename = FXFileDialog::getSaveFilename(this, "Publish Report", startpath, "Text Files (*.txt)\nHTML Files (*.html,*.htm)");
     if(!filename.empty())
     {
         FXFile* outfile = new FXFile(filename, FXIO::Writing, FXIO::OwnerReadWrite);
