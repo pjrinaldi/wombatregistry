@@ -588,8 +588,39 @@ long WombatRegistry::PublishReport(FXObject*, FXSelector, void*)
         if(filename.contains(".htm"))
         {
             buf = "<html><head><title>Wombat Registry Report</title></head>\n";
-            buf += "<body>\n";
+            buf += "<body style='font-color: #3a291a; background-color: #d6ceb5;'>\n";
             buf += "<h2>Wombat Registry Report</h2>\n";
+            buf += "<div id='toc'><h3>Contents</h3>\n";
+            for(int j=0; j < tags.size(); j++)
+            {
+                int tagcnt = 0;
+                for(int i=0; i < taggedlist.no(); i++)
+                {
+                    if(taggedlist.at(i).contains(tags.at(j).c_str()))
+                        tagcnt++;
+                }
+                buf += "<div><a href='#t" + FXString::value(j) + "'>" + FXString(tags.at(j).c_str()) + " (" + FXString::value(tagcnt) + ")</a></div>\n";
+            }
+            buf += "<h3>Tagged Items</h3>";
+            for(int i=0; i < tags.size(); i++)
+            {
+                buf += "<div id='t" + FXString::value(i) + "'><h4>" + tags.at(i).c_str() + "<span style='font-size: 10px;'>&nbsp;&nbsp;<a href='#toc'>TOP</a></span></h4>\n";
+                for(int j=0; j < taggedlist.no(); j++)
+                {
+                    std::size_t found = taggedlist.at(j).find("|");
+                    std::size_t rfound = taggedlist.at(j).rfind("|");
+                    FXString itemtag = taggedlist.at(j).mid(0, found);
+                    FXString itemhdr = taggedlist.at(j).mid(found+1, rfound - found - 1);
+                    FXString itemcon = taggedlist.at(j).mid(rfound+1, taggedlist.at(j).length() - rfound);
+                    if(itemtag == tags.at(i).c_str())
+                    {
+                        buf += "<div style='border-bottom: 1px solid black;'>\n";
+                        buf += "<div>Key:&nbsp;&nbsp;&nbsp;&nbsp;" + itemhdr + "</div>\n";
+                        buf += "<div><pre>" + itemcon + "</pre></div>\n";
+                        buf += "</div>\n";
+                    }
+                }
+            }
             buf += "</body></html>";
         }
         else
