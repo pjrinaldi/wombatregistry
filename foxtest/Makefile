@@ -9,6 +9,6 @@ icons: $(ICONS) icons.h
 # Link it all together
 
 wombatregistry: $(OBJECTS)
-	g++ -O3 -o wombatregistry $(OBJECTS) -lX11 -lXext -lXft -lfontconfig -lfreetype -lXcursor -lXrender -lXrandr -lXfixes -lXi -lGLU -lGL -ldl -lpthread -ljpeg -lrt -lpng -ltiff -lz -lbz2 -lpoppler-cpp libFOX-1.7.a libregf.a libhpdf.a
+	g++ -O3 -o wombatregistry $(OBJECTS) -lX11 -lXext -lXft -lfontconfig -lfreetype -lXcursor -lXrender -lXrandr -lXfixes -lXi -lGLU -lGL -ldl -lpthread -ljpeg -lrt -lpng -ltiff -lz -lbz2 libFOX-1.7.a libregf.a
 
 wombatregistry.o: wombatregistry.cpp icons.h managetags.cpp aboutbox.cpp viewer.cpp
