@@ -9,13 +9,14 @@
 
 #include "icons.h"
 
+/*
 #include "hpdf.h"
 
 #include "/usr/include/poppler/cpp/poppler-document.h"
 #include "/usr/include/poppler/cpp/poppler-page.h"
 #include "/usr/include/poppler/cpp/poppler-page-renderer.h"
 #include "/usr/include/poppler/cpp/poppler-image.h"
-
+*/
 #include "/usr/local/include/fox-1.7/fx.h"
 
 class Viewer : public FXDialogBox
@@ -27,7 +28,9 @@ class Viewer : public FXDialogBox
         // build the image elsewhere and then push it in the on paint...y
         //FXImage* report;
         FXVerticalFrame* vframe;
-        FXImageView* imgview;
+        //FXImageView* imgview;
+        FXText* textview;
+        FXFont* plainfont;
         /*
         FXScrollBar* vbar;
         FXScrollBar* hbar;
@@ -40,8 +43,9 @@ class Viewer : public FXDialogBox
         FXFont* header2;
         FXFont* header3;
         FXFont* regular;
-        FXFont* monospace;
         */
+
+        /*
         HPDF_Doc pdf;
         HPDF_Page page;
         HPDF_Font defaultfont;
@@ -55,6 +59,8 @@ class Viewer : public FXDialogBox
         poppler::page* pdfpage;
         poppler::image pdfimage;
         poppler::page_renderer pdfrender;
+        */
+
         /*
         FXLabel* clabel;
         FXLabel* hlabel;
