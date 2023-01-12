@@ -24,27 +24,10 @@ class Viewer : public FXDialogBox
     FXDECLARE(Viewer)
 
     private:
-        // need to use FXDC and call onpaint where the dc is used...
-        // build the image elsewhere and then push it in the on paint...y
-        //FXImage* report;
         FXVerticalFrame* vframe;
         //FXImageView* imgview;
         FXText* textview;
         FXFont* plainfont;
-        /*
-        FXScrollBar* vbar;
-        FXScrollBar* hbar;
-        //FXScrollArea* sarea;
-        FXVerticalFrame* vframe;
-        //FXVerticalFrame* vframe2;
-        */
-        /*
-        FXFont* header1;
-        FXFont* header2;
-        FXFont* header3;
-        FXFont* regular;
-        */
-
         /*
         HPDF_Doc pdf;
         HPDF_Page page;
@@ -61,19 +44,12 @@ class Viewer : public FXDialogBox
         poppler::page_renderer pdfrender;
         */
 
-        /*
-        FXLabel* clabel;
-        FXLabel* hlabel;
-        */
-
     protected:
         Viewer() {}
 
     public:
         Viewer(FXWindow* parent, const FXString& title);
-        //void GenerateContents(std::vector<std::string> tags);
         void GenerateReport(FXArray<FXString> taggedlist, std::vector<std::string> tags);
-        //void GenerateTaggedItems(std::vector<std::string> tags, FXArray<FXString> taggedlist);
 };
 
 #endif // VIEWER_H

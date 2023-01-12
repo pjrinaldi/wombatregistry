@@ -23,7 +23,6 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     tablelist->setColumnText(1, "Value Name");
     tablelist->setColumnText(2, "Value Type");
     tablelist->setColumnHeaderHeight(tablelist->getColumnHeaderHeight() + 5);
-    //tablelist->fitColumnsToContents(1, 1);
     openicon = new FXPNGIcon(this->getApp(), folderopen);
     openbutton = new FXButton(toolbar, "", openicon, this, ID_OPEN, BUTTON_TOOLBAR);
     managetagsicon = new FXPNGIcon(this->getApp(), managetags);
@@ -35,19 +34,6 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     abouticon = new FXPNGIcon(this->getApp(), helpcontents);
     aboutbutton = new FXButton(toolbar, "", abouticon, this, ID_ABOUT, BUTTON_TOOLBAR);
     statusbar->getStatusLine()->setNormalText("Open a Hive File to Begin");
-    //rootitem = treelist->getFirstItem();
-
-    //rootitem = new FXTreeItem("Root Item");
-
-    //std::cout << "firstitem:" << rootitem;
-    //FXTreeItem* mainitem = new FXTreeItem("Root Item");
-    //treelist->setAnchorItem(rootitem);
-
-    //treelist->appendItem(0, rootitem);
-
-    //treelist->makeItemVisible(rootitem);
-    //treelist->appendItem(0, mainitem);
-    //treelist->appendItem(mainitem, new FXTreeItem("Test 2"));
     hives.clear();
     tags.clear();
     taggedlist.clear();
