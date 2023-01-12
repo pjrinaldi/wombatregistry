@@ -91,7 +91,7 @@ void Viewer::GenerateReport(FXArray<FXString> taggedlist, std::vector<std::strin
     height = HPDF_Page_GetHeight(page);
     width = HPDF_Page_GetWidth(page);
     // PLACE TITLE
-    monofont = HPDF_GetFont(pdf, "Monospace", NULL);
+    monofont = HPDF_GetFont(pdf, "Courier", NULL);
     defaultfont = HPDF_GetFont(pdf, "Helvetica", NULL);
     HPDF_Page_SetFontAndSize(page, defaultfont, 24);
     //tw = HPDF_Page_TextWidth(page, "Wombat Registry Report");
@@ -151,11 +151,18 @@ void Viewer::GenerateReport(FXArray<FXString> taggedlist, std::vector<std::strin
                 HPDF_Page_ShowText(page, itemhdr.text());
                 HPDF_Page_EndText(page);
                 curheight += 20;
-                HPDF_Page_BeginText(page);
-                HPDF_Page_MoveTextPos(page, 20, height - curheight);
-                HPDF_Page_SetFontAndSize(page, monofont, 12);
-                HPDF_Page_ShowText(page, itemcon.text());
-                HPDF_Page_EndText(page);
+                std::string curstring = "";
+                std::stringstream streamdata(itemcon.text());
+                while(std::getline(streamdata, curstring, '\n'))
+                {
+                    //std::cout << "line:" << curstring << std::endl;
+                    HPDF_Page_BeginText(page);
+                    HPDF_Page_MoveTextPos(page, 20, height - curheight);
+                    HPDF_Page_SetFontAndSize(page, monofont, 12);
+                    HPDF_Page_ShowText(page, curstring.c_str());
+                    HPDF_Page_EndText(page);
+                    curheight += 20;
+                }
             }
         }
         curheight += 30;
