@@ -570,9 +570,9 @@ long  WombatRegistry::OpenAboutBox(FXObject*, FXSelector, void*)
 
 long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
 {
-    Viewer viewer(this, "Report Preview");
-    viewer.GenerateReport(taggedlist, tags);
-    viewer.execute(PLACEMENT_OWNER);
+    viewer = new Viewer(this, "Report Preview");
+    viewer->GenerateReport(taggedlist, tags);
+    viewer->execute(PLACEMENT_OWNER);
 
     return 1;
 }
@@ -581,6 +581,24 @@ long WombatRegistry::PublishReport(FXObject*, FXSelector, void*)
 {
     FXString startpath = FXString(getenv("HOME")) + "/";
     FXString filename = FXFileDialog::getSaveFilename(this, "Publish Report", startpath, "Text Files (*.txt)\nHTML Files (*.htm,*.html)");
+    if(!filename.empty())
+    {
+        FXFile* outfile = new FXFile(filename, FXIO::Writing, FXIO::OwnerReadWrite);
+        FXString buf;
+        if(filename.contains(".htm"))
+        {
+            buf = "<html><head><title>Wombat Registry Report</title></head>\n";
+            buf += "<body>\n";
+            buf += "<h2>Wombat Registry Report</h2>\n";
+            buf += "</body></html>";
+        }
+        else
+        {
+            viewer->GetText(&buf);
+        }
+        outfile->writeBlock(buf.text(), buf.length());
+        outfile->close();
+    }
     return 1;
 }
 

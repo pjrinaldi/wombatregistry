@@ -53,6 +53,7 @@ class WombatRegistry : public FXMainWindow
         std::vector<std::string> tags;
         FXArray<FXString> taggedlist;
         std::ifstream* filebufptr;
+        Viewer* viewer;
 
     protected:
         WombatRegistry() {}

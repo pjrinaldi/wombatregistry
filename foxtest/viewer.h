@@ -50,6 +50,7 @@ class Viewer : public FXDialogBox
     public:
         Viewer(FXWindow* parent, const FXString& title);
         void GenerateReport(FXArray<FXString> taggedlist, std::vector<std::string> tags);
+        void GetText(FXString* buf);
 };
 
 #endif // VIEWER_H

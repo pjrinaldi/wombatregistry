@@ -12,6 +12,11 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     textview->setEditable(false);
 }
 
+void Viewer::GetText(FXString* buf)
+{
+    textview->getText(*buf);
+}
+
 void Viewer::GenerateReport(FXArray<FXString> taggedlist, std::vector<std::string> tags)
 {
     /*
