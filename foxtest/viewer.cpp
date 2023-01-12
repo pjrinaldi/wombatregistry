@@ -32,24 +32,33 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     clabel->setFont(header2);
     clabel->setBackColor(FX::colorFromName("white"));
     */
+    /*
     // GENERATE PDF
     pdf = HPDF_New(NULL, NULL);
     page = HPDF_AddPage(pdf);
     height = HPDF_Page_GetHeight(page);
     width = HPDF_Page_GetWidth(page);
+    // PLACE TITLE
     defaultfont = HPDF_GetFont(pdf, "Helvetica", NULL);
     HPDF_Page_SetFontAndSize(page, defaultfont, 24);
-    tw = HPDF_Page_TextWidth(page, "Wombat Registry Report");
+    //tw = HPDF_Page_TextWidth(page, "Wombat Registry Report");
     HPDF_Page_BeginText(page);
-    HPDF_Page_MoveTextPos(page, (width - tw) / 2, height - 50);
+    HPDF_Page_MoveTextPos(page, 10, height - 25);
+    //HPDF_Page_MoveTextPos(page, (width - tw) / 2, height - 50);
     HPDF_Page_ShowText(page, "Wombat Registry Report");
     HPDF_Page_EndText(page);
 
+    // PLACE CONTENTS HEADER
     HPDF_Page_BeginText(page);
-    HPDF_Page_MoveTextPos(page, 60, height - 80);
+    HPDF_Page_MoveTextPos(page, 10, height - 50);
     HPDF_Page_SetFontAndSize(page, defaultfont, 16);
     HPDF_Page_ShowText(page, "Contents");
     HPDF_Page_EndText(page);
+    
+    // GENERATE TAGS AND THEIR COUNT
+    for(int i=0; i < taggedlist.no(); i++)
+    {
+    }
 
     HPDF_SaveToFile(pdf, "tmp.pdf");
     HPDF_Free(pdf);
@@ -71,11 +80,113 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     img->create();
     imgview->setImage(img);
     this->getApp()->endWaitCursor();
-    
+    */
 }
 
+void Viewer::GenerateReport(FXArray<FXString> taggedlist, std::vector<std::string> tags)
+{
+    // GENERATE PDF
+    pdf = HPDF_New(NULL, NULL);
+    page = HPDF_AddPage(pdf);
+    height = HPDF_Page_GetHeight(page);
+    width = HPDF_Page_GetWidth(page);
+    // PLACE TITLE
+    monofont = HPDF_GetFont(pdf, "Monospace", NULL);
+    defaultfont = HPDF_GetFont(pdf, "Helvetica", NULL);
+    HPDF_Page_SetFontAndSize(page, defaultfont, 24);
+    //tw = HPDF_Page_TextWidth(page, "Wombat Registry Report");
+    HPDF_Page_BeginText(page);
+    HPDF_Page_MoveTextPos(page, 10, height - 25);
+    //HPDF_Page_MoveTextPos(page, (width - tw) / 2, height - 50);
+    HPDF_Page_ShowText(page, "Wombat Registry Report");
+    HPDF_Page_EndText(page);
+
+    // PLACE CONTENTS HEADER
+    HPDF_Page_BeginText(page);
+    HPDF_Page_MoveTextPos(page, 10, height - 50);
+    HPDF_Page_SetFontAndSize(page, defaultfont, 16);
+    HPDF_Page_ShowText(page, "Contents");
+    HPDF_Page_EndText(page);
+    
+    // GENERATE TAGS AND THEIR COUNT
+    for(int j=0; j < tags.size(); j++)
+    {
+        FXString tagcontent = "";
+        int tagcnt = 0;
+        for(int i=0; i < taggedlist.no(); i++)
+        {
+            if(taggedlist.at(i).contains(tags.at(j).c_str()))
+                tagcnt++;
+        }
+        tagcontent += FXString(tags.at(j).c_str()) + " (" + FXString::value(tagcnt) + ")";
+        HPDF_Page_BeginText(page);
+        HPDF_Page_MoveTextPos(page, 20, height - 60 - (j+1)*20);
+        HPDF_Page_SetFontAndSize(page, defaultfont, 12);
+        HPDF_Page_ShowText(page, tagcontent.text());
+        HPDF_Page_EndText(page);
+    }
+    // GENERATE TAG HEADER AND CONTENT
+    int curheight = 130;
+    for(int i=0; i < tags.size(); i++)
+    {
+        HPDF_Page_BeginText(page);
+        HPDF_Page_MoveTextPos(page, 20, height - curheight);
+        HPDF_Page_SetFontAndSize(page, defaultfont, 16);
+        HPDF_Page_ShowText(page, tags.at(i).c_str());
+        HPDF_Page_EndText(page);
+        for(int j=0; j < taggedlist.no(); j++)
+        {
+            curheight += 30;
+            std::size_t found = taggedlist.at(j).find("|");
+            std::size_t rfound = taggedlist.at(j).rfind("|");
+            //std::cout << "found: " << found << " rfound: " << rfound << std::endl;
+            FXString itemtag = taggedlist.at(j).mid(0, found);
+            FXString itemhdr = taggedlist.at(j).mid(found+1, rfound - found - 1);
+            FXString itemcon = taggedlist.at(j).mid(rfound+1, taggedlist.at(j).length() - rfound);
+            if(itemtag == tags.at(i).c_str())
+            {
+                HPDF_Page_BeginText(page);
+                HPDF_Page_MoveTextPos(page, 20, height - curheight);
+                HPDF_Page_SetFontAndSize(page, defaultfont, 12);
+                HPDF_Page_ShowText(page, itemhdr.text());
+                HPDF_Page_EndText(page);
+                curheight += 20;
+                HPDF_Page_BeginText(page);
+                HPDF_Page_MoveTextPos(page, 20, height - curheight);
+                HPDF_Page_SetFontAndSize(page, monofont, 12);
+                HPDF_Page_ShowText(page, itemcon.text());
+                HPDF_Page_EndText(page);
+            }
+        }
+        curheight += 30;
+    }
+
+    HPDF_SaveToFile(pdf, "tmp.pdf");
+    HPDF_Free(pdf);
+
+    // RENDER PDF TO AN IMAGE
+    pdfdoc = poppler::document::load_from_file("tmp.pdf");
+    pdfpage = pdfdoc->create_page(0);
+    pdfrender.set_render_hint(poppler::page_renderer::antialiasing, true);
+    pdfrender.set_render_hint(poppler::page_renderer::text_antialiasing, true);
+    pdfimage = pdfrender.render_page(pdfpage, 72.0, 72.0, -1, -1, -1, -1, poppler::rotate_0);
+    pdfimage.save("tmp.png", "PNG");
+    // Load Image
+    FXImage* img = new FXPNGImage(this->getApp(), NULL, IMAGE_KEEP|IMAGE_SHMI|IMAGE_SHMP);
+    FXFileStream stream;
+    this->getApp()->beginWaitCursor();
+    stream.open("tmp.png", FXStreamLoad);
+    img->loadPixels(stream);
+    stream.close();
+    img->create();
+    imgview->setImage(img);
+    this->getApp()->endWaitCursor();
+}
+
+/*
 void Viewer::GenerateContents(std::vector<std::string> tags)
 {
+*/
     /*
     for(int i=0; i < tags.size(); i++)
     {
@@ -83,10 +194,12 @@ void Viewer::GenerateContents(std::vector<std::string> tags)
         tmplabel->setBackColor(FX::colorFromName("white"));
     }
     */
+/*
 }
 
 void Viewer::GenerateTaggedItems(std::vector<std::string> tags, FXArray<FXString> taggedlist)
 {
+*/
     /*
     FXLabel* tagitemheader = new FXLabel(vframe, "Tagged Items");
     tagitemheader->setFont(header2);
@@ -151,4 +264,4 @@ void Viewer::GenerateTaggedItems(std::vector<std::string> tags, FXArray<FXString
     reportstring = prehtml + curcontent + psthtml;
 
      */ 
-}
+//}

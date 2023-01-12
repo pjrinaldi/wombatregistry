@@ -44,6 +44,7 @@ class Viewer : public FXDialogBox
         HPDF_Doc pdf;
         HPDF_Page page;
         HPDF_Font defaultfont;
+        HPDF_Font monofont;
         HPDF_REAL tw;
         HPDF_REAL height;
         HPDF_REAL width;
@@ -63,8 +64,9 @@ class Viewer : public FXDialogBox
 
     public:
         Viewer(FXWindow* parent, const FXString& title);
-        void GenerateContents(std::vector<std::string> tags);
-        void GenerateTaggedItems(std::vector<std::string> tags, FXArray<FXString> taggedlist);
+        //void GenerateContents(std::vector<std::string> tags);
+        void GenerateReport(FXArray<FXString> taggedlist, std::vector<std::string> tags);
+        //void GenerateTaggedItems(std::vector<std::string> tags, FXArray<FXString> taggedlist);
 };
 
 #endif // VIEWER_H
