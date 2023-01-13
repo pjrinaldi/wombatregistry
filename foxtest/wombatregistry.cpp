@@ -23,6 +23,7 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     tablelist->setColumnText(1, "Value Name");
     tablelist->setColumnText(2, "Value Type");
     tablelist->setColumnHeaderHeight(tablelist->getColumnHeaderHeight() + 5);
+    tablelist->setRowHeaderWidth(0);
     openicon = new FXPNGIcon(this->getApp(), folderopen);
     openbutton = new FXButton(toolbar, "", openicon, this, ID_OPEN, BUTTON_TOOLBAR);
     managetagsicon = new FXPNGIcon(this->getApp(), managetags);
