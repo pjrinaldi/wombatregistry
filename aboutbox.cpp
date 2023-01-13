@@ -1,42 +1,100 @@
 #include "aboutbox.h"
 
-// Copyright 2013-2022 Pasquale J. Rinaldi, Jr.
-// Distributed under the terms of the GNU General Public License version 2
+FXIMPLEMENT(AboutBox,FXDialogBox,NULL, 0)
 
-AboutBox::AboutBox(QWidget* parent) : QDialog(parent), ui(new Ui::AboutBox)
+AboutBox::AboutBox(FXWindow* parent, const FXString& title):FXDialogBox(parent, title, DECOR_TITLE|DECOR_BORDER|DECOR_CLOSE, 0, 0, 400, 600, 0,0,0,0, 0, 0)
 {
-    ui->setupUi(this);
-    QString abouttext = "<h3>About Wombat Registry v0.4</h3>";
-    abouttext += "<h5>License: GPLv2</h5>";
-    abouttext += "<h4>Copyright 2022-2023 Pasquale J. Rinaldi, Jr.</h4>";
-    abouttext += "<h5>Email: pjrinaldi@gmail.com</h5>";
-    abouttext += "<p>This program incorporates Qt5.15.0, provided by the LGPL, some of the elementary (GPLv3), and tango (public domain) icons.";
-    abouttext += " Registry parsing provided by the libregf library from Joachim Metz provided under the LGPLv3.";
-    abouttext += "<p>The wombat icon as well as the About dialog graphic was designed by Lindsey Pargman and a lot of the design implementation ideas were brainstormed with Mark Smith.</p>";
-    abouttext += "<p>If I have forgotten to mention any library or anyone, let me know and I will update this content accordingly.</p>";
-    ui->textlabel->setText(abouttext);
-    this->hide();
+    mainframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
+    mainimage = new FXPNGImage(this->getApp(), aboutwombat);
+    imgframe = new FXImageFrame(mainframe, mainimage, FRAME_NONE);
+    FXString abouttext = "\n\nAbout Wombat Registry v0.4\n\n";
+    abouttext += "License: GPLv2\n";
+    abouttext += "Copyright: 2022-2023 Pasquale J. Rinaldi, Jr.\n";
+    abouttext += "Email: pjrinaldi@gmail.com\n\n";
+    abouttext += "This program incorporates Fox Toolkit v1.7.6.81 (LGPLv2),\n";
+    abouttext += "some of the elementary icons (GPLv3),\n";
+    abouttext += " and tango icons (public domain).\n";
+    abouttext += " Registry parsing by libregf library (LGPLv3) from Joachim Metz\n\n";
+    abouttext += "Wombat icon and about image designed by Lindsay Pargman\n.";
+    abouttext += "Design Implementation ideas brainstormed with Mark Smith.\n\n";
+    abouttext += "If I have forgotten to mention any library or anyone,\n";
+    abouttext += " let me know and I will update this content accordingly.";
+    mainlabel = new FXLabel(mainframe, abouttext, NULL, JUSTIFY_LEFT);
+    this->setBackColor(FX::colorFromName("white"));
+    mainframe->setBackColor(FX::colorFromName("white"));
+    mainlabel->setBackColor(FX::colorFromName("white"));
+
+    /*
+    taglist = new FXList(mainframe, this, ID_LISTSELECT, LIST_SINGLESELECT|LAYOUT_FILL_X|LAYOUT_FILL_Y);
+    buttonframe = new FXHorizontalFrame(mainframe, LAYOUT_BOTTOM|LAYOUT_FILL_X);
+    newicon = new FXPNGIcon(this->getApp(), bookmarknew);
+    newbutton = new FXButton(buttonframe, "New Tag", newicon, this, ID_NEWTAG);
+    editicon = new FXPNGIcon(this->getApp(), bookmark);
+    editbutton = new FXButton(buttonframe, "Modify Tag", editicon, this, ID_EDITTAG);
+    remicon = new FXPNGIcon(this->getApp(), bookmarkrem);
+    rembutton = new FXButton(buttonframe, "Remove Tag", remicon, this, ID_REMTAG);
+    rembutton->disable();
+    editbutton->disable();
+    */
 }
 
-AboutBox::~AboutBox()
+/*
+void AboutBox::SetTagList(std::vector<std::string>* tagslist)
 {
+    tags = tagslist;
+    if(tags != NULL)
+        UpdateList();
 }
 
-void AboutBox::HideClicked()
+void AboutBox::UpdateList()
 {
-    this->hide();
+    taglist->clearItems();
+    for(int i=0; i < tags->size(); i++)
+        taglist->appendItem(new FXListItem(FXString(tags->at(i).c_str())));
 }
 
-void AboutBox::ShowAbout()
+long AboutBox::AddTag(FXObject*, FXSelector, void*)
 {
-    this->show();
-}
-
-void AboutBox::mousePressEvent(QMouseEvent* e)
-{
-    if(e->type() == QEvent::MouseButtonPress)
+    FXString tagstr = "";
+    bool isset = FXInputDialog::getString(tagstr, this, "Enter Tag Name", "New Tag");
+    if(isset)
     {
-        this->hide();
+        tags->push_back(tagstr.text());
+        UpdateList();
     }
+    return 1;
 }
 
+long AboutBox::ModifyTag(FXObject*, FXSelector, void*)
+{
+    FXint curitem = taglist->getCurrentItem();
+    std::string curtext = tags->at(curitem);
+    FXString modtagname = "";
+    bool isset = FXInputDialog::getString(modtagname, this, "Modify Tag Name", "Modify Tag");
+    if(isset)
+    {
+        taglist->getItem(curitem)->setText(modtagname);
+        taglist->update();
+        tags->at(curitem) = modtagname.text();
+    }
+    return 1;
+}
+
+long AboutBox::RemoveTag(FXObject*, FXSelector, void*)
+{
+    int curitem = taglist->getCurrentItem();
+    std::string curtext = tags->at(curitem);
+    tags->erase(tags->begin() + curitem);
+    rembutton->disable();
+    editbutton->disable();
+    UpdateList();
+    return 1;
+}
+
+long AboutBox::ListSelection(FXObject*, FXSelector, void*)
+{
+    rembutton->enable();
+    editbutton->enable();
+    return 1;
+}
+*/

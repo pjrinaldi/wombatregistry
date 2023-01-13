@@ -12,8 +12,9 @@ There is tag management if you like to create your tags ahead of time rather tha
 Plus it runs on linux and is open source and free.
 
 It is a pretty simple and straightforward tool.
-The libregf library is dynamically linked, so you will have to build this library and ensure it is in your path first.
+The libregf library and fox toolkit library are statically compiled into the program, so it should run if you download the binary.
+If you want to compile from source, you will have to download libregf and the fox-toolkit library and compile those prior to compiling wombat registry. To compile, simply run "make wombatregistry" and that should create the executable, then you just have to copy it to your /usr/local/bin/ folder.
 
 Screenshot of the main window
 
-![Main Window](./Resources/mainwindow.png)
+![Main Window](./resources/mainwindow.png)
