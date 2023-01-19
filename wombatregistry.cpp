@@ -415,7 +415,7 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                         }
                         valuedata += "]\n";
                     }
-		    else if(keypath.contains("CIDSizeMRU") || keypath.contains("LastVisitedPidlMRU") || keypath.contains("RecentDocs"))
+		    else if(keypath.contains("CIDSizeMRU") || keypath.contains("LastVisitedPidlMRU") || keypath.contains("RecentDocs") || keypath.contains("WordWheelQuery"))
 		    {
 			if(!valuename.contains("MRUListEx"))
 			{
@@ -456,6 +456,16 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
 				asciioffset = i*2 + 3;
 				break;
 			    }
+                            else if(data[i*2] == 0x20 && data[i*2+1] < 0x0a)
+                            {
+                                asciioffset = i*2 + 3;
+                                break;
+                            }
+                            else if(data[i*2] < 0x0a && data[i*2+1] == 0x20)
+                            {
+                                asciioffset = i*2 + 2;
+                                break;
+                            }
 			}
 			//std::cout << "ascii offset: " << asciioffset << std::endl;
 			if(asciioffset > 0)
@@ -712,6 +722,19 @@ long WombatRegistry::PublishReport(FXObject*, FXSelector, void*)
         outfile->writeBlock(buf.text(), buf.length());
         outfile->close();
     }
+    return 1;
+}
+
+long WombatRegistry::TableUp(FXObject*, FXSelector, void* ptr)
+{
+    switch(((FXEvent*)ptr)->code)
+    {
+        case KEY_Up:
+            //std::cout << "keyboard up movement." << std::endl;
+        case KEY_Down:
+            //std::cout << "keyboard down movement." << std::endl;
+    }
+
     return 1;
 }
 

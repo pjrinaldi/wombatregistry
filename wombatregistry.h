@@ -73,6 +73,7 @@ class WombatRegistry : public FXMainWindow
             ID_NEWTAG = 108,
             ID_SETTAG = 109,
             ID_REMTAG = 110,
+            ID_MOVE_UP = 111,
             ID_LAST
         };
         WombatRegistry(FXApp* a);
@@ -87,6 +88,7 @@ class WombatRegistry : public FXMainWindow
         long RemoveTag(FXObject*, FXSelector, void*);
         long PreviewReport(FXObject*, FXSelector, void*);
         long PublishReport(FXObject*, FXSelector, void*);
+        long TableUp(FXObject*, FXSelector, void*);
 	void PopulateChildKeys(libregf_key_t* curkey, FXTreeItem* curitem, libregf_error_t* regerr);
 	void GetRootString(FXTreeItem* curitem, FXString* rootstring);
 	FXString ConvertWindowsTimeToUnixTimeUTC(uint64_t input);
@@ -114,6 +116,7 @@ FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_REMTAG, WombatRegistry::RemoveTag),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_PREVIEW, WombatRegistry::PreviewReport),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_PUBLISH, WombatRegistry::PublishReport),
+    FXMAPFUNC(SEL_KEYPRESS, WombatRegistry::ID_TABLESELECT, WombatRegistry::TableUp),
 };
 
 #endif // WOMBATREGISTRY_H
