@@ -130,12 +130,12 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
     //std::cout << "found: " << found << std::endl;
     FXString rootstr = pathitems.at(pathitems.size() - 1).left(found).upper();
     //std::cout << "rootstr: " << rootstr.text() << std::endl;
-    keypath += "\\" + rootstr;
+    //keypath += "\\" + rootstr;
     for(int i=pathitems.size() - 2; i > -1; i--)
     {
 	keypath += "\\" + pathitems.at(i);
     }
-    StatusUpdate(keypath);
+    StatusUpdate("\\" + rootstr + "\\" + keypath);
     libregf_file_t* regfile = NULL;
     libregf_error_t* regerr = NULL;
     libregf_file_initialize(&regfile, &regerr);
