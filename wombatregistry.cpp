@@ -116,7 +116,9 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
     {
 	parent = child->getParent();
 	if(parent == NULL)
+        {
 	    toplevel = true;
+        }
 	else
 	{
 	    pathitems.push_back(parent->getText());
@@ -124,6 +126,11 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 	}
     }
     FXString keypath = "";
+    int found = pathitems.at(pathitems.size() - 1).find(" (");
+    //std::cout << "found: " << found << std::endl;
+    FXString rootstr = pathitems.at(pathitems.size() - 1).left(found).upper();
+    //std::cout << "rootstr: " << rootstr.text() << std::endl;
+    keypath += "\\" + rootstr;
     for(int i=pathitems.size() - 2; i > -1; i--)
     {
 	keypath += "\\" + pathitems.at(i);
