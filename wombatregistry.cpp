@@ -256,8 +256,8 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
     libregf_file_close(regfile, &regerr);
     libregf_file_free(&regfile, &regerr);
     libregf_error_free(&regerr);
-    //tablelist->selectRow(0);
-    //tablelist->setCurrentItem(0, 0);
+    tablelist->setCurrentItem(0, 0);
+    tablelist->selectRow(0, true);
 
     return 1;
 }
