@@ -7,7 +7,7 @@ AboutBox::AboutBox(FXWindow* parent, const FXString& title):FXDialogBox(parent, 
     mainframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
     mainimage = new FXPNGImage(this->getApp(), aboutwombat);
     imgframe = new FXImageFrame(mainframe, mainimage, FRAME_NONE);
-    FXString abouttext = "\n\nAbout Wombat Registry v0.4\n\n";
+    FXString abouttext = "\n\nAbout Wombat Registry v0.6\n\n";
     abouttext += "License: GPLv2\n";
     abouttext += "Copyright: 2022-2023 Pasquale J. Rinaldi, Jr.\n";
     abouttext += "Email: pjrinaldi@gmail.com\n\n";
