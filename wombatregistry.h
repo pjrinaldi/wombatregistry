@@ -93,6 +93,7 @@ class WombatRegistry : public FXMainWindow
         FXString ConvertUnixTimeToString(uint32_t input);
         FXString DecryptRot13(FXString encstr);
         FXchar Rot13Char(FXchar curchar);
+        void AlignColumn(FXTable* curtable, int row, FXuint justify);
 	void StatusUpdate(FXString tmptext)
 	{
 	    statusbar->getStatusLine()->setNormalText(tmptext);

@@ -256,6 +256,9 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
     libregf_file_close(regfile, &regerr);
     libregf_file_free(&regfile, &regerr);
     libregf_error_free(&regerr);
+    AlignColumn(tablelist, 0, FXTableItem::LEFT);
+    AlignColumn(tablelist, 1, FXTableItem::LEFT);
+    AlignColumn(tablelist, 2, FXTableItem::LEFT);
     tablelist->setCurrentItem(0, 0);
     tablelist->selectRow(0, true);
 
@@ -563,6 +566,12 @@ FXchar WombatRegistry::Rot13Char(FXchar curchar)
     else
         rot13char = curchar;
     return rot13char;
+}
+
+void WombatRegistry::AlignColumn(FXTable* curtable, int col, FXuint justify)
+{
+    for(int i=0; i < curtable->getNumRows(); i++)
+        curtable->setItemJustify(i, col, justify);
 }
 
 long WombatRegistry::OpenTagManager(FXObject*, FXSelector, void*)
