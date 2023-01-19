@@ -135,7 +135,7 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
     {
 	keypath += "\\" + pathitems.at(i);
     }
-    StatusUpdate("\\" + rootstr + "\\" + keypath);
+    StatusUpdate(rootstr + keypath);
     libregf_file_t* regfile = NULL;
     libregf_error_t* regerr = NULL;
     libregf_file_initialize(&regfile, &regerr);
@@ -325,7 +325,8 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                 if(rootstring.contains(FXString(hives.at(i).string().c_str())))
                     hivefilepath = FXString(hives.at(i).string().c_str());
             }
-            FXString keypath = statusbar->getStatusLine()->getNormalText();
+	    int found = statusbar->getStatusLine()->getNormalText().find_first_of("\\");
+            FXString keypath = statusbar->getStatusLine()->getNormalText().after('\\');
             libregf_file_t* regfile = NULL;
             libregf_error_t* regerr = NULL;
             libregf_file_initialize(&regfile, &regerr);
@@ -358,7 +359,7 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                 else if(valuetype.contains("REG_BINARY"))
                 {
                     valuedata += "Content\n-------\n\n";
-                    if(keypath.contains("UserAssist") && (keypath.contains("{750") || keypath.contains("{F4E") || keypath.contains("{5E6")))
+                    if(keypath.contains("UserAssist") && keypath.contains("{"))
                     {
                         valuedata += "ROT13 Decrypted Content:\t";
                         valuedata += DecryptRot13(valuename) + "\n";
@@ -439,8 +440,12 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                     valuedata += "Content:\t";
                     uint32_t dwordvalue = 0;
                     libregf_value_get_value_32bit(curval, &dwordvalue, &regerr);
-                    if(valuename.lower().contains("date"))
-                        valuedata += ConvertUnixTimeToString(dwordvalue);
+                    if(valuename.lower().contains("date") || valuename.lower().contains("time"))
+		    {
+			valuedata += "\n--------\n";
+                        valuedata += "DateTime:\t" + ConvertUnixTimeToString(dwordvalue) + "\n";
+                        valuedata += "Value:\t\t" + FXString::value(dwordvalue);
+		    }
                     else
                         valuedata += FXString::value(dwordvalue);
                 }
@@ -474,7 +479,15 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                     valuedata += "Content:\t";
                     uint64_t qwordvalue = 0;
                     libregf_value_get_value_64bit(curval, &qwordvalue, &regerr);
-                    valuedata += FXString::value(qwordvalue);
+                    if(valuename.lower().contains("date") || valuename.lower().contains("time"))
+		    {
+			valuedata += "\n--------\n";
+                        valuedata += "DateTime:\t" + ConvertUnixTimeToString(qwordvalue) + "\n";
+			valuedata += "DateTime:\t" + ConvertWindowsTimeToUnixTimeUTC(qwordvalue) + "\n";
+                        valuedata += "Value:\t\t" + FXString::value(qwordvalue);
+		    }
+		    else
+			valuedata += FXString::value(qwordvalue);
                 }
             }
             size_t datasize = 0;
@@ -486,11 +499,16 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
             {
                 valuedata += "0000\t";
                 std::stringstream ss;
-                ss << std::hex <<  std::setfill('0');
-                for(int i=0; i < datasize; i++)
-                    ss << std::setw(2) << ((uint)data[i]) << " ";
+                ss << std::hex << std::setfill('0');
+                //for(int i=0; i < datasize; i++)
+                for(int i=0; i < 16; i++)
+		    if(i < datasize)
+			ss << std::setw(2) << ((uint)data[i]) << " ";
+		    else
+			ss << "   ";
                 valuedata += FXString(ss.str().c_str()).upper();
                 for(int i=0; i < datasize; i++)
+                //for(int i=0; i < 16; i++)
                 {
                     if(isprint(data[i]))
                         valuedata += FXchar(reinterpret_cast<unsigned char>(data[i]));
@@ -697,7 +715,9 @@ long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
             FXString rootitemstring(std::string(hivefilename + " (" + hivefilepath + ")").c_str());
             rootitem = new FXTreeItem(rootitemstring);
             treelist->appendItem(0, rootitem);
+	    this->getApp()->beginWaitCursor();
 	    PopulateChildKeys(rootkey, rootitem, regerr);
+	    this->getApp()->endWaitCursor();
 	    treelist->expandTree(rootitem);
 	    libregf_key_free(&rootkey, &regerr);
 	    libregf_file_close(regfile, &regerr);
