@@ -444,27 +444,30 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
 			int asciioffset = 0;
 			for(int i=0; i < sizeof(data) / 2; i++)
 			{
-			    // can't figure out how this element is laid out.
-			    //std::cout << "i: " << i << "data[i] :" << data[i*2] << "data[i+1] :" << data[i*2+1] << std::endl;
 			    uint16_t tmp16 = (uint16_t)data[i*2] | (uint16_t)data[i*2 + 1] << 8;
 			    FXwchar tmpwc = FX::wc(&tmp16);
 			    if(tmp16 == 0x0080)
 			    {
-				//std::cout << "tmp16 " << tmp16 << std::endl;
-				//std::cout << "ascii starts here..." << std::endl;
-				asciioffset = i*2+2;
+				asciioffset = i*2 + 2;
 				break;
-				//valuedata += tmpwc;
+			    }
+			    else if(tmp16 == 0x8000)
+			    {
+				asciioffset = i*2 + 3;
+				break;
 			    }
 			}
 			//std::cout << "ascii offset: " << asciioffset << std::endl;
-			for(int i=asciioffset; i < sizeof(data); i++)
+			if(asciioffset > 0)
 			{
-			    FXchar tmpc = FX::FXchar((char)data[i]);
-			    //std::cout << "char: " << tmpc << std::endl;
-			    if(data[i] == 0x00)
-				break;
-			    valuedata += tmpc;
+			    for(int i=asciioffset; i < sizeof(data); i++)
+			    {
+				FXchar tmpc = FX::FXchar((char)data[i]);
+				//std::cout << "char: " << tmpc << std::endl;
+				if(data[i] == 0x00)
+				    break;
+				valuedata += tmpc;
+			    }
 			}
 		    }
                 }
