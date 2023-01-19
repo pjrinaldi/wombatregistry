@@ -456,7 +456,7 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
 				//valuedata += tmpwc;
 			    }
 			}
-			std::cout << "ascii offset: " << asciioffset << std::endl;
+			//std::cout << "ascii offset: " << asciioffset << std::endl;
 			for(int i=asciioffset; i < sizeof(data); i++)
 			{
 			    FXchar tmpc = FX::FXchar((char)data[i]);
