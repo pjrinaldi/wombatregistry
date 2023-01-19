@@ -444,6 +444,7 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
 			int asciioffset = 0;
 			for(int i=0; i < sizeof(data) / 2; i++)
 			{
+			    // can't figure out how this element is laid out.
 			    //std::cout << "i: " << i << "data[i] :" << data[i*2] << "data[i+1] :" << data[i*2+1] << std::endl;
 			    uint16_t tmp16 = (uint16_t)data[i*2] | (uint16_t)data[i*2 + 1] << 8;
 			    FXwchar tmpwc = FX::wc(&tmp16);
