@@ -415,25 +415,57 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                         }
                         valuedata += "]\n";
                     }
-                    else if(keypath.contains("RecentDocs"))
-                    {
-                        if(!valuename.contains("MRUListEx"))
-                        {
-                            size_t datasize = 0;
-                            libregf_value_get_value_data_size(curval, &datasize, &regerr);
-                            uint8_t data[datasize];
-                            libregf_value_get_value_data(curval, data, datasize, &regerr);
-                            valuedata += "Name:\t";
-                            for(int i=0; i < sizeof(data) / 2; i++)
-                            {
-                                uint16_t tmp16 = (uint16_t)data[i*2] | (uint16_t)data[i*2 + 1] << 8;
-                                FXwchar tmpwc = FX::wc(&tmp16);
-                                if(tmp16 == 0x0000)
-                                    break;
-                                valuedata += tmpwc;
-                            }
-                        }
-                    }
+		    else if(keypath.contains("CIDSizeMRU") || keypath.contains("LastVisitedPidlMRU") || keypath.contains("RecentDocs"))
+		    {
+			if(!valuename.contains("MRUListEx"))
+			{
+			    size_t datasize = 0;
+			    libregf_value_get_value_data_size(curval, &datasize, &regerr);
+			    uint8_t data[datasize];
+			    libregf_value_get_value_data(curval, data, datasize, &regerr);
+			    valuedata += "Name:\t";
+			    for(int i=0; i < sizeof(data) / 2; i++)
+			    {
+				uint16_t tmp16 = (uint16_t)data[i*2] | (uint16_t)data[i*2+1] << 8;
+				FXwchar tmpwc = FX::wc(&tmp16);
+				if(tmp16 == 0x0000)
+				    break;
+				valuedata += tmpwc;
+			    }
+			}
+		    }
+		    else if(keypath.contains("OpenSavePidlMRU") && !valuename.contains("MRUListEx"))
+		    {
+			size_t datasize = 0;
+			libregf_value_get_value_data_size(curval, &datasize, &regerr);
+			uint8_t data[datasize];
+			libregf_value_get_value_data(curval, data, datasize, &regerr);
+			valuedata += "Name:\t";
+			int asciioffset = 0;
+			for(int i=0; i < sizeof(data) / 2; i++)
+			{
+			    //std::cout << "i: " << i << "data[i] :" << data[i*2] << "data[i+1] :" << data[i*2+1] << std::endl;
+			    uint16_t tmp16 = (uint16_t)data[i*2] | (uint16_t)data[i*2 + 1] << 8;
+			    FXwchar tmpwc = FX::wc(&tmp16);
+			    if(tmp16 == 0x0080)
+			    {
+				//std::cout << "tmp16 " << tmp16 << std::endl;
+				//std::cout << "ascii starts here..." << std::endl;
+				asciioffset = i*2+2;
+				break;
+				//valuedata += tmpwc;
+			    }
+			}
+			std::cout << "ascii offset: " << asciioffset << std::endl;
+			for(int i=asciioffset; i < sizeof(data); i++)
+			{
+			    FXchar tmpc = FX::FXchar((char)data[i]);
+			    //std::cout << "char: " << tmpc << std::endl;
+			    if(data[i] == 0x00)
+				break;
+			    valuedata += tmpc;
+			}
+		    }
                 }
                 else if(valuetype.contains("REG_DWORD"))
                 {
