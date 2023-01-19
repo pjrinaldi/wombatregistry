@@ -138,6 +138,8 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
     // valid key, get values...
     int valuecount = 0;
     libregf_key_get_number_of_values(curkey, &valuecount, &regerr);
+    //std::cout << "curkey: " << curkey << std::endl;
+    //std::cout << "value count: " << valuecount << std::endl;
     tablelist->clearItems();
     plaintext->setText("");
     tablelist->setTableSize(valuecount, 3);
@@ -490,21 +492,30 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
             else
             {
                 int linecount = datasize / 16;
+                int linerem = datasize % 16;
+                if(linerem > 0)
+                    linecount++;
                 for(int i=0; i < linecount; i++)
                 {
                     std::stringstream ss;
                     ss << std::hex << std::setfill('0') << std::setw(8) << i * 16 << "\t";
                     for(int j=0; j < 16; j++)
                     {
-                        ss << std::setw(2) << ((uint)data[j+i*16]) << " ";
+                        if(j+i*16 < datasize)
+                            ss << std::setw(2) << ((uint)data[j+i*16]) << " ";
+                        else
+                            ss << "   ";
                     }
                     valuedata += FXString(ss.str().c_str()).upper();
                     for(int j=0; j < 16; j++)
                     {
-                        if(isprint(data[j+i*16]))
-                            valuedata += FXchar(reinterpret_cast<unsigned char>(data[j+i*16]));
-                        else
-                            valuedata += ".";
+                        if(j+i*16 < datasize)
+                        {
+                            if(isprint(data[j+i*16]))
+                                valuedata += FXchar(reinterpret_cast<unsigned char>(data[j+i*16]));
+                            else
+                                valuedata += ".";
+                        }
                     }
                     valuedata += "\n";
                 }
