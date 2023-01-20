@@ -125,6 +125,15 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 	    child = parent;
 	}
     }
+    FXString rootstring = "";
+    FXString hivepath = "";
+    GetRootString(curitem, &rootstring);
+    for(int i=0; i < hives.size(); i++)
+    {
+        if(rootstring.contains(FXString(hives.at(i).string().c_str())))
+            hivepath = FXString(hives.at(i).string().c_str());
+    }
+    //std::cout << "hivepath: " << hivepath.text() << std::endl;
     FXString keypath = "";
     int found = pathitems.at(pathitems.size() - 1).find(" (");
     //std::cout << "found: " << found << std::endl;
@@ -139,7 +148,8 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
     libregf_file_t* regfile = NULL;
     libregf_error_t* regerr = NULL;
     libregf_file_initialize(&regfile, &regerr);
-    libregf_file_open(regfile, hivefilepath.c_str(), LIBREGF_OPEN_READ, &regerr);
+    libregf_file_open(regfile, hivepath.text(), LIBREGF_OPEN_READ, &regerr);
+    //libregf_file_open(regfile, hivefilepath.c_str(), LIBREGF_OPEN_READ, &regerr);
     libregf_key_t* curkey = NULL;
     libregf_file_get_key_by_utf8_path(regfile, (uint8_t*)(keypath.text()), keypath.count(), &curkey, &regerr);
     // valid key, get values...
@@ -318,19 +328,19 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
             FXString valuetype = tablelist->getItemText(tablelist->getCurrentRow(), 2);
             FXTreeItem* curitem = treelist->getCurrentItem();
             FXString rootstring = "";
-            FXString hivefilepath = "";
+            FXString hivepath = "";
             GetRootString(curitem, &rootstring);
             for(int i=0; i < hives.size(); i++)
             {
                 if(rootstring.contains(FXString(hives.at(i).string().c_str())))
-                    hivefilepath = FXString(hives.at(i).string().c_str());
+                    hivepath = FXString(hives.at(i).string().c_str());
             }
 	    int found = statusbar->getStatusLine()->getNormalText().find_first_of("\\");
             FXString keypath = statusbar->getStatusLine()->getNormalText().after('\\');
             libregf_file_t* regfile = NULL;
             libregf_error_t* regerr = NULL;
             libregf_file_initialize(&regfile, &regerr);
-            libregf_file_open(regfile, hivefilepath.text(), LIBREGF_OPEN_READ, &regerr);
+            libregf_file_open(regfile, hivepath.text(), LIBREGF_OPEN_READ, &regerr);
             libregf_key_t* curkey = NULL;
             libregf_file_get_key_by_utf8_path(regfile, (uint8_t*)(keypath.text()), keypath.count(), &curkey, &regerr);
             libregf_value_t* curval = NULL;
@@ -415,7 +425,7 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
                         }
                         valuedata += "]\n";
                     }
-		    else if(keypath.contains("CIDSizeMRU") || keypath.contains("LastVisitedPidlMRU") || keypath.contains("RecentDocs") || keypath.contains("WordWheelQuery"))
+		    else if(keypath.contains("CIDSizeMRU") || keypath.contains("LastVisitedPidlMRU") || keypath.contains("RecentDocs") || keypath.contains("WordWheelQuery") || keypath.contains("MountedDevices"))
 		    {
 			if(!valuename.contains("MRUListEx"))
 			{
