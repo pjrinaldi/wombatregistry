@@ -28,7 +28,9 @@ void Viewer::GenerateReport(FXArray<FXString> taggedlist, std::vector<std::strin
         int tagcnt = 0;
         for(int i=0; i < taggedlist.no(); i++)
         {
-            if(taggedlist.at(i).contains(tags.at(j).c_str()))
+            std::size_t found = taggedlist.at(i).find("|");
+            FXString itemtag = taggedlist.at(i).mid(0, found);
+            if(FXString::compare(itemtag, FXString(tags.at(j).c_str())) == 0)
                 tagcnt++;
         }
         textview->appendText(FXString(tags.at(j).c_str()) + " (" + FXString::value(tagcnt) + ")\n");
