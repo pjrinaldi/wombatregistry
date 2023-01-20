@@ -18,9 +18,10 @@ ManageTags::ManageTags(FXWindow* parent, const FXString& title):FXDialogBox(pare
     editbutton->disable();
 }
 
-void ManageTags::SetTagList(std::vector<std::string>* tagslist)
+void ManageTags::SetTagList(std::vector<std::string>* tagslist, FXArray<FXString>* taggedlist)
 {
     tags = tagslist;
+    tlist = taggedlist;
     if(tags != NULL)
         UpdateList();
 }
@@ -55,8 +56,22 @@ long ManageTags::ModifyTag(FXObject*, FXSelector, void*)
         taglist->getItem(curitem)->setText(modtagname);
         taglist->update();
         tags->at(curitem) = modtagname.text();
+        if(tlist != NULL)
+            UpdateTaggedList(FXString(curtext.c_str()), modtagname);
     }
     return 1;
+}
+
+void ManageTags::UpdateTaggedList(FXString curtag, FXString modtag)
+{
+    for(int i=0; i < tlist->no(); i++)
+    {
+        std::size_t found = tlist->at(i).find("|");
+        FXString itemtag = tlist->at(i).mid(0, found);
+        if(FXString::compare(curtag, itemtag) == 0) // tag found, remove then insert tag name
+        {
+        }
+    }
 }
 
 long ManageTags::RemoveTag(FXObject*, FXSelector, void*)

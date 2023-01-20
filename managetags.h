@@ -27,6 +27,7 @@ class ManageTags : public FXDialogBox
         FXButton* rembutton;
 
         std::vector<std::string>* tags = NULL;
+        FXArray<FXString>* tlist = NULL;
 
     protected:
         ManageTags() {}
@@ -44,8 +45,9 @@ class ManageTags : public FXDialogBox
             ID_LAST
         };
         ManageTags(FXWindow* parent, const FXString& title);
-        void SetTagList(std::vector<std::string>* tagslist);
+        void SetTagList(std::vector<std::string>* tagslist, FXArray<FXString>* taggedlist);
         void UpdateList();
+        void UpdateTaggedList(FXString curtag, FXString modtag);
         long AddTag(FXObject*, FXSelector, void*);
         long ModifyTag(FXObject*, FXSelector, void*);
         long RemoveTag(FXObject*, FXSelector, void*);

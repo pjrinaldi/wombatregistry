@@ -693,7 +693,7 @@ void WombatRegistry::AlignColumn(FXTable* curtable, int col, FXuint justify)
 long WombatRegistry::OpenTagManager(FXObject*, FXSelector, void*)
 {
     ManageTags tagmanager(this, "Manage Tags");
-    tagmanager.SetTagList(&tags);
+    tagmanager.SetTagList(&tags, &taggedlist);
     tagmanager.execute(PLACEMENT_OWNER);
     return 1;
 }
