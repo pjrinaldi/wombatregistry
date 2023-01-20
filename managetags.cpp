@@ -69,8 +69,7 @@ void ManageTags::UpdateTaggedList(FXString curtag, FXString modtag)
         std::size_t found = tlist->at(i).find("|");
         FXString itemtag = tlist->at(i).mid(0, found);
         if(FXString::compare(curtag, itemtag) == 0) // tag found, remove then insert tag name
-        {
-        }
+            tlist->at(i).replace(0, curtag.length(), modtag);
     }
 }
 

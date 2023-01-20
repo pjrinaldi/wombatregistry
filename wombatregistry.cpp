@@ -695,6 +695,23 @@ long WombatRegistry::OpenTagManager(FXObject*, FXSelector, void*)
     ManageTags tagmanager(this, "Manage Tags");
     tagmanager.SetTagList(&tags, &taggedlist);
     tagmanager.execute(PLACEMENT_OWNER);
+    for(int i=0; i < tablelist->getNumRows(); i++)
+    {
+        std::cout << tablelist->getItemText(i, 0).text() << std::endl;
+    }
+    //    tablelist->update();
+    /*
+        for(int j=0; j < taggedlist.no(); j++)
+        {
+            if(taggedlist.at(j).contains(curtagvalue))
+            {
+                std::size_t found = taggedlist.at(j).find("|");
+                tagstr = taggedlist.at(j).left(found);
+                tablelist->setItemText(i, 0, tagstr); 
+            }
+        }
+     */
+
     return 1;
 }
 
