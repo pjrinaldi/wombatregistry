@@ -697,20 +697,21 @@ long WombatRegistry::OpenTagManager(FXObject*, FXSelector, void*)
     tagmanager.execute(PLACEMENT_OWNER);
     for(int i=0; i < tablelist->getNumRows(); i++)
     {
-        std::cout << tablelist->getItemText(i, 0).text() << std::endl;
-    }
-    //    tablelist->update();
-    /*
+        FXString curidkeyval = statusbar->getStatusLine()->getText() + "\\" + tablelist->getItemText(i, 1);
+        FXString curtag = tablelist->getItemText(i, 0);
         for(int j=0; j < taggedlist.no(); j++)
         {
-            if(taggedlist.at(j).contains(curtagvalue))
+            std::size_t found = taggedlist.at(j).find("|");
+            std::size_t rfound = taggedlist.at(j).rfind("|");
+            FXString itemtag = taggedlist.at(j).mid(0, found);
+            FXString itemhdr = taggedlist.at(j).mid(found+1, rfound - found - 1);
+            if(FXString::compare(curidkeyval, itemhdr) == 0)
             {
-                std::size_t found = taggedlist.at(j).find("|");
-                tagstr = taggedlist.at(j).left(found);
-                tablelist->setItemText(i, 0, tagstr); 
+                if(FXString::compare(curtag, itemtag) != 0)
+                    tablelist->setItemText(i, 0, itemtag);
             }
         }
-     */
+    }
 
     return 1;
 }
