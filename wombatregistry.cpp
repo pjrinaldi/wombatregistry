@@ -349,7 +349,7 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
             libregf_key_get_last_written_time(curkey, &lastwritetime, &regerr);
             FXString valuedata = "Last Written Time:\t" + ConvertWindowsTimeToUnixTimeUTC(lastwritetime) + " UTC\n\n";
             valuedata += "Name:\t" + valuename + "\n\n";
-            if(valuename.contains("(unnamed)"))
+            if(valuename.contains("(unnamed)") && !keypath.contains("USBSTOR"))
             {
                 valuedata += "Content\n-------\n\n";
                 valuedata += "Hex:\t0x" + FXString::value(valuetype.toInt(16), 16) + "\n";
@@ -544,6 +544,41 @@ long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
 		    }
 		    else
 			valuedata += FXString::value(qwordvalue);
+                }
+                else if(keypath.contains("USBSTOR"))
+                {
+                    uint64_t tmp64 = 0;
+                    size_t datasize = 0;
+                    libregf_value_get_value_data_size(curval, &datasize, &regerr);
+                    uint8_t data[datasize];
+                    libregf_value_get_value_data(curval, data, datasize, &regerr);
+                    if(keypath.contains("0003") || keypath.contains("000A"))
+                    {
+                        valuedata += "Name:\t";
+                        for(int i=0; i < sizeof(data) / 2; i++)
+                        {
+                            uint16_t tmp16 = (uint16_t)data[i*2] | (uint16_t)data[i*2+1] << 8;
+                            FXwchar tmpwc = FX::wc(&tmp16);
+                            if(tmp16 == 0x0000)
+                                break;
+                            valuedata += tmpwc;
+                        }
+                    }
+                    else if(keypath.contains("0064"))
+                    {
+                        tmp64 = (uint64_t)data[0] | (uint64_t)data[1] << 8 | (uint64_t)data[2] << 16 | (uint64_t)data[3] << 24 | (uint64_t)data[4] << 32 | (uint64_t)data[5] << 40 | (uint64_t)data[6] << 48 | (uint64_t)data[7] << 56;
+                        valuedata += "First Install:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                    }
+                    else if(keypath.contains("0066"))
+                    {
+                        tmp64 = (uint64_t)data[0] | (uint64_t)data[1] << 8 | (uint64_t)data[2] << 16 | (uint64_t)data[3] << 24 | (uint64_t)data[4] << 32 | (uint64_t)data[5] << 40 | (uint64_t)data[6] << 48 | (uint64_t)data[7] << 56;
+                        valuedata += "Last Connected:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                    }
+                    else if(keypath.contains("0067"))
+                    {
+                        tmp64 = (uint64_t)data[0] | (uint64_t)data[1] << 8 | (uint64_t)data[2] << 16 | (uint64_t)data[3] << 24 | (uint64_t)data[4] << 32 | (uint64_t)data[5] << 40 | (uint64_t)data[6] << 48 | (uint64_t)data[7] << 56;
+                        valuedata += "Last Removal:\t" + ConvertWindowsTimeToUnixTimeUTC(tmp64) + " UTC\n";
+                    }
                 }
             }
             size_t datasize = 0;
