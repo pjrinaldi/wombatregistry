@@ -727,12 +727,17 @@ long WombatRegistry::PublishReport(FXObject*, FXSelector, void*)
 
 long WombatRegistry::TableUp(FXObject*, FXSelector, void* ptr)
 {
+    int currow = tablelist->getCurrentRow();
     switch(((FXEvent*)ptr)->code)
     {
         case KEY_Up:
-            //std::cout << "keyboard up movement." << std::endl;
+            tablelist->setCurrentItem(currow - 1, 0, true);
+	    tablelist->selectRow(currow - 1, true);
+            break;
         case KEY_Down:
-            //std::cout << "keyboard down movement." << std::endl;
+            tablelist->setCurrentItem(currow + 1, 0, true);
+	    tablelist->selectRow(currow + 1, true);
+            break;
     }
 
     return 1;
