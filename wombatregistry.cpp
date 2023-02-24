@@ -1,9 +1,13 @@
 #include "wombatregistry.h"
 
+// Copyright 2013-2023 Pasquale J. Rinaldi, Jr.
+// Distributed under the terms of the GNU General Public License version 2
+
 FXIMPLEMENT(WombatRegistry,FXMainWindow,WombatRegistryMap,ARRAYNUMBER(WombatRegistryMap))
 
 WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forensics", new FXICOIcon(a, wombat_32), new FXICOIcon(a, wombat_32), DECOR_ALL, 0, 0, 1024, 768)
 {
+    new FXToolTip(this->getApp(), TOOLTIP_PERMANENT);
     mainframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0, 0, 0, 0, 0, 0, 0, 0);
     toolbar = new FXToolBar(mainframe, this, LAYOUT_TOP|LAYOUT_LEFT);
     vsplitter = new FXSplitter(mainframe, SPLITTER_NORMAL|LAYOUT_FILL);
@@ -25,15 +29,20 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     tablelist->setColumnHeaderHeight(tablelist->getColumnHeaderHeight() + 5);
     tablelist->setRowHeaderWidth(0);
     openicon = new FXPNGIcon(this->getApp(), folderopen);
-    openbutton = new FXButton(toolbar, "", openicon, this, ID_OPEN, BUTTON_TOOLBAR);
+    openbutton = new FXButton(toolbar, "", openicon, this, ID_OPEN, BUTTON_TOOLBAR|FRAME_RAISED, 0,0,0,0, 4,4,4,4);
+    openbutton->setTipText("Open Registry File");
     managetagsicon = new FXPNGIcon(this->getApp(), managetags);
-    managetagsbutton = new FXButton(toolbar, "", managetagsicon, this, ID_MANAGETAGS, BUTTON_TOOLBAR);
+    managetagsbutton = new FXButton(toolbar, "", managetagsicon, this, ID_MANAGETAGS, BUTTON_TOOLBAR|FRAME_RAISED, 0,0,0,0, 4,4,4,4);
+    managetagsbutton->setTipText("Manage Tags");
     previewicon = new FXPNGIcon(this->getApp(), reportpreview1);
-    previewbutton = new FXButton(toolbar, "", previewicon, this, ID_PREVIEW, BUTTON_TOOLBAR);
+    previewbutton = new FXButton(toolbar, "", previewicon, this, ID_PREVIEW, BUTTON_TOOLBAR|FRAME_RAISED, 0,0,0,0, 4,4,4,4);
+    previewbutton->setTipText("Preview Report");
     publishicon = new FXPNGIcon(this->getApp(), paperairplane2);
-    publishbutton = new FXButton(toolbar, "", publishicon, this, ID_PUBLISH, BUTTON_TOOLBAR);
+    publishbutton = new FXButton(toolbar, "", publishicon, this, ID_PUBLISH, BUTTON_TOOLBAR|FRAME_RAISED, 0,0,0,0, 4,4,4,4);
+    publishbutton->setTipText("Publish Report");
     abouticon = new FXPNGIcon(this->getApp(), helpcontents);
-    aboutbutton = new FXButton(toolbar, "", abouticon, this, ID_ABOUT, BUTTON_TOOLBAR);
+    aboutbutton = new FXButton(toolbar, "", abouticon, this, ID_ABOUT, BUTTON_TOOLBAR|FRAME_RAISED, 0,0,0,0, 4,4,4,4);
+    aboutbutton->setTipText("About Wombat Registry Forensics");
     statusbar->getStatusLine()->setNormalText("Open a Hive File to Begin");
     hives.clear();
     tags.clear();
@@ -855,7 +864,10 @@ long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
 	    libregf_error_free(&regerr);
         }
         else
-            std::cout << "check failed..." << std::endl;
+        {
+            StatusUpdate("File not opened. Not a valid registry file.");
+            //std::cout << "check failed..." << std::endl;
+        }
     }
     return 1;
 }

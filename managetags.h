@@ -1,6 +1,9 @@
 #ifndef MANAGETAGS_H
 #define MANAGETAGS_H
 
+// Copyright 2013-2023 Pasquale J. Rinaldi, Jr.
+// Distributed under the terms of the GNU General Public License version 2
+
 #include <iostream>
 #include <stdio.h>
 #include <string>
@@ -31,8 +34,6 @@ class ManageTags : public FXDialogBox
 
     protected:
         ManageTags() {}
-
-        long onSomeCommand(FXObject* sender, FXSelector sel, void* ptr);
 
     public:
         enum

@@ -1,19 +1,22 @@
 #include "managetags.h"
 
+// Copyright 2013-2023 Pasquale J. Rinaldi, Jr.
+// Distributed under the terms of the GNU General Public License version 2
+
 FXIMPLEMENT(ManageTags,FXDialogBox,ManageTagsMap,ARRAYNUMBER(ManageTagsMap))
 
-ManageTags::ManageTags(FXWindow* parent, const FXString& title):FXDialogBox(parent, title, DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE|DECOR_CLOSE, 0, 0, 320, 260, 0,0,0,0, 4, 4)
+ManageTags::ManageTags(FXWindow* parent, const FXString& title):FXDialogBox(parent, title, DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE|DECOR_CLOSE, 0, 0, 430, 260, 0,0,0,0, 4, 4)
 {
     mainframe = new FXVerticalFrame(this, LAYOUT_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y);
     mainlabel = new FXLabel(mainframe, "Case Tags");
     taglist = new FXList(mainframe, this, ID_LISTSELECT, LIST_SINGLESELECT|LAYOUT_FILL_X|LAYOUT_FILL_Y);
     buttonframe = new FXHorizontalFrame(mainframe, LAYOUT_BOTTOM|LAYOUT_FILL_X);
     newicon = new FXPNGIcon(this->getApp(), bookmarknew);
-    newbutton = new FXButton(buttonframe, "New Tag", newicon, this, ID_NEWTAG);
+    newbutton = new FXButton(buttonframe, "New Tag", newicon, this, ID_NEWTAG, BUTTON_NORMAL, 0,0,0,0, 20,20);
     editicon = new FXPNGIcon(this->getApp(), bookmark);
-    editbutton = new FXButton(buttonframe, "Modify Tag", editicon, this, ID_EDITTAG);
+    editbutton = new FXButton(buttonframe, "Modify Tag", editicon, this, ID_EDITTAG, BUTTON_NORMAL, 0,0,0,0, 20,20);
     remicon = new FXPNGIcon(this->getApp(), bookmarkrem);
-    rembutton = new FXButton(buttonframe, "Remove Tag", remicon, this, ID_REMTAG);
+    rembutton = new FXButton(buttonframe, "Remove Tag", remicon, this, ID_REMTAG, BUTTON_NORMAL, 0,0,0,0, 20,20);
     rembutton->disable();
     editbutton->disable();
 }

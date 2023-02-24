@@ -1,5 +1,8 @@
 #include "viewer.h"
 
+// Copyright 2013-2023 Pasquale J. Rinaldi, Jr.
+// Distributed under the terms of the GNU General Public License version 2
+
 FXIMPLEMENT(Viewer,FXDialogBox, NULL, 0)
 
 Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, title, DECOR_TITLE|DECOR_RESIZE|DECOR_BORDER|DECOR_CLOSE, 0, 0, 400, 300, 0,0,0,0, 0, 0)
