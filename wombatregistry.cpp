@@ -88,6 +88,8 @@ long WombatRegistry::CreateNewTag(FXObject*, FXSelector, void*)
     {
         tags.push_back(tagstr.text());
         tablelist->setItemText(tablelist->getCurrentRow(), 0, tagstr);
+	if(tagstr.length() > 5)
+	    tablelist->fitColumnsToContents(0);
     }
     FXString idkeyvalue = statusbar->getStatusLine()->getText() + "\\" + tablelist->getItemText(tablelist->getCurrentRow(), 1);
     for(int i=0; i < taggedlist.no(); i++)
@@ -113,6 +115,7 @@ long WombatRegistry::RemoveTag(FXObject*, FXSelector, void*)
 
 long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 {
+    size_t namemax = 0;
     FXTreeItem* curitem = treelist->getCurrentItem();
     bool toplevel = false;
     std::vector<FXString> pathitems;
@@ -198,6 +201,8 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
 	libregf_key_get_value(curkey, i, &curval, &regerr);
 	size_t namesize = 0;
 	libregf_value_get_utf8_name_size(curval, &namesize, &regerr);
+	if(namemax < namesize)
+	    namemax = namesize;
 	uint8_t name[namesize];
 	libregf_value_get_utf8_name(curval, name, namesize, &regerr);
 	uint32_t type = 0;
@@ -285,6 +290,10 @@ long WombatRegistry::KeySelected(FXObject* sender, FXSelector, void*)
     AlignColumn(tablelist, 0, FXTableItem::LEFT);
     AlignColumn(tablelist, 1, FXTableItem::LEFT);
     AlignColumn(tablelist, 2, FXTableItem::LEFT);
+    if(!tagstr.empty() && tagstr.length() > 5)
+	tablelist->fitColumnsToContents(0);
+    if(namemax > 12)
+	tablelist->fitColumnsToContents(1);
     tablelist->setCurrentItem(0, 0);
     tablelist->selectRow(0, true);
 

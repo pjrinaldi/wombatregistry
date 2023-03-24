@@ -57,7 +57,7 @@ void Viewer::GenerateReport(FXArray<FXString> taggedlist, std::vector<std::strin
             {
                 textview->appendText("Key:\t" + itemhdr + "\n");
                 textview->appendText(itemcon + "\n");
-                for(int k=0; k < itemcon.length(); k++)
+                for(int k=0; k < 80; k++)
                     textview->appendText("-");
                 textview->appendText("\n\n");
             }
