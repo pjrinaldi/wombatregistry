@@ -53,6 +53,11 @@ void WombatRegistry::create()
 {
     FXMainWindow::create();
     show(PLACEMENT_SCREEN);
+    if(this->getApp()->getArgc() == 2)
+    {
+        cmdhivepath = std::string(this->getApp()->getArgv()[1]);
+        int ret = OpenHive(NULL, 0, NULL);
+    }
 }
 
 long WombatRegistry::TagMenu(FXObject*, FXSelector, void* ptr)
@@ -829,9 +834,16 @@ long WombatRegistry::TableUp(FXObject*, FXSelector, void* ptr)
 
 long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
 {
-    if(prevhivepath.empty())
-        prevhivepath = getenv("HOME") + std::string("/");
-    FXString filename = FXFileDialog::getOpenFilename(this, "Open Hive", prevhivepath.c_str());
+    FXString filename = "";
+    if(cmdhivepath.empty())
+    {
+        if(prevhivepath.empty())
+            prevhivepath = getenv("HOME") + std::string("/");
+        filename = FXFileDialog::getOpenFilename(this, "Open Hive", prevhivepath.c_str());
+    }
+    else
+        filename = FXString(cmdhivepath.c_str());
+
     if(!filename.empty())
     {
         hivefilepath = filename.text();

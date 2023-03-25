@@ -52,6 +52,7 @@ class WombatRegistry : public FXMainWindow
         FXFont* plainfont;
         std::string prevhivepath;
         std::string hivefilepath;
+        std::string cmdhivepath = "";
         std::vector<std::filesystem::path> hives;
         std::vector<std::string> tags;
         FXArray<FXString> taggedlist;
