@@ -817,15 +817,26 @@ long WombatRegistry::PublishReport(FXObject*, FXSelector, void*)
 long WombatRegistry::TableUp(FXObject*, FXSelector, void* ptr)
 {
     int currow = tablelist->getCurrentRow();
+    std::cout << "currow: " << currow << " num rows: " << tablelist->getNumRows() << std::endl;
     switch(((FXEvent*)ptr)->code)
     {
         case KEY_Up:
             tablelist->setCurrentItem(currow - 1, 0, true);
 	    tablelist->selectRow(currow - 1, true);
+            if(currow - 1 > 0)
+            {
+            if(!tablelist->isItemVisible(currow, 0))
+                tablelist->makePositionVisible(currow - 1, 0);
+            }
             break;
         case KEY_Down:
             tablelist->setCurrentItem(currow + 1, 0, true);
 	    tablelist->selectRow(currow + 1, true);
+            if(currow + 1 < tablelist->getNumRows() - 1)
+            {
+            if(!tablelist->isItemVisible(currow, 0))
+                tablelist->makePositionVisible(currow + 1, 0);
+            }
             break;
     }
 
