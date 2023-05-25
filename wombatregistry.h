@@ -14,7 +14,7 @@
 #include <filesystem>
 #include <byteswap.h>
 #include <time.h>
-#include "/usr/local/include/fox-1.7/fx.h"
+#include "fox-1.7/fx.h"
 #include "libregf.h"
 #include "icons.h"
 #include "managetags.h"
