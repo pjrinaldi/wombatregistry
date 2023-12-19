@@ -748,8 +748,9 @@ long  WombatRegistry::OpenAboutBox(FXObject*, FXSelector, void*)
 
 long WombatRegistry::PreviewReport(FXObject*, FXSelector, void*)
 {
+    GenerateReport(taggedlist, tags);
     viewer = new Viewer(this, "Report Preview");
-    viewer->GenerateReport(taggedlist, tags);
+    viewer->SetText(reportstring);
     viewer->execute(PLACEMENT_OWNER);
 
     return 1;
@@ -806,7 +807,8 @@ long WombatRegistry::PublishReport(FXObject*, FXSelector, void*)
         }
         else
         {
-            viewer->GetText(&buf);
+            GenerateReport(taggedlist, tags);
+            buf = reportstring;
         }
         outfile->writeBlock(buf.text(), buf.length());
         outfile->close();
@@ -960,4 +962,51 @@ int main(int argc, char* argv[])
     wr->run();
 
     return 0;
+}
+
+void WombatRegistry::GenerateReport(FXArray<FXString> taggedlist, std::vector<std::string> tags)
+{
+    reportstring.clear();
+    // PLACE TITLE
+    reportstring.append("Wombat Registry Report\n----------------------\n\n");
+    // PLACE CONTENTS HEADER
+    reportstring.append("Contents\n--------\n\n");
+    // GENERATE TAGS AND THEIR COUNT
+    for(int j=0; j < tags.size(); j++)
+    {
+        int tagcnt = 0;
+        for(int i=0; i < taggedlist.no(); i++)
+        {
+            std::size_t found = taggedlist.at(i).find("|");
+            FXString itemtag = taggedlist.at(i).mid(0, found);
+            if(FXString::compare(itemtag, FXString(tags.at(j).c_str())) == 0)
+                tagcnt++;
+        }
+        reportstring.append(FXString(tags.at(j).c_str()) + " (" + FXString::value(tagcnt) + ")\n");
+    }
+    reportstring.append("\n\n");
+    // GENERATE TAG HEADER AND CONTENT
+    for(int i=0; i < tags.size(); i++)
+    {
+        reportstring.append(FXString(tags.at(i).c_str()) + "\n");
+        for(int j=0; j < tags.at(i).size(); j++)
+            reportstring.append("-");
+        reportstring.append("\n\n");
+        for(int j=0; j < taggedlist.no(); j++)
+        {
+            std::size_t found = taggedlist.at(j).find("|");
+            std::size_t rfound = taggedlist.at(j).rfind("|");
+            FXString itemtag = taggedlist.at(j).mid(0, found);
+            FXString itemhdr = taggedlist.at(j).mid(found+1, rfound - found - 1);
+            FXString itemcon = taggedlist.at(j).mid(rfound+1, taggedlist.at(j).length() - rfound);
+            if(itemtag == tags.at(i).c_str())
+            {
+                reportstring.append("Key:\t" + itemhdr + "\n");
+                reportstring.append(itemcon + "\n");
+                for(int k=0; k < 80; k++)
+                    reportstring.append("-");
+                reportstring.append("\n\n");
+            }
+        }
+    }
 }

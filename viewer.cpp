@@ -14,53 +14,7 @@ Viewer::Viewer(FXWindow* parent, const FXString& title):FXDialogBox(parent, titl
     textview->setEditable(false);
 }
 
-void Viewer::GetText(FXString* buf)
+void Viewer::SetText(FXString txt)
 {
-    textview->getText(*buf);
-}
-
-void Viewer::GenerateReport(FXArray<FXString> taggedlist, std::vector<std::string> tags)
-{
-    // PLACE TITLE
-    textview->appendText("Wombat Registry Report\n----------------------\n\n");
-    // PLACE CONTENTS HEADER
-    textview->appendText("Contents\n--------\n\n");
-    // GENERATE TAGS AND THEIR COUNT
-    for(int j=0; j < tags.size(); j++)
-    {
-        int tagcnt = 0;
-        for(int i=0; i < taggedlist.no(); i++)
-        {
-            std::size_t found = taggedlist.at(i).find("|");
-            FXString itemtag = taggedlist.at(i).mid(0, found);
-            if(FXString::compare(itemtag, FXString(tags.at(j).c_str())) == 0)
-                tagcnt++;
-        }
-        textview->appendText(FXString(tags.at(j).c_str()) + " (" + FXString::value(tagcnt) + ")\n");
-    }
-    textview->appendText("\n\n");
-    // GENERATE TAG HEADER AND CONTENT
-    for(int i=0; i < tags.size(); i++)
-    {
-        textview->appendText(FXString(tags.at(i).c_str()) + "\n");
-        for(int j=0; j < tags.at(i).size(); j++)
-            textview->appendText("-");
-        textview->appendText("\n\n");
-        for(int j=0; j < taggedlist.no(); j++)
-        {
-            std::size_t found = taggedlist.at(j).find("|");
-            std::size_t rfound = taggedlist.at(j).rfind("|");
-            FXString itemtag = taggedlist.at(j).mid(0, found);
-            FXString itemhdr = taggedlist.at(j).mid(found+1, rfound - found - 1);
-            FXString itemcon = taggedlist.at(j).mid(rfound+1, taggedlist.at(j).length() - rfound);
-            if(itemtag == tags.at(i).c_str())
-            {
-                textview->appendText("Key:\t" + itemhdr + "\n");
-                textview->appendText(itemcon + "\n");
-                for(int k=0; k < 80; k++)
-                    textview->appendText("-");
-                textview->appendText("\n\n");
-            }
-        }
-    }
+    textview->setText(txt);
 }

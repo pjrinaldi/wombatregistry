@@ -56,6 +56,7 @@ class WombatRegistry : public FXMainWindow
         std::vector<std::filesystem::path> hives;
         std::vector<std::string> tags;
         FXArray<FXString> taggedlist;
+	FXString reportstring;
         std::ifstream* filebufptr;
         Viewer* viewer;
 
@@ -105,6 +106,7 @@ class WombatRegistry : public FXMainWindow
 	    statusbar->getStatusLine()->setNormalText(tmptext);
 	};
         virtual void create();
+	void GenerateReport(FXArray<FXString> taggedlist, std::vector<std::string> tags);
 
 };
 
