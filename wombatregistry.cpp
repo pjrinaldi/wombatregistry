@@ -31,6 +31,9 @@ WombatRegistry::WombatRegistry(FXApp* a):FXMainWindow(a, "Wombat Registry Forens
     openicon = new FXPNGIcon(this->getApp(), folderopen);
     openbutton = new FXButton(toolbar, "", openicon, this, ID_OPEN, BUTTON_TOOLBAR|FRAME_RAISED, 0,0,0,0, 4,4,4,4);
     openbutton->setTipText("Open Registry File");
+    closeicon = new FXPNGIcon(this->getApp(), closehive);
+    closebutton = new FXButton(toolbar, "", closeicon, this, ID_CLOSE, BUTTON_TOOLBAR|FRAME_RAISED, 0,0,0,0, 4,4,4,4);
+    closebutton->setTipText("Close Selected Hive");
     managetagsicon = new FXPNGIcon(this->getApp(), managetags);
     managetagsbutton = new FXButton(toolbar, "", managetagsicon, this, ID_MANAGETAGS, BUTTON_TOOLBAR|FRAME_RAISED, 0,0,0,0, 4,4,4,4);
     managetagsbutton->setTipText("Manage Tags");
@@ -337,7 +340,6 @@ FXString WombatRegistry::ConvertWindowsTimeToUnixTimeUTC(uint64_t input)
 
     return timestr;
 }
-
 
 long WombatRegistry::ValueSelected(FXObject*, FXSelector, void*)
 {
@@ -841,6 +843,35 @@ long WombatRegistry::TableUp(FXObject*, FXSelector, void* ptr)
             }
             break;
     }
+
+    return 1;
+}
+
+long WombatRegistry::CloseHive(FXObject*, FXSelector, void*)
+{
+    FXTreeItem* curitem = treelist->getCurrentItem();
+    bool toplevel = false;
+    std::vector<FXString> pathitems;
+    //pathitems.clear();
+    //pathitems.push_back(curitem->getText());
+    FXTreeItem* parent;
+    FXTreeItem* child;
+    child = curitem;
+    while(toplevel == false)
+    {
+	parent = child->getParent();
+	if(parent == NULL)
+        {
+	    toplevel = true;
+        }
+	else
+	{
+	    //pathitems.push_back(parent->getText());
+	    child = parent;
+	}
+    }
+    //std::cout << child->getText().text() << std::endl;
+    treelist->removeItem(child);
 
     return 1;
 }

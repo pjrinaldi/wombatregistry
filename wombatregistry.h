@@ -40,6 +40,8 @@ class WombatRegistry : public FXMainWindow
         FXTreeItem* rootitem;
 	FXIcon* openicon;
         FXButton* openbutton;
+	FXIcon* closeicon;
+	FXButton* closebutton;
 	FXIcon* managetagsicon;
 	FXButton* managetagsbutton;
 	FXIcon* previewicon;
@@ -79,10 +81,12 @@ class WombatRegistry : public FXMainWindow
             ID_SETTAG = 109,
             ID_REMTAG = 110,
             ID_MOVE_UP = 111,
+	    ID_CLOSE = 112,
             ID_LAST
         };
         WombatRegistry(FXApp* a);
         long OpenHive(FXObject*, FXSelector, void*);
+	long CloseHive(FXObject*, FXSelector, void*);
         long OpenTagManager(FXObject*, FXSelector, void*);
 	long OpenAboutBox(FXObject*, FXSelector, void*);
         long KeySelected(FXObject*, FXSelector, void*);
@@ -113,6 +117,7 @@ class WombatRegistry : public FXMainWindow
 FXDEFMAP(WombatRegistry) WombatRegistryMap[]={
     FXMAPFUNC(SEL_CLICKED, WombatRegistry::ID_TREESELECT, WombatRegistry::KeySelected),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_OPEN, WombatRegistry::OpenHive),
+    FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_CLOSE, WombatRegistry::CloseHive),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_MANAGETAGS, WombatRegistry::OpenTagManager),
     FXMAPFUNC(SEL_COMMAND, WombatRegistry::ID_ABOUT, WombatRegistry::OpenAboutBox),
     FXMAPFUNC(SEL_SELECTED, WombatRegistry::ID_TABLESELECT, WombatRegistry::ValueSelected),
