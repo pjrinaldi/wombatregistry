@@ -825,7 +825,7 @@ long WombatRegistry::PublishReport(FXObject*, FXSelector, void*)
 long WombatRegistry::TableUp(FXObject*, FXSelector, void* ptr)
 {
     int currow = tablelist->getCurrentRow();
-    std::cout << "currow: " << currow << " num rows: " << tablelist->getNumRows() << std::endl;
+    //std::cout << "currow: " << currow << " num rows: " << tablelist->getNumRows() << std::endl;
     switch(((FXEvent*)ptr)->code)
     {
         case KEY_Up:
@@ -895,10 +895,18 @@ long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
     {
         if(prevhivepath.empty())
             prevhivepath = getenv("HOME") + std::string("/");
+	else
+	{
+	    std::size_t found = prevhivepath.find_last_of("/");
+	    prevhivepath = prevhivepath.substr(0, found+1);
+	}
         filename = FXFileDialog::getOpenFilename(this, "Open Hive", prevhivepath.c_str());
     }
     else
+    {
         filename = FXString(cmdhivepath.c_str());
+	cmdhivepath = "";
+    }
 
     if(!filename.empty())
     {
