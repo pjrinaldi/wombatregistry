@@ -106,6 +106,7 @@ long WombatRegistry::CreateNewTag(FXObject*, FXSelector, void*)
             taggedlist.erase(i);
     }
     taggedlist.append(tagstr + "|" + idkeyvalue + "|" + plaintext->getText());
+
     return 1;
 }
 
@@ -118,6 +119,7 @@ long WombatRegistry::RemoveTag(FXObject*, FXSelector, void*)
         if(taggedlist.at(i).contains(idkeyvalue))
             taggedlist.erase(i);
     }
+
     return 1;
 }
 
@@ -706,6 +708,7 @@ FXchar WombatRegistry::Rot13Char(FXchar curchar)
         rot13char = FXchar(curchar - 13);
     else
         rot13char = curchar;
+
     return rot13char;
 }
 
@@ -815,6 +818,7 @@ long WombatRegistry::PublishReport(FXObject*, FXSelector, void*)
         outfile->writeBlock(buf.text(), buf.length());
         outfile->close();
     }
+
     return 1;
 }
 
@@ -849,11 +853,10 @@ long WombatRegistry::TableUp(FXObject*, FXSelector, void* ptr)
 
 long WombatRegistry::CloseHive(FXObject*, FXSelector, void*)
 {
+    FXString idkeyvalue = statusbar->getStatusLine()->getText() + "\\" + tablelist->getItemText(tablelist->getCurrentRow(), 1);
+    int rootoffset = idkeyvalue.find("\\");
     FXTreeItem* curitem = treelist->getCurrentItem();
     bool toplevel = false;
-    std::vector<FXString> pathitems;
-    //pathitems.clear();
-    //pathitems.push_back(curitem->getText());
     FXTreeItem* parent;
     FXTreeItem* child;
     child = curitem;
@@ -861,17 +864,26 @@ long WombatRegistry::CloseHive(FXObject*, FXSelector, void*)
     {
 	parent = child->getParent();
 	if(parent == NULL)
-        {
 	    toplevel = true;
-        }
 	else
-	{
-	    //pathitems.push_back(parent->getText());
 	    child = parent;
+    }
+    for(int i=taggedlist.no() - 1; i >= 0; i--)
+    {
+        if(taggedlist.at(i).contains(idkeyvalue.left(rootoffset)))
+	{
+            taggedlist.erase(i);
 	}
     }
-    //std::cout << child->getText().text() << std::endl;
     treelist->removeItem(child);
+    plaintext->clearText();
+    tablelist->clearItems();
+    tablelist->setEditable(false);
+    tablelist->setTableSize(4, 3);
+    tablelist->setColumnText(0, "Tag");
+    tablelist->setColumnText(1, "Value Name");
+    tablelist->setColumnText(2, "Value Type");
+    tablelist->setColumnHeaderHeight(tablelist->getColumnHeaderHeight() + 5);
 
     return 1;
 }
@@ -934,6 +946,7 @@ long WombatRegistry::OpenHive(FXObject*, FXSelector, void*)
             //std::cout << "check failed..." << std::endl;
         }
     }
+
     return 1;
 }
 
